@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>劇團年度營運精細計算機 (匯出按鈕優化版)</title>
+    <title>劇團年度營運精細計算機 (技術組獨立計費版)</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -20,18 +20,10 @@
         body { background-color: var(--bg-color); color: #334155; line-height: 1.4; padding: 12px; display: flex; flex-direction: column; min-height: 100vh; }
         .container { width: 100%; max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; flex: 1; padding-bottom: 150px; }
         
-        /* 頂部標題與按鈕整合區塊 */
         header { text-align: center; margin: 10px 0 15px 0; }
         header h1 { color: var(--primary-color); font-size: 22px; font-weight: bold; }
         
-        /* 🌟 優化後的副標題與匯出按鈕整合樣式 */
-        .header-sub-row { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 10px; 
-            margin-top: 6px; 
-        }
+        .header-sub-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 6px; }
         .header-sub-row p { color: #64748b; font-size: 13px; }
         .btn-export {
             background-color: var(--success-color);
@@ -51,12 +43,11 @@
         .fixed-card { background: var(--card-bg); border-radius: 12px; padding: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 16px; border: 1px solid #e2e8f0; }
         .fixed-card h2 { font-size: 15px; color: var(--primary-color); margin-bottom: 10px; border-left: 4px solid var(--info-color); padding-left: 8px; }
 
-        /* 中間劇目清單橫向滑動容器 */
         .scroll-container { display: flex; gap: 16px; width: 100%; overflow-x: auto; padding-bottom: 15px; -webkit-overflow-scrolling: touch; }
         #projects_container { display: flex; gap: 16px; }
 
         .project-card {
-            flex: 0 0 310px;
+            flex: 0 0 325px;
             background: var(--card-bg);
             border-radius: 14px;
             padding: 16px;
@@ -82,6 +73,7 @@
         
         .btn-add { flex: 0 0 90px; background: #fff; color: var(--accent-color); border: 2px dashed var(--accent-color); border-radius: 14px; cursor: pointer; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; min-height: 400px; }
         .auto-calc-box { background: #f8fafc; padding: 6px; border-radius: 4px; font-size: 11px; color: #64748b; margin-top: 4px; border-left: 3px solid #94a3b8; }
+        .tech-sub-box { border-left: 3px solid var(--info-color); padding-left: 6px; margin-bottom: 10px; }
 
         /* 底座儀表板 */
         .sticky-dashboard { position: fixed; bottom: 0; left: 0; right: 0; background: var(--primary-color); color: white; border-radius: 16px 16px 0 0; padding: 12px 16px; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); z-index: 999; }
@@ -95,10 +87,9 @@
         .status-success { background-color: var(--success-color); color: white; }
         .status-danger { background-color: var(--danger-color); color: white; }
 
-        /* 響應式佈局微調 */
         @media (max-width: 767px) {
-            .project-card { flex: 0 0 82vw; }
-            .header-sub-row { flex-direction: column; gap: 6px; } /* 手機上副標題與按鈕垂直置中疊放，更整齊 */
+            .project-card { flex: 0 0 85vw; }
+            .header-sub-row { flex-direction: column; gap: 6px; }
             .sticky-dashboard { padding: 8px 12px; }
             .result-block { padding: 4px; }
             .result-block .value { font-size: 12px; }
@@ -174,6 +165,42 @@
                 </div>
                 <div class="auto-calc-box">🤖 演員薪資總計：$ <span class="p-res-actor-salary">0</span></div>
 
+                <div class="section-title">🛠️ Crew 技術組獨立計費</div>
+                
+                <div class="tech-sub-box">
+                    <div class="form-row">
+                        <div><label>舞台組 (人)</label><input type="number" class="p-stage-count" value="2" oninput="calculateAll()"></div>
+                        <div><label>進館整檔 (日)</label><input type="number" class="p-stage-days" value="3" oninput="calculateAll()"></div>
+                    </div>
+                    <div class="form-row">
+                        <div><label>舞台日薪(進館)</label><input type="number" class="p-stage-salary-day" value="3000" oninput="calculateAll()"></div>
+                        <div><label>舞台每場演出</label><input type="number" class="p-stage-salary-show" value="2500" oninput="calculateAll()"></div>
+                    </div>
+                </div>
+
+                <div class="tech-sub-box" style="border-left-color: #9b59b6;">
+                    <div class="form-row">
+                        <div><label>燈光組 (人)</label><input type="number" class="p-light-count" value="2" oninput="calculateAll()"></div>
+                        <div><label>進館整檔 (日)</label><input type="number" class="p-light-days" value="3" oninput="calculateAll()"></div>
+                    </div>
+                    <div class="form-row">
+                        <div><label>燈光日薪(進館)</label><input type="number" class="p-light-salary-day" value="3000" oninput="calculateAll()"></div>
+                        <div><label>燈光每場演出</label><input type="number" class="p-light-salary-show" value="2500" oninput="calculateAll()"></div>
+                    </div>
+                </div>
+
+                <div class="tech-sub-box" style="border-left-color: #16a085;">
+                    <div class="form-row">
+                        <div><label>音響組 (人)</label><input type="number" class="p-sound-count" value="1" oninput="calculateAll()"></div>
+                        <div><label>進館整檔 (日)</label><input type="number" class="p-sound-days" value="3" oninput="calculateAll()"></div>
+                    </div>
+                    <div class="form-row">
+                        <div><label>音響日薪(進館)</label><input type="number" class="p-sound-salary-day" value="3000" oninput="calculateAll()"></div>
+                        <div><label>音響每場演出</label><input type="number" class="p-sound-salary-show" value="2500" oninput="calculateAll()"></div>
+                    </div>
+                </div>
+                <div class="auto-calc-box">🤖 技術組(Crew)總計：$ <span class="p-res-crew-salary">0</span></div>
+
                 <div class="section-title">🙋‍♂️ 志工支援津貼</div>
                 <div class="form-row">
                     <div><label>總支援場次</label><input type="number" class="p-vol-shows" value="3" oninput="calculateAll()"></div>
@@ -239,7 +266,7 @@
 
     <div class="sticky-dashboard">
         <div class="sticky-dashboard-inner">
-            <h2>📊 損益即時分析儀表板 (滿座基準)</h2>
+            <h2>📊 損益即時 analysis 儀表板 (滿座基準)</h2>
             <div class="result-grid">
                 <div class="result-block"><div class="title">各劇總成本</div><div class="value" id="total_all_cost">$0</div></div>
                 <div class="result-block"><div class="title">各劇總收入</div><div class="value" id="total_all_revenue">$0</div></div>
@@ -289,6 +316,39 @@
                 <div><label>每人每演出</label><input type="number" class="p-salary-show" value="3000" oninput="calculateAll()"></div>
             </div>
             <div class="auto-calc-box">🤖 演員薪資總計：$ <span class="p-res-actor-salary">0</span></div>
+
+            <div class="section-title">🛠️ Crew 技術組獨立計費</div>
+            <div class="tech-sub-box">
+                <div class="form-row">
+                    <div><label>舞台組 (人)</label><input type="number" class="p-stage-count" value="2" oninput="calculateAll()"></div>
+                    <div><label>進館整檔 (日)</label><input type="number" class="p-stage-days" value="3" oninput="calculateAll()"></div>
+                </div>
+                <div class="form-row">
+                    <div><label>舞台日薪(進館)</label><input type="number" class="p-stage-salary-day" value="3000" oninput="calculateAll()"></div>
+                    <div><label>舞台每場演出</label><input type="number" class="p-stage-salary-show" value="2500" oninput="calculateAll()"></div>
+                </div>
+            </div>
+            <div class="tech-sub-box" style="border-left-color: #9b59b6;">
+                <div class="form-row">
+                    <div><label>燈光組 (人)</label><input type="number" class="p-light-count" value="2" oninput="calculateAll()"></div>
+                    <div><label>進館整檔 (日)</label><input type="number" class="p-light-days" value="3" oninput="calculateAll()"></div>
+                </div>
+                <div class="form-row">
+                    <div><label>燈光日薪(進館)</label><input type="number" class="p-light-salary-day" value="3000" oninput="calculateAll()"></div>
+                    <div><label>燈光每場演出</label><input type="number" class="p-light-salary-show" value="2500" oninput="calculateAll()"></div>
+                </div>
+            </div>
+            <div class="tech-sub-box" style="border-left-color: #16a085;">
+                <div class="form-row">
+                    <div><label>音響組 (人)</label><input type="number" class="p-sound-count" value="1" oninput="calculateAll()"></div>
+                    <div><label>進館整檔 (日)</label><input type="number" class="p-sound-days" value="3" oninput="calculateAll()"></div>
+                </div>
+                <div class="form-row">
+                    <div><label>音響日薪(進館)</label><input type="number" class="p-sound-salary-day" value="3000" oninput="calculateAll()"></div>
+                    <div><label>音響每場演出</label><input type="number" class="p-sound-salary-show" value="2500" oninput="calculateAll()"></div>
+                </div>
+            </div>
+            <div class="auto-calc-box">🤖 技術組(Crew)總計：$ <span class="p-res-crew-salary">0</span></div>
 
             <div class="section-title">🙋‍♂️ 志工支援津貼</div>
             <div class="form-row">
@@ -376,11 +436,9 @@
     document.getElementById('add_btn_trigger').onclick = function() {
         pCount++;
         var container = document.getElementById('projects_container');
-        
         var newCard = document.createElement('div');
         newCard.className = 'project-card';
         newCard.innerHTML = getCleanCardHtml(pCount);
-        
         container.appendChild(newCard);
         calculateAll();
     };
@@ -425,12 +483,38 @@
             }
             card.getElementsByClassName('p-res-ticket-net')[0].innerText = Math.round(totalCardTicketNet).toLocaleString();
 
+            // 演員薪資計算
             var aCount = parseFloat(card.getElementsByClassName('p-actor-count')[0].value) || 0;
             var aMonths = parseFloat(card.getElementsByClassName('p-rehearsal-months')[0].value) || 0;
             var sMonth = parseFloat(card.getElementsByClassName('p-salary-month')[0].value) || 0;
             var sShow = parseFloat(card.getElementsByClassName('p-salary-show')[0].value) || 0;
             var totalActorSalary = (aCount * aMonths * sMonth) + (aCount * totalCardShows * sShow);
             card.getElementsByClassName('p-res-actor-salary')[0].innerText = totalActorSalary.toLocaleString();
+
+            // 🚀 舞台組計算
+            var stCount = parseFloat(card.getElementsByClassName('p-stage-count')[0].value) || 0;
+            var stDays = parseFloat(card.getElementsByClassName('p-stage-days')[0].value) || 0;
+            var stSalDay = parseFloat(card.getElementsByClassName('p-stage-salary-day')[0].value) || 0;
+            var stSalShow = parseFloat(card.getElementsByClassName('p-stage-salary-show')[0].value) || 0;
+            var totalStageCost = (stCount * stDays * stSalDay) + (stCount * totalCardShows * stSalShow);
+
+            // 🚀 燈光組計算
+            var ltCount = parseFloat(card.getElementsByClassName('p-light-count')[0].value) || 0;
+            var ltDays = parseFloat(card.getElementsByClassName('p-light-days')[0].value) || 0;
+            var ltSalDay = parseFloat(card.getElementsByClassName('p-light-salary-day')[0].value) || 0;
+            var ltSalShow = parseFloat(card.getElementsByClassName('p-light-salary-show')[0].value) || 0;
+            var totalLightCost = (ltCount * ltDays * ltSalDay) + (ltCount * totalCardShows * ltSalShow);
+
+            // 🚀 音響組計算
+            var sdCount = parseFloat(card.getElementsByClassName('p-sound-count')[0].value) || 0;
+            var sdDays = parseFloat(card.getElementsByClassName('p-sound-days')[0].value) || 0;
+            var sdSalDay = parseFloat(card.getElementsByClassName('p-sound-salary-day')[0].value) || 0;
+            var sdSalShow = parseFloat(card.getElementsByClassName('p-sound-salary-show')[0].value) || 0;
+            var totalSoundCost = (sdCount * sdDays * sdSalDay) + (sdCount * totalCardShows * sdSalShow);
+
+            // 技術組總計
+            var totalCrewSalary = totalStageCost + totalLightCost + totalSoundCost;
+            card.getElementsByClassName('p-res-crew-salary')[0].innerText = totalCrewSalary.toLocaleString();
 
             var vVolShows = parseFloat(card.getElementsByClassName('p-vol-shows')[0].value) || 0;
             var vAllowance = parseFloat(card.getElementsByClassName('p-vol-allowance')[0].value) || 0;
@@ -459,7 +543,7 @@
             var merchCost = parseFloat(card.getElementsByClassName('p-merch-cost')[0].value) || 0;
             var contingency = parseFloat(card.getElementsByClassName('p-contingency')[0].value) || 0;
 
-            var projectTotalCost = totalActorSalary + totalVolFee + totalTravel + director + staff + hwTotal + marketing + insurance + merchCost + contingency;
+            var projectTotalCost = totalActorSalary + totalCrewSalary + totalVolFee + totalTravel + director + staff + hwTotal + marketing + insurance + merchCost + contingency;
 
             var subsidy = parseFloat(card.getElementsByClassName('p-subsidy')[0].value) || 0;
             var merchRev = parseFloat(card.getElementsByClassName('p-merch-revenue')[0].value) || 0;
@@ -519,10 +603,10 @@
 
         csvRows.push('=== 各劇目製作營運明細 ===');
         var headers = [
-            '劇目名稱', '總場次', '票房總實拿', '導演酬勞', '行政執行費', 
-            '演員總薪資', '志工總車馬', '技術硬體場地費', '差旅總費用', 
-            '行銷宣傳費', '保險與授權', '周邊成本', '緊急預備金', 
-            '政府/企業補助', '周邊淨利收入', '本劇總成本', '本劇總收入', '【本劇最終損益】'
+            '劇目名稱', '總場次', '票房總實拿', '導演酬勞', '行政執行費', '演員總薪資', 
+            '舞台組薪資', '燈光組薪資', '音響組薪資', '技術組總薪資', 
+            '志工總車馬', '技術硬體場地費', '差旅總費用', '行銷宣傳費', '保險與授權', 
+            '周邊成本', '緊急預備金', '政府/企業補助', '周邊淨利收入', '本劇總成本', '本劇總收入', '【本劇最終損益】'
         ];
         csvRows.push(headers.join(','));
 
@@ -552,6 +636,29 @@
             var sShow = parseFloat(card.getElementsByClassName('p-salary-show')[0].value) || 0;
             var actorSalary = (aCount * aMonths * sMonth) + (aCount * totalCardShows * sShow);
 
+            // 舞台組明細
+            var stCount = parseFloat(card.getElementsByClassName('p-stage-count')[0].value) || 0;
+            var stDays = parseFloat(card.getElementsByClassName('p-stage-days')[0].value) || 0;
+            var stSalDay = parseFloat(card.getElementsByClassName('p-stage-salary-day')[0].value) || 0;
+            var stSalShow = parseFloat(card.getElementsByClassName('p-stage-salary-show')[0].value) || 0;
+            var stageCost = (stCount * stDays * stSalDay) + (stCount * totalCardShows * stSalShow);
+
+            // 燈光組明細
+            var ltCount = parseFloat(card.getElementsByClassName('p-light-count')[0].value) || 0;
+            var ltDays = parseFloat(card.getElementsByClassName('p-light-days')[0].value) || 0;
+            var ltSalDay = parseFloat(card.getElementsByClassName('p-light-salary-day')[0].value) || 0;
+            var ltSalShow = parseFloat(card.getElementsByClassName('p-light-salary-show')[0].value) || 0;
+            var lightCost = (ltCount * ltDays * ltSalDay) + (ltCount * totalCardShows * ltSalShow);
+
+            // 音響組明細
+            var sdCount = parseFloat(card.getElementsByClassName('p-sound-count')[0].value) || 0;
+            var sdDays = parseFloat(card.getElementsByClassName('p-sound-days')[0].value) || 0;
+            var sdSalDay = parseFloat(card.getElementsByClassName('p-sound-salary-day')[0].value) || 0;
+            var sdSalShow = parseFloat(card.getElementsByClassName('p-sound-salary-show')[0].value) || 0;
+            var soundCost = (sdCount * sdDays * sdSalDay) + (sdCount * totalCardShows * sdSalShow);
+
+            var crewTotalSalary = stageCost + lightCost + soundCost;
+
             var vVolShows = parseFloat(card.getElementsByClassName('p-vol-shows')[0].value) || 0;
             var vAllowance = parseFloat(card.getElementsByClassName('p-vol-allowance')[0].value) || 0;
             var vCount = parseFloat(card.getElementsByClassName('p-vol-count')[0].value) || 0;
@@ -579,14 +686,14 @@
             var subsidy = parseFloat(card.getElementsByClassName('p-subsidy')[0].value) || 0;
             var merchRev = parseFloat(card.getElementsByClassName('p-merch-revenue')[0].value) || 0;
 
-            var pCost = actorSalary + volFee + travelFee + director + staff + hwTotal + marketing + insurance + merchCost + contingency;
+            var pCost = actorSalary + crewTotalSalary + volFee + travelFee + director + staff + hwTotal + marketing + insurance + merchCost + contingency;
             var pRev = totalCardTicketNet + subsidy + merchRev;
             var pProfit = pRev - pCost;
 
             var rowData = [
-                title, totalCardShows, Math.round(totalCardTicketNet), director, staff,
-                Math.round(actorSalary), Math.round(volFee), hwTotal, Math.round(travelFee),
-                marketing, insurance, merchCost, contingency,
+                title, totalCardShows, Math.round(totalCardTicketNet), director, staff, Math.round(actorSalary),
+                Math.round(stageCost), Math.round(lightCost), Math.round(soundCost), Math.round(crewTotalSalary),
+                Math.round(volFee), hwTotal, Math.round(travelFee), marketing, insurance, merchCost, contingency,
                 subsidy, merchRev, Math.round(pCost), Math.round(pRev), Math.round(pProfit)
             ];
             csvRows.push(rowData.join(','));
@@ -599,7 +706,7 @@
         var dateStr = d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
         
         link.href = URL.createObjectURL(blob);
-        link.setAttribute("download", "劇團營運試算表_" + dateStr + ".csv");
+        link.setAttribute("download", "劇團營運試算表(技術分組)_" + dateStr + ".csv");
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
