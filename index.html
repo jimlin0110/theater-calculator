@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>劇團年度營運精細計算機</title>
+    <title>劇團年度營運精細計算機 v6</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -19,7 +19,7 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif; }
         body { background-color: var(--bg-color); color: #334155; line-height: 1.4; padding: 12px; display: flex; flex-direction: column; min-height: 100vh; }
-        .container { width: 100%; max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; flex: 1; padding-bottom: 200px; }
+        .container { width: 100%; max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; flex: 1; padding-bottom: 220px; }
         
         header { text-align: center; margin: 10px 0 15px 0; }
         header h1 { color: var(--primary-color); font-size: 22px; font-weight: bold; }
@@ -37,7 +37,7 @@
         #projects_container { display: flex; gap: 16px; }
 
         .project-card {
-            flex: 0 0 350px;
+            flex: 0 0 380px;
             background: var(--card-bg);
             border-radius: 14px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
@@ -58,7 +58,7 @@
         .header-btn-group { display: flex; align-items: center; gap: 4px; }
         .copy-btn { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .remove-btn { background: #fee2e2; color: var(--danger-color); border: 1px solid #fca5a5; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
-        .project-title-input { font-size: 15px; font-weight: bold; border: none; border-bottom: 2px solid #cbd5e1; background: transparent; padding: 2px; width: 150px; color: var(--primary-color); }
+        .project-title-input { font-size: 15px; font-weight: bold; border: none; border-bottom: 2px solid #cbd5e1; background: transparent; padding: 2px; width: 165px; color: var(--primary-color); }
         .section-title { font-size: 12px; font-weight: bold; color: #475569; margin: 12px 0 6px 0; background: #f1f5f9; padding: 4px 6px; border-radius: 4px; }
 
         .slider-box { background: #fff7ed; border: 1px solid #ffedd5; border-radius: 8px; padding: 10px; margin-bottom: 12px; }
@@ -66,8 +66,9 @@
         .slider-input { width: 100%; accent-color: var(--accent-color); cursor: pointer; margin: 4px 0; }
 
         .venue-list { width: 100%; }
-        .venue-sub-block { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; margin-bottom: 8px; position: relative; }
+        .venue-sub-block { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; margin-bottom: 12px; position: relative; }
         .venue-sub-block .del-venue-btn { position: absolute; top: 4px; right: 4px; background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 10px; }
+        .venue-sub-title { font-size: 11px; font-weight: bold; color: var(--info-color); margin-bottom: 6px; padding-bottom: 2px; border-bottom: 1px dotted #cbd5e1; }
 
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 4px; align-items: center; }
         .tax-row { display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: #64748b; margin-top: -2px; margin-bottom: 4px; }
@@ -101,7 +102,7 @@
         .status-danger { background-color: var(--danger-color); color: white; }
 
         @media (max-width: 767px) {
-            .project-card { flex: 0 0 88vw; }
+            .project-card { flex: 0 0 90vw; }
             .sticky-dashboard { padding: 8px 12px; }
             .fixed-card .form-row { grid-template-columns: repeat(2, 1fr) !important; }
         }
@@ -112,16 +113,16 @@
             .btn-add { flex: 0 0 90px; min-height: auto; height: auto; align-self: stretch; }
             .result-grid { grid-template-columns: repeat(4, 1fr); }
         }
-        @media (min-width: 1025px) { #projects_container { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 1100px) { #projects_container { grid-template-columns: repeat(3, 1fr); } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>🎭 劇團年度營運精細計算機</h1>
+        <h1>🎭 劇團年度營運精細計算機 v6</h1>
         <div class="header-sub-row">
-            <p>獨立拆分刷卡與技術天數差、整合專案回撥與期初自籌現金流估算</p>
+            <p>場地獨立綁定差旅負線、整合周邊商品動態銷售與二代健保防呆機制</p>
             <div>
                 <button class="btn-export" onclick="exportToCSV()">📥 匯出至 Excel</button>
                 <button class="btn-clear" onclick="clearSavedData()">🔄 重設全部</button>
@@ -152,10 +153,10 @@
 
     <div class="sticky-dashboard">
         <div class="sticky-dashboard-inner">
-            <h2>📊 全年度損益即時 analysis 儀表板</h2>
+            <h2>📊 全年度損益即時分析儀表板</h2>
             <div class="result-grid">
-                <div class="result-block"><div class="title">各劇總成本 (含稅/攤提)</div><div class="value" id="total_all_cost">$0</div></div>
-                <div class="result-block"><div class="title">各劇總收入 (已扣手續費)</div><div class="value" id="total_all_revenue">$0</div></div>
+                <div class="result-block"><div class="title">各劇總成本 (含稅/攤提/差旅)</div><div class="value" id="total_all_cost">$0</div></div>
+                <div class="result-block"><div class="title">各劇總收入 (已扣手續費/含周邊)</div><div class="value" id="total_all_revenue">$0</div></div>
                 <div class="result-block" style="background: rgba(39, 174, 96, 0.25);"><div class="title" style="color: #2ecc71;">各劇總盈餘</div><div class="value" id="total_all_profit">$0</div></div>
                 <div class="result-block" style="background: rgba(192, 57, 43, 0.25);"><div class="title" style="color: #ff7675;">辦公室最終負擔</div><div class="value" id="total_all_office_cost">$0</div></div>
             </div>
@@ -170,24 +171,33 @@
         {
             title: "年度大戲《劇目 1》",
             salePercent: 75,
+            merchSalePercent: 50,
             isCollapsed: false,
-            venues: [{ shows: 3, seats: 500, earlyBirdPercent: 30, earlyBirdPrice: 960, regularPrice: 1200, systemFee: 6, bankFee: 2, vipSeats: 20 }],
+            venues: [
+                { 
+                    vName: "台北主場", shows: 3, seats: 500, earlyBirdPercent: 30, earlyBirdPrice: 960, regularPrice: 1200, systemFee: 6, bankFee: 2, vipSeats: 20,
+                    tCrewCount: 0, tCrewEarlyDays: 0, tActorCount: 0, tTotalDays: 0, tFare: 0, tHotel: 0, tMeal: 150
+                },
+                { 
+                    vName: "高雄巡演場", shows: 2, seats: 400, earlyBirdPercent: 20, earlyBirdPrice: 800, regularPrice: 1000, systemFee: 6, bankFee: 2, vipSeats: 15,
+                    tCrewCount: 5, tCrewEarlyDays: 2, tActorCount: 10, tTotalDays: 4, tFare: 1500, tHotel: 1200, tMeal: 250
+                }
+            ],
             director: 80000, staff: 120000, paybackPercent: 10,
             actorCount: 5, rehearsalMonths: 2.5, salaryMonth: 15000, salaryShow: 3000,
             actorGhi: true, crewGhi: true, 
             stageCount: 2, stageDays: 2, stageSalaryDay: 3500, stageEntryFee: 1500, stageSalaryShow: 2000,
             lightCount: 2, lightDays: 2, lightSalaryDay: 3500, lightEntryFee: 1500, lightSalaryShow: 2000,
             soundCount: 1, soundDays: 2, soundSalaryDay: 3500, soundEntryFee: 1500, soundSalaryShow: 2000,
-            volShows: 3, volAllowance: 300, volCount: 8,
+            volShows: 5, volAllowance: 300, volCount: 6,
             scenery: 150000, sceneryTax: false, 
             lighting: 100000, lightingTax: false, 
             sound: 80000, soundTax: false, 
             venue: 140000, venueTax: false,
             isAmortized: false, amortYears: 3,
-            travelCrewCount: 5, travelCrewEarlyDays: 2, travelActorCount: 10, travelTotalDays: 4,
-            travelFare: 1500, travelHotel: 1000, travelMeal: 250,
-            marketing: 40000, marketingTax: false,
-            insurance: 15000, merchCost: 20000, merchRevenue: 35000, contingency: 20000,
+            marketing: 50000, marketingTax: false,
+            insurance: 15000, contingency: 20000,
+            merchTotalCost: 40000, merchUnitPrice: 350, merchTotalQty: 300,
             subsidy: 450000 
         }
     ];
@@ -201,7 +211,7 @@
                 document.getElementById('annual_software').value = localStorage.getItem('theatre_office_software');
                 document.getElementById('annual_hardware').value = localStorage.getItem('theatre_office_hardware');
             }
-            let savedProjects = localStorage.getItem('theatre_projects_data_v5');
+            let savedProjects = localStorage.getItem('theatre_projects_data_v6');
             if (savedProjects) {
                 renderProjects(JSON.parse(savedProjects));
             } else {
@@ -220,22 +230,35 @@
         projList.forEach((p, idx) => {
             let venueHtml = '';
             p.venues.forEach((v, vIdx) => {
+                let vName = v.vName || `地點 ${vIdx + 1}`;
                 let sFee = v.systemFee !== undefined ? v.systemFee : 6;
                 let bFee = v.bankFee !== undefined ? v.bankFee : 2;
                 let ebP = v.earlyBirdPercent !== undefined ? v.earlyBirdPercent : 30;
                 let ebPr = v.earlyBirdPrice !== undefined ? v.earlyBirdPrice : 960;
                 let regPr = v.regularPrice !== undefined ? v.regularPrice : 1200;
                 let vSeats = v.vipSeats !== undefined ? v.vipSeats : 0;
+                
+                let tcCount = v.tCrewCount !== undefined ? v.tCrewCount : 0;
+                let tcEarly = v.tCrewEarlyDays !== undefined ? v.tCrewEarlyDays : 0;
+                let taCount = v.tActorCount !== undefined ? v.tActorCount : 0;
+                let tDays = v.tTotalDays !== undefined ? v.tTotalDays : 0;
+                let tFare = v.tFare !== undefined ? v.tFare : 0;
+                let tHotel = v.tHotel !== undefined ? v.tHotel : 0;
+                let tMeal = v.tMeal !== undefined ? v.tMeal : 150;
 
                 venueHtml += `
                     <div class="venue-sub-block">
                         ${vIdx > 0 ? `<button class="del-venue-btn" onclick="removeVenue(this, ${idx}, ${vIdx})">🗑️ 移除</button>` : ''}
+                        <div class="venue-sub-title">📍 場地 & 票房條件設定</div>
+                        <div class="form-row" style="margin-bottom:6px;">
+                            <div style="grid-column: span 2;"><label>場地名稱標籤</label><input type="text" class="p-vname" value="${vName}" style="width:100%; font-weight:bold; color:var(--info-color); padding:3px 6px; border:1px solid #94a3b8; border-radius:4px;" oninput="saveCurrentStateOnly()"></div>
+                        </div>
                         <div class="form-row">
                             <div><label>場次 (場)</label><input type="number" class="p-shows" value="${v.shows}" oninput="saveAndCalc()"></div>
                             <div><label>總座位 (席)</label><input type="number" class="p-seats" value="${v.seats}" oninput="saveAndCalc()"></div>
                         </div>
                         <div class="form-row">
-                            <div><label style="color:var(--danger-color); font-weight:bold;">每場公關留座</label><input type="number" class="p-vip-seats" value="${vSeats}" oninput="saveAndCalc()"></div>
+                            <div><label style="color:var(--danger-color); font-weight:bold;">公關留座/每場</label><input type="number" class="p-vip-seats" value="${vSeats}" oninput="saveAndCalc()"></div>
                             <div><label>早鳥比例 (%)</label><input type="number" class="p-eb-percent" value="${ebP}" oninput="saveAndCalc()"></div>
                         </div>
                         <div class="form-row">
@@ -244,21 +267,38 @@
                         </div>
                         <div class="form-row">
                             <div><label>售票服務費 (%)</label><input type="number" class="p-system-fee" value="${sFee}" oninput="saveAndCalc()"></div>
-                            <div><label>💳 刷卡/超商手續費 (%)</label><input type="number" class="p-bank-fee" value="${bFee}" oninput="saveAndCalc()"></div>
+                            <div><label>💳 金流手續費 (%)</label><input type="number" class="p-bank-fee" value="${bFee}" oninput="saveAndCalc()"></div>
+                        </div>
+
+                        <div class="venue-sub-title" style="color:#65a30d; border-color:#cbd5e1; margin-top:8px;">🚗 本場地專屬差旅綁定</div>
+                        <div class="form-row">
+                            <div><label>隨團技術組 (人)</label><input type="number" class="p-t-crew-count" value="${tcCount}" oninput="saveAndCalc()"></div>
+                            <div><label>技術提早進館(天)</label><input type="number" class="p-t-crew-early" value="${tcEarly}" oninput="saveAndCalc()"></div>
+                        </div>
+                        <div class="form-row">
+                            <div><label>隨團演員/行政 (人)</label><input type="number" class="p-t-actor-count" value="${taCount}" oninput="saveAndCalc()"></div>
+                            <div><label>本站總停留天數</label><input type="number" class="p-t-total-days" value="${tDays}" oninput="saveAndCalc()"></div>
+                        </div>
+                        <div class="form-row">
+                            <div><label>每人來回高鐵/車資</label><input type="number" class="p-t-fare" value="${tFare}" oninput="saveAndCalc()"></div>
+                            <div><label>每間雙人房/晚</label><input type="number" class="p-t-hotel" value="${tHotel}" oninput="saveAndCalc()"></div>
+                        </div>
+                        <div class="form-row">
+                            <div style="grid-column: span 2;"><label>每人每天餐費補貼</label><input type="number" class="p-t-meal" value="${tMeal}" oninput="saveAndCalc()"></div>
                         </div>
                     </div>
                 `;
             });
 
             let pbPct = p.paybackPercent !== undefined ? p.paybackPercent : 10;
-            let tCrewC = p.travelCrewCount !== undefined ? p.travelCrewCount : 5;
-            let tCrewEd = p.travelCrewEarlyDays !== undefined ? p.travelCrewEarlyDays : 2;
-            let tActC = p.travelActorCount !== undefined ? p.travelActorCount : 10;
-            let tTotD = p.travelTotalDays !== undefined ? p.travelTotalDays : 4;
             let currentSubsidy = p.subsidy !== undefined ? p.subsidy : 450000;
-            
             let actGhi = p.actorGhi !== undefined ? p.actorGhi : true;
             let crwGhi = p.crewGhi !== undefined ? p.crewGhi : true;
+            
+            let mCost = p.merchTotalCost !== undefined ? p.merchTotalCost : 40000;
+            let mPrice = p.merchUnitPrice !== undefined ? p.merchUnitPrice : 350;
+            let mQty = p.merchTotalQty !== undefined ? p.merchTotalQty : 300;
+            let mSalePct = p.merchSalePercent !== undefined ? p.merchSalePercent : 50;
 
             let card = document.createElement('div');
             card.className = `project-card ${p.isCollapsed ? 'collapsed' : ''}`;
@@ -281,9 +321,9 @@
                         <input type="range" class="slider-input p-sale-slider" min="0" max="100" value="${p.salePercent}" step="5" oninput="updateSliderText(this); saveAndCalc();">
                     </div>
 
-                    <div class="section-title">🗺️ 巡迴票房與精細抽成</div>
+                    <div class="section-title">🗺️ 巡迴票房與專屬差旅結構</div>
                     <div class="venue-list">${venueHtml}</div>
-                    <button class="btn-add-venue" onclick="addVenueBlockData(${idx})">➕ 新增巡迴場地/條件</button>
+                    <button class="btn-add-venue" onclick="addVenueBlockData(${idx})">➕ 新增巡迴場地(獨立差旅條件)</button>
 
                     <div class="section-title">👥 人事、正職回撥與二代健保</div>
                     <div class="form-row">
@@ -397,25 +437,31 @@
                         </div>
                     </div>
 
-                    <div class="section-title">🚗 巡演差旅精細計算法</div>
-                    <div class="form-row">
-                        <div><label>技術組(Crew)人數</label><input type="number" class="p-travel-crew-count" value="${tCrewC}" oninput="saveAndCalc()"></div>
-                        <div><label>技術提早進館 (天)</label><input type="number" class="p-travel-crew-early" value="${tCrewEd}" oninput="saveAndCalc()"></div>
+                    <div class="auto-calc-box" style="background:#f0fdf4; border-left-color:#16a34a; color:#15803d;">
+                        🤖 合計全站動態差旅總開銷：$ <span class="p-res-travel">0</span>
                     </div>
-                    <div class="form-row">
-                        <div><label>演員/行政組人數</label><input type="number" class="p-travel-actor-count" value="${tActC}" oninput="saveAndCalc()"></div>
-                        <div><label>全團總巡演天數</label><input type="number" class="p-travel-total-days" value="${tTotD}" oninput="saveAndCalc()"></div>
-                    </div>
-                    <div class="form-row">
-                        <div><label>每人來回交通</label><input type="number" class="p-travel-fare" value="${p.travelFare}" oninput="saveAndCalc()"></div>
-                        <div><label>每間雙人房/晚</label><input type="number" class="p-travel-hotel" value="${p.travelHotel}" oninput="saveAndCalc()"></div>
-                    </div>
-                    <div class="form-row">
-                        <div style="grid-column: span 2;"><label>每人每天伙食津貼</label><input type="number" class="p-travel-meal" value="${p.travelMeal}" oninput="saveAndCalc()"></div>
-                    </div>
-                    <div class="auto-calc-box">🤖 差旅總開銷：$ <span class="p-res-travel">0</span></div>
 
-                    <div class="section-title">📢 行銷、周邊與雜支</div>
+                    <div class="section-title">🛍️ 周邊商品動態銷售模擬</div>
+                    <div class="form-row">
+                        <div><label>製作總成本 (印製費用)</label><input type="number" class="p-merch-total-cost" value="${mCost}" oninput="saveAndCalc()"></div>
+                        <div><label>總製作數量 (件/本)</label><input type="number" class="p-merch-total-qty" value="${mQty}" oninput="saveAndCalc()"></div>
+                    </div>
+                    <div class="form-row" style="margin-bottom:6px;">
+                        <div style="grid-column: span 2;"><label>單件零售價 ($)</label><input type="number" class="p-merch-unit-price" value="${mPrice}" oninput="saveAndCalc()"></div>
+                    </div>
+                    <div class="slider-box" style="background: #f0fdfa; border-color: #ccfbf1;">
+                        <div class="slider-title" style="color: #0d9488;">
+                            <span>🛍️ 預估周邊銷售率模擬</span>
+                            <span><strong class="p-merch-slider-value">${mSalePct}</strong> %</span>
+                        </div>
+                        <input type="range" class="slider-input p-merch-sale-slider" min="0" max="100" value="${mSalePct}" step="5" oninput="this.parentElement.getElementsByClassName('p-merch-slider-value')[0].innerText = this.value; saveAndCalc();">
+                    </div>
+                    <div class="auto-calc-box" style="background:#f0fdfa; border-left-color:#0d9488;">
+                        🎯 周邊預估營業額：$ <span class="p-res-merch-rev">0</span> (售出 <span class="p-res-merch-sold-qty">0</span> 件)<br>
+                        📦 殘存庫存損失：$ <span class="p-res-merch-loss">0</span> (剩下 <span class="p-res-merch-left-qty">0</span> 件)
+                    </div>
+
+                    <div class="section-title">📢 行銷、宣傳與雜支</div>
                     <div class="form-row">
                         <div style="grid-column: span 2;"><label>行銷宣傳</label><input type="number" class="p-marketing" value="${p.marketing}" oninput="saveAndCalc()"></div>
                     </div>
@@ -426,10 +472,6 @@
                         <div><label>保險授權</label><input type="number" class="p-insurance" value="${p.insurance}" oninput="saveAndCalc()"></div>
                         <div><label>🚨 緊急預備金</label><input type="number" class="p-contingency" value="${p.contingency}" oninput="saveAndCalc()"></div>
                     </div>
-                    <div class="form-row">
-                        <div><label>周邊成本</label><input type="number" class="p-merch-cost" value="${p.merchCost}" oninput="saveAndCalc()"></div>
-                        <div><label>周邊淨利</label><input type="number" class="p-merch-revenue" value="${p.merchRevenue}" oninput="saveAndCalc()"></div>
-                    </div>
 
                     <div class="section-title">💰 外部收入來源</div>
                     <div class="form-row">
@@ -438,7 +480,7 @@
 
                     <div class="auto-calc-box" style="background:#fff7ed; border-left-color: var(--accent-color); color: #c2410c;">
                         📈 票房動態實拿：$ <span class="p-res-ticket-net">0</span><br>
-                        📊 本劇預估損益：<strong class="p-res-final-profit">$ 0</strong>
+                        📊 本劇預估總損益：<strong class="p-res-final-profit">$ 0</strong>
                     </div>
 
                     <div class="break-even-badge">
@@ -454,7 +496,7 @@
                     <div class="cashflow-warning-badge">
                         <span style="font-weight:bold;">⏳ 票房解凍前「絕對流動金防線」：</span>
                         <span style="font-size:12px; font-weight:bold; color:var(--warning-color);" class="p-res-cashflow-warning">計算中...</span>
-                        <span style="font-size:10px; color:#9a3412;">⚠️ 票房卡在售票系統、補助僅到首期時，現付硬體尾款與全劇團薪資所需的最低戶頭存量。</span>
+                        <span style="font-size:10px; color:#9a3412;">⚠️ 當票款卡在售票系統、政府補助僅拿到首期時，用來支付現付團隊薪資、各地衍生差旅與硬體尾款的劇團戶頭安全水位。</span>
                     </div>
                 </div>
             `;
@@ -473,7 +515,7 @@
 
     function addVenueBlockData(projIdx) {
         let currentData = captureAllDataObjects();
-        currentData[projIdx].venues.push({ shows: 2, seats: 300, earlyBirdPercent: 30, earlyBirdPrice: 800, regularPrice: 1000, systemFee: 6, bankFee: 2, vipSeats: 10 });
+        currentData[projIdx].venues.push({ vName: `新巡迴站`, shows: 2, seats: 300, earlyBirdPercent: 20, earlyBirdPrice: 800, regularPrice: 1000, systemFee: 6, bankFee: 2, vipSeats: 10, tCrewCount: 0, tCrewEarlyDays: 0, tActorCount: 0, tTotalDays: 0, tFare: 0, tHotel: 0, tMeal: 150 });
         renderProjects(currentData);
         calculateAll();
     }
@@ -521,6 +563,7 @@
             var vList = [];
             for(var j=0; j<vBlocks.length; j++) {
                 vList.push({
+                    vName: vBlocks[j].getElementsByClassName('p-vname')[0].value,
                     shows: parseFloat(vBlocks[j].getElementsByClassName('p-shows')[0].value) || 0,
                     seats: parseFloat(vBlocks[j].getElementsByClassName('p-seats')[0].value) || 0,
                     vipSeats: parseFloat(vBlocks[j].getElementsByClassName('p-vip-seats')[0].value) || 0,
@@ -528,13 +571,21 @@
                     systemFee: parseFloat(vBlocks[j].getElementsByClassName('p-system-fee')[0].value) || 0,
                     bankFee: parseFloat(vBlocks[j].getElementsByClassName('p-bank-fee')[0].value) || 0,
                     earlyBirdPrice: parseFloat(vBlocks[j].getElementsByClassName('p-eb-price')[0].value) || 0,
-                    regularPrice: parseFloat(vBlocks[j].getElementsByClassName('p-reg-price')[0].value) || 0
+                    regularPrice: parseFloat(vBlocks[j].getElementsByClassName('p-reg-price')[0].value) || 0,
+                    tCrewCount: parseFloat(vBlocks[j].getElementsByClassName('p-t-crew-count')[0].value) || 0,
+                    tCrewEarlyDays: parseFloat(vBlocks[j].getElementsByClassName('p-t-crew-early')[0].value) || 0,
+                    tActorCount: parseFloat(vBlocks[j].getElementsByClassName('p-t-actor-count')[0].value) || 0,
+                    tTotalDays: parseFloat(vBlocks[j].getElementsByClassName('p-t-total-days')[0].value) || 0,
+                    tFare: parseFloat(vBlocks[j].getElementsByClassName('p-t-fare')[0].value) || 0,
+                    tHotel: parseFloat(vBlocks[j].getElementsByClassName('p-t-hotel')[0].value) || 0,
+                    tMeal: parseFloat(vBlocks[j].getElementsByClassName('p-t-meal')[0].value) || 0
                 });
             }
 
             list.push({
                 title: card.getElementsByClassName('project-title-input')[0].value,
                 salePercent: parseFloat(card.getElementsByClassName('p-sale-slider')[0].value) || 0,
+                merchSalePercent: parseFloat(card.getElementsByClassName('p-merch-sale-slider')[0].value) || 0,
                 isCollapsed: card.classList.contains('collapsed'),
                 venues: vList,
                 director: parseFloat(card.getElementsByClassName('p-director')[0].value) || 0,
@@ -574,18 +625,12 @@
                 venueTax: card.getElementsByClassName('p-venue-tax')[0].checked,
                 isAmortized: card.getElementsByClassName('p-is-amortized')[0].checked,
                 amortYears: parseFloat(card.getElementsByClassName('p-amort-years')[0].value) || 3,
-                travelCrewCount: parseFloat(card.getElementsByClassName('p-travel-crew-count')[0].value) || 0,
-                travelCrewEarlyDays: parseFloat(card.getElementsByClassName('p-travel-crew-early')[0].value) || 0,
-                travelActorCount: parseFloat(card.getElementsByClassName('p-travel-actor-count')[0].value) || 0,
-                travelTotalDays: parseFloat(card.getElementsByClassName('p-travel-total-days')[0].value) || 0,
-                travelFare: parseFloat(card.getElementsByClassName('p-travel-fare')[0].value) || 0,
-                travelHotel: parseFloat(card.getElementsByClassName('p-travel-hotel')[0].value) || 0,
-                travelMeal: parseFloat(card.getElementsByClassName('p-travel-meal')[0].value) || 0,
+                merchTotalCost: parseFloat(card.getElementsByClassName('p-merch-total-cost')[0].value) || 0,
+                merchTotalQty: parseFloat(card.getElementsByClassName('p-merch-total-qty')[0].value) || 0,
+                merchUnitPrice: parseFloat(card.getElementsByClassName('p-merch-unit-price')[0].value) || 0,
                 marketing: parseFloat(card.getElementsByClassName('p-marketing')[0].value) || 0,
                 marketingTax: card.getElementsByClassName('p-marketing-tax')[0].checked,
                 insurance: parseFloat(card.getElementsByClassName('p-insurance')[0].value) || 0,
-                merchCost: parseFloat(card.getElementsByClassName('p-merch-cost')[0].value) || 0,
-                merchRevenue: parseFloat(card.getElementsByClassName('p-merch-revenue')[0].value) || 0,
                 contingency: parseFloat(card.getElementsByClassName('p-contingency')[0].value) || 0,
                 subsidy: parseFloat(card.getElementsByClassName('p-subsidy')[0].value) || 0
             });
@@ -599,7 +644,7 @@
         localStorage.setItem('theatre_office_insurance', document.getElementById('annual_insurance').value);
         localStorage.setItem('theatre_office_software', document.getElementById('annual_software').value);
         localStorage.setItem('theatre_office_hardware', document.getElementById('annual_hardware').value);
-        localStorage.setItem('theatre_projects_data_v5', JSON.stringify(captureAllDataObjects()));
+        localStorage.setItem('theatre_projects_data_v6', JSON.stringify(captureAllDataObjects()));
     }
 
     function saveAndCalc() {
@@ -630,10 +675,12 @@
         for (var i = 0; i < cards.length; i++) {
             var card = cards[i];
             var salePercent = parseFloat(card.getElementsByClassName('p-sale-slider')[0].value) || 0;
+            var merchSalePercent = parseFloat(card.getElementsByClassName('p-merch-sale-slider')[0].value) || 0;
             var vBlocks = card.getElementsByClassName('venue-sub-block');
             
             var totalCardShows = 0;
             var max100PercentTicketRevenueNet = 0; 
+            var totalProjectTravelCost = 0; 
 
             for (var j = 0; j < vBlocks.length; j++) {
                 var vb = vBlocks[j];
@@ -657,10 +704,27 @@
                 
                 var venueNet100 = venueGross100 * (1 - (sysFee / 100) - (bkFee / 100));
                 max100PercentTicketRevenueNet += venueNet100;
+
+                var tcCount = parseFloat(vb.getElementsByClassName('p-t-crew-count')[0].value) || 0;
+                var tcEarly = parseFloat(vb.getElementsByClassName('p-t-crew-early')[0].value) || 0;
+                var taCount = parseFloat(vb.getElementsByClassName('p-t-actor-count')[0].value) || 0;
+                var tDays = parseFloat(vb.getElementsByClassName('p-t-total-days')[0].value) || 0;
+                var tFare = parseFloat(vb.getElementsByClassName('p-t-fare')[0].value) || 0;
+                var tHotel = parseFloat(vb.getElementsByClassName('p-t-hotel')[0].value) || 0;
+                var tMeal = parseFloat(vb.getElementsByClassName('p-t-meal')[0].value) || 0;
+
+                var crewTotalDays = tDays + tcEarly;
+                var stationTrafficCost = (tcCount + taCount) * tFare;
+                var stationCrewHotel = (tcCount / 2) * (crewTotalDays > 1 ? (crewTotalDays - 1) : 0) * tHotel;
+                var stationActorHotel = (taCount / 2) * (tDays > 1 ? (tDays - 1) : 0) * tHotel;
+                var stationMealCost = (tcCount * crewTotalDays * tMeal) + (taCount * tDays * tMeal);
+                
+                totalProjectTravelCost += (stationTrafficCost + stationCrewHotel + stationActorHotel + stationMealCost);
             }
             
             var totalCardTicketNet = max100PercentTicketRevenueNet * (salePercent / 100);
             card.getElementsByClassName('p-res-ticket-net')[0].innerText = Math.round(totalCardTicketNet).toLocaleString();
+            card.getElementsByClassName('p-res-travel')[0].innerText = Math.round(totalProjectTravelCost).toLocaleString();
 
             var director = parseFloat(card.getElementsByClassName('p-director')[0].value) || 0;
             var staff = parseFloat(card.getElementsByClassName('p-staff')[0].value) || 0;
@@ -702,33 +766,12 @@
             var calculatedGhiTax = (totalLaborCost * 0.10); 
             if(actGhiChecked) { calculatedGhiTax += (director + staff + totalActorSalary) * 0.0211; }
             if(crwGhiChecked) { calculatedGhiTax += totalTechnicalGroupCost * 0.0211; }
-
             card.getElementsByClassName('p-res-tax')[0].innerText = Math.round(calculatedGhiTax).toLocaleString();
 
             var vVolShows = parseFloat(card.getElementsByClassName('p-vol-shows')[0].value) || 0;
             var vAllowance = parseFloat(card.getElementsByClassName('p-vol-allowance')[0].value) || 0;
             var vCount = parseFloat(card.getElementsByClassName('p-vol-count')[0].value) || 0;
             var totalVolFee = vVolShows * vAllowance * vCount;
-
-            var tCrewC = parseFloat(card.getElementsByClassName('p-travel-crew-count')[0].value) || 0;
-            var tCrewEd = parseFloat(card.getElementsByClassName('p-travel-crew-early')[0].value) || 0;
-            var tActC = parseFloat(card.getElementsByClassName('p-travel-actor-count')[0].value) || 0;
-            var tTotD = parseFloat(card.getElementsByClassName('p-travel-total-days')[0].value) || 0;
-            
-            var tFare = parseFloat(card.getElementsByClassName('p-travel-fare')[0].value) || 0;
-            var tHotel = parseFloat(card.getElementsByClassName('p-travel-hotel')[0].value) || 0;
-            var tMeal = parseFloat(card.getElementsByClassName('p-travel-meal')[0].value) || 0;
-
-            var crewTotalDays = tTotD + tCrewEd; 
-            var actorTotalDays = tTotD;
-
-            var totalTrafficCost = (tCrewC + tActC) * tFare;
-            var crewHotelCost = (tCrewC / 2) * (crewTotalDays > 1 ? (crewTotalDays - 1) : 0) * tHotel;
-            var actorHotelCost = (tActC / 2) * (actorTotalDays > 1 ? (actorTotalDays - 1) : 0) * tHotel;
-            var totalMealCost = (tCrewC * crewTotalDays * tMeal) + (tActC * actorTotalDays * tMeal);
-            
-            var totalTravelExp = totalTrafficCost + crewHotelCost + actorHotelCost + totalMealCost;
-            card.getElementsByClassName('p-res-travel')[0].innerText = Math.round(totalTravelExp).toLocaleString();
 
             var scenery = parseFloat(card.getElementsByClassName('p-scenery')[0].value) || 0; if(card.getElementsByClassName('p-scenery-tax')[0].checked) scenery *= 1.05;
             var lighting = parseFloat(card.getElementsByClassName('p-lighting')[0].value) || 0; if(card.getElementsByClassName('p-lighting-tax')[0].checked) lighting *= 1.05;
@@ -741,19 +784,33 @@
             var finalHardwareCost = venue + (isAmortized ? (scenery + lighting + sound) / amortYears : (scenery + lighting + sound));
 
             var insurance = parseFloat(card.getElementsByClassName('p-insurance')[0].value) || 0;
-            var merchCost = parseFloat(card.getElementsByClassName('p-merch-cost')[0].value) || 0;
             var contingency = parseFloat(card.getElementsByClassName('p-contingency')[0].value) || 0;
 
+            var mCost = parseFloat(card.getElementsByClassName('p-merch-total-cost')[0].value) || 0;
+            var mQty = parseFloat(card.getElementsByClassName('p-merch-total-qty')[0].value) || 0;
+            var mPrice = parseFloat(card.getElementsByClassName('p-merch-unit-price')[0].value) || 0;
+            
+            var mSoldQty = Math.round(mQty * (merchSalePercent / 100));
+            var mLeftQty = mQty - mSoldQty;
+            var merchRevenueCalculated = mSoldQty * mPrice;
+            
+            var unitCost = mQty > 0 ? (mCost / mQty) : 0;
+            var merchLossCalculated = mLeftQty * unitCost; 
+
+            card.getElementsByClassName('p-res-merch-rev')[0].innerText = Math.round(merchRevenueCalculated).toLocaleString();
+            card.getElementsByClassName('p-res-merch-sold-qty')[0].innerText = mSoldQty;
+            card.getElementsByClassName('p-res-merch-loss')[0].innerText = Math.round(merchLossCalculated).toLocaleString();
+            card.getElementsByClassName('p-res-merch-left-qty')[0].innerText = mLeftQty;
+
             var paybackPercent = parseFloat(card.getElementsByClassName('p-payback-percent')[0].value) || 0;
-            var baseProjectCost = totalLaborCost + calculatedGhiTax + totalVolFee + totalTravelExp + finalHardwareCost + marketing + insurance + merchCost + contingency;
+            var baseProjectCost = totalLaborCost + calculatedGhiTax + totalVolFee + totalProjectTravelCost + finalHardwareCost + marketing + insurance + mCost + contingency;
             var officeContribution = baseProjectCost * (paybackPercent / 100);
             totalProjectPaybackToOffice += officeContribution;
 
             var projectTotalCost = baseProjectCost + officeContribution;
 
             var subsidy = parseFloat(card.getElementsByClassName('p-subsidy')[0].value) || 0;
-            var merchRev = parseFloat(card.getElementsByClassName('p-merch-revenue')[0].value) || 0;
-            var projectTotalRevenue = totalCardTicketNet + subsidy + merchRev;
+            var projectTotalRevenue = totalCardTicketNet + subsidy + merchRevenueCalculated;
             var projectFinalProfit = projectTotalRevenue - projectTotalCost;
 
             var profitEl = card.getElementsByClassName('p-res-final-profit')[0];
@@ -761,9 +818,9 @@
             profitEl.style.color = projectFinalProfit >= 0 ? 'var(--success-color)' : 'var(--danger-color)';
 
             var breakEvenEl = card.getElementsByClassName('p-res-break-even')[0];
-            var netCostNeeded = projectTotalCost - (subsidy + merchRev);
+            var netCostNeeded = projectTotalCost - (subsidy + merchRevenueCalculated);
             if (netCostNeeded <= 0) {
-                breakEvenEl.innerText = "0% (靠補助已保本)";
+                breakEvenEl.innerText = "0% (靠補助與周邊已保本)";
                 breakEvenEl.style.color = "var(--success-color)";
             } else if (max100PercentTicketRevenueNet <= 0) {
                 breakEvenEl.innerText = "無法計算";
@@ -773,7 +830,7 @@
                 if(breakEvenPercent > 100) breakEvenEl.style.color = "var(--danger-color)";
             }
 
-            var cashFlowNeeded = (director + staff + (aCount * aMonths * sMonth) + scenery + lighting + sound + venue + marketing + insurance) * 0.75 + totalTravelExp;
+            var cashFlowNeeded = (director + staff + (aCount * aMonths * sMonth) + scenery + lighting + sound + venue + marketing + insurance + mCost) * 0.75 + totalProjectTravelCost;
             card.getElementsByClassName('p-res-cashflow')[0].innerText = '$ ' + Math.round(cashFlowNeeded).toLocaleString();
 
             var actualShowPaidCrew = totalTechnicalGroupCost + (aCount * totalCardShows * sShow); 
@@ -800,7 +857,7 @@
 
         if(finalAnnualNet >= 0) {
             statusBox.className = "profit-status status-success";
-            statusBox.innerHTML = "🎉 全年最終淨獲利 $" + Math.round(finalAnnualNet).toLocaleString() + " 元 (已計入扣除公關座之動態票房與行政回撥)";
+            statusBox.innerHTML = "🎉 全年最終淨獲利 $" + Math.round(finalAnnualNet).toLocaleString() + " 元 (已動態扣除周邊未售庫存跌價與場地專屬差旅)";
         } else {
             statusBox.className = "profit-status status-danger";
             statusBox.innerHTML = "🚨 全年最終資金缺口 $" + Math.round(Math.abs(finalAnnualNet)).toLocaleString() + " 元";
@@ -815,7 +872,7 @@
         let officeHard = document.getElementById('annual_hardware').value;
         
         let csvContent = "\uFEFF"; 
-        csvContent += "劇團年度營運精細數據匯出\n";
+        csvContent += "劇團年度營運精細數據匯出_v6\n";
         csvContent += `辦公室常態開銷,房租水電:${officeRent},行政薪資:${officeSalary},勞健保:${officeIns},系統軟體:${officeSoft},設備雜支:${officeHard}\n\n`;
         
         let projs = captureAllDataObjects();
@@ -824,14 +881,15 @@
             csvContent += `導演酬勞,${p.director},專案行政執行,${p.staff},行政回撥比例,${p.paybackPercent}%\n`;
             csvContent += `演員人數,${p.actorCount},排練月數,${p.rehearsalMonths},月排練薪資,${p.salaryMonth},演出執行費/場,${p.salaryShow}\n`;
             csvContent += `佈景道具,${p.scenery},燈光租借,${p.lighting},音響工程,${p.sound},劇場總租金,${p.venue}\n`;
+            csvContent += `周邊總成本,${p.merchTotalCost},周邊總數量,${p.merchTotalQty},單件售價,${p.merchUnitPrice},預估周邊銷售率,${p.merchSalePercent}%\n`;
             csvContent += `行銷宣傳,${p.marketing},保險授權,${p.insurance},緊急預備金,${p.contingency}\n`;
-            csvContent += `政府與企業補助,${p.subsidy},周邊淨利,${p.merchRevenue}\n\n`;
+            csvContent += `政府與企業補助,${p.subsidy}\n\n`;
         });
         
         let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         let link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.setAttribute("download", `劇團營運數據匯出_${new Date().toISOString().slice(0,10)}.csv`);
+        link.setAttribute("download", `劇團營運精細數據_v6_${new Date().toISOString().slice(0,10)}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
