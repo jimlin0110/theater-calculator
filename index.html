@@ -73,6 +73,7 @@
             transition: max-height 0.3s ease;
         }
 
+        /* 摺疊標頭樣式 */
         .card-header {
             padding: 12px 16px;
             background: #fafafa;
@@ -86,6 +87,7 @@
         .card-header:hover { background: #f1f5f9; }
         .card-body { padding: 16px; display: block; }
         
+        /* 摺疊狀態的類別 */
         .project-card.collapsed .card-body { display: none; }
         .toggle-icon { font-size: 12px; color: #94a3b8; transition: transform 0.2s; }
         .project-card.collapsed .toggle-icon { transform: rotate(-90deg); }
@@ -113,6 +115,7 @@
         .tax-note { font-size: 10px; color: #7f8c8d; font-style: italic; margin-top: 2px; display: block; }
         .tech-sub-box { border-left: 3px solid var(--info-color); padding-left: 6px; margin-bottom: 10px; }
 
+        /* 攤提區區塊樣式 */
         .amortization-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px; margin-bottom: 10px; }
         .amortization-title { display: flex; align-items: center; font-size: 11px; font-weight: bold; color: #166534; gap: 4px; }
 
@@ -133,7 +136,6 @@
             .sticky-dashboard { padding: 8px 12px; }
             .result-block { padding: 4px; }
             .result-block .value { font-size: 12px; }
-            .fixed-card .form-row { grid-template-columns: repeat(2, 1fr) !important; }
         }
         @media (min-width: 768px) {
             .scroll-container { overflow-x: visible; flex-wrap: wrap; }
@@ -162,15 +164,14 @@
         
     <div class="fixed-card">
         <h2>🏢 劇團年度辦公室固定開銷</h2>
-        <div class="form-row" style="grid-template-columns: repeat(5, 1fr); gap: 6px;">
+        <div class="form-row" style="grid-template-columns: repeat(4, 1fr); gap: 6px;">
             <div><label>房租水電</label><input type="number" id="annual_rent" value="240000" oninput="saveAndCalc()"></div>
             <div><label>行政薪資</label><input type="number" id="annual_salary" value="450000" oninput="saveAndCalc()"></div>
-            <div><label>正職勞健保/勞退</label><input type="number" id="annual_insurance" value="65000" oninput="saveAndCalc()"></div>
             <div><label>系統軟體</label><input type="number" id="annual_software" value="12000" oninput="saveAndCalc()"></div>
             <div><label>設備雜支</label><input type="number" id="annual_hardware" value="45000" oninput="saveAndCalc()"></div>
         </div>
         <p style="font-size: 12px; color: var(--info-color); font-weight: bold; margin-top: 6px; text-align: right;">
-            辦公室開銷總計：$ <span id="total_office_overhead_text">0</span> 元
+            辦公室開銷：$ <span id="total_office_overhead_text">0</span> 元
         </p>
     </div>
 
@@ -196,6 +197,7 @@
 </div>
 
 <script>
+    // 預設第一個劇目的初始資料結構
     const defaultProjects = [
         {
             title: "年度大戲《劇目 1》",
@@ -216,11 +218,11 @@
         }
     ];
 
+    // 初始化與記憶庫讀取
     window.onload = function() {
         if (localStorage.getItem('theatre_office_rent')) {
             document.getElementById('annual_rent').value = localStorage.getItem('theatre_office_rent');
             document.getElementById('annual_salary').value = localStorage.getItem('theatre_office_salary');
-            document.getElementById('annual_insurance').value = localStorage.getItem('theatre_office_insurance') || "65000";
             document.getElementById('annual_software').value = localStorage.getItem('theatre_office_software');
             document.getElementById('annual_hardware').value = localStorage.getItem('theatre_office_hardware');
         }
@@ -241,6 +243,7 @@
             const card = document.createElement('div');
             card.className = `project-card ${p.isCollapsed ? 'collapsed' : ''}`;
             
+            // 建立巡迴場地區塊
             let venueHtml = '';
             p.venues.forEach((v, vIdx) => {
                 venueHtml += `
@@ -313,4 +316,471 @@
                         </div>
                     </div>
 
-                    <div class="tech-sub-box" style="border-left-color: #9b
+                    <div class="tech-sub-box" style="border-left-color: #9b59b6;">
+                        <div class="form-row">
+                            <div><label>燈光組 (人)</label><input type="number" class="p-light-count" value="${p.lightCount}" oninput="saveAndCalc()"></div>
+                            <div><label>裝台天數 (日)</label><input type="number" class="p-light-days" value="${p.lightDays}" oninput="saveAndCalc()"></div>
+                        </div>
+                        <div class="form-row">
+                            <div><label>裝台日薪</label><input type="number" class="p-light-salary-day" value="${p.stageSalaryDay}" oninput="saveAndCalc()"></div>
+                            <div><label>演出日進館費/天</label><input type="number" class="p-light-entry-fee" value="${p.lightEntryFee}" oninput="saveAndCalc()"></div>
+                        </div>
+                        <div class="form-row">
+                            <div style="grid-column: span 2;"><label>每場演出執行費/場</label><input type="number" class="p-light-salary-show" value="${p.lightSalaryShow}" oninput="saveAndCalc()"></div>
+                        </div>
+                    </div>
+
+                    <div class="tech-sub-box" style="border-left-color: #16a085;">
+                        <div class="form-row">
+                            <div><label>音響組 (人)</label><input type="number" class="p-sound-count" value="${p.soundCount}" oninput="saveAndCalc()"></div>
+                            <div><label>裝台天數 (日)</label><input type="number" class="p-sound-days" value="${p.soundDays}" oninput="saveAndCalc()"></div>
+                        </div>
+                        <div class="form-row">
+                            <div><label>裝台日薪</label><input type="number" class="p-sound-salary-day" value="${p.soundSalaryDay}" oninput="saveAndCalc()"></div>
+                            <div><label>演出日進館費/天</label><input type="number" class="p-sound-entry-fee" value="${p.soundEntryFee}" oninput="saveAndCalc()"></div>
+                        </div>
+                        <div class="form-row">
+                            <div style="grid-column: span 2;"><label>每場演出執行費/場</label><input type="number" class="p-sound-salary-show" value="${p.soundSalaryShow}" oninput="saveAndCalc()"></div>
+                        </div>
+                    </div>
+                    <div class="auto-calc-box">🤖 技術組(Crew)總計：$ <span class="p-res-crew-salary">0</span></div>
+
+                    <div class="section-title">🙋‍♂️ 志工支援津貼</div>
+                    <div class="form-row">
+                        <div><label>總支援場次</label><input type="number" class="p-vol-shows" value="${p.volShows}" oninput="saveAndCalc()"></div>
+                        <div><label>每場車馬</label><input type="number" class="p-vol-allowance" value="${p.volAllowance}" oninput="saveAndCalc()"></div>
+                    </div>
+                    <div class="form-row">
+                        <div style="grid-column: span 2;"><label>志工總人數 (人)</label><input type="number" class="p-vol-count" value="${p.volCount}" oninput="saveAndCalc()"></div>
+                    </div>
+                    <div class="auto-calc-box">🤖 志工車馬：$ <span class="p-res-vol-salary">0</span></div>
+
+                    <div class="section-title">📐 技術、硬體與場地成本</div>
+                    <div class="form-row">
+                        <div><label>佈景道具</label><input type="number" class="p-scenery" value="${p.scenery}" oninput="saveAndCalc()"></div>
+                        <div><label>燈光租借</label><input type="number" class="p-lighting" value="${p.lighting}" oninput="saveAndCalc()"></div>
+                    </div>
+                    <div class="form-row">
+                        <div><label>音響工程</label><input type="number" class="p-sound" value="${p.sound}" oninput="saveAndCalc()"></div>
+                        <div><label>劇場總租金</label><input type="number" class="p-venue" value="${p.venue}" oninput="saveAndCalc()"></div>
+                    </div>
+
+                    <div class="amortization-box">
+                        <div class="amortization-title">
+                            <input type="checkbox" class="p-is-amortized" ${p.isAmortized ? 'checked' : ''} onchange="saveAndCalc()">
+                            <span>啟用硬體資產攤提換算</span>
+                        </div>
+                        <div class="form-row" style="margin-top: 6px; grid-template-columns: 2fr 1fr;">
+                            <div><label style="color: #166534;">預計巡迴年數/輪數 (年)</label></div>
+                            <div><input type="number" class="p-amort-years" value="${p.amortYears}" min="2" max="10" oninput="saveAndCalc()"></div>
+                        </div>
+                        <div class="tax-note" style="color: #15803d;">※ 勾選後，道具/燈光/音響硬體成本將平攤，降低首演年帳面負擔。</div>
+                    </div>
+
+                    <div class="section-title">🚗 外巡差旅生活</div>
+                    <div class="form-row">
+                        <div><label>差旅人數</label><input type="number" class="p-travel-people" value="${p.travelPeople}" oninput="saveAndCalc()"></div>
+                        <div><label>差旅天數</label><input type="number" class="p-travel-days" value="${p.travelDays}" oninput="saveAndCalc()"></div>
+                    </div>
+                    <div class="form-row">
+                        <div><label>每人交通</label><input type="number" class="p-travel-fare" value="${p.travelFare}" oninput="saveAndCalc()"></div>
+                        <div><label>每人住宿</label><input type="number" class="p-travel-hotel" value="${p.travelHotel}" oninput="saveAndCalc()"></div>
+                    </div>
+                    <div class="form-row">
+                        <div style="grid-column: span 2;"><label>每人每天餐費</label><input type="number" class="p-travel-meal" value="${p.travelMeal}" oninput="saveAndCalc()"></div>
+                    </div>
+                    <div class="auto-calc-box">🤖 差旅總開銷：$ <span class="p-res-travel">0</span></div>
+
+                    <div class="section-title">📢 行銷、周邊與雜支</div>
+                    <div class="form-row">
+                        <div><label>行銷宣傳</label><input type="number" class="p-marketing" value="${p.marketing}" oninput="saveAndCalc()"></div>
+                        <div><label>保險授權</label><input type="number" class="p-insurance" value="${p.insurance}" oninput="saveAndCalc()"></div>
+                    </div>
+                    <div class="form-row">
+                        <div><label>周邊成本</label><input type="number" class="p-merch-cost" value="${p.merchCost}" oninput="saveAndCalc()"></div>
+                        <div><label>周邊淨利</label><input type="number" class="p-merch-revenue" value="${p.merchRevenue}" oninput="saveAndCalc()"></div>
+                    </div>
+                    <div class="form-row">
+                        <div style="grid-column: span 2;"><label>🚨 緊急預備金</label><input type="number" class="p-contingency" value="${p.contingency}" oninput="saveAndCalc()"></div>
+                    </div>
+
+                    <div class="section-title">💰 外部收入來源</div>
+                    <div class="form-row">
+                        <div style="grid-column: span 2;"><label>政府補助 + 企業贊助總額</label><input type="number" class="p-subsidy" value="${p.subsidy}" oninput="saveAndCalc()"></div>
+                    </div>
+
+                    <div class="auto-calc-box" style="background:#fff7ed; border-left-color: var(--accent-color); color: #c2410c;">
+                        📈 票房動態實拿：$ <span class="p-res-ticket-net">0</span><br>
+                        📊 本劇預估損益：<strong class="p-res-final-profit">$ 0</strong>
+                    </div>
+                </div>
+            `;
+            pContainer.appendChild(card);
+        });
+    }
+
+    // 摺疊與展開控制
+    function toggleCollapse(headerEl, idx) {
+        const card = headerEl.parentElement;
+        card.classList.toggle('collapsed');
+        saveCurrentStateOnly();
+    }
+
+    function updateSliderText(sliderElement) {
+        var txtSpan = sliderElement.parentElement.getElementsByClassName('p-slider-value')[0];
+        txtSpan.innerText = sliderElement.value;
+    }
+
+    // 新增場地
+    function addVenueBlockData(projIdx) {
+        let currentData = captureAllDataObjects();
+        currentData[projIdx].venues.push({ shows: 2, seats: 300, price: 1000, fee: 5 });
+        renderProjects(currentData);
+        calculateAll();
+        saveCurrentStateOnly();
+    }
+
+    // 移除場地
+    function removeVenue(btn, projIdx, venueIdx) {
+        let currentData = captureAllDataObjects();
+        currentData[projIdx].venues.splice(venueIdx, 1);
+        renderProjects(currentData);
+        calculateAll();
+        saveCurrentStateOnly();
+    }
+
+    // 新增劇目
+    document.getElementById('add_btn_trigger').onclick = function() {
+        let currentData = captureAllDataObjects();
+        let newProj = JSON.parse(JSON.stringify(defaultProjects[0])); 
+        newProj.title = `新巡迴劇目 ${currentData.length + 1}`;
+        newProj.isCollapsed = false;
+        currentData.push(newProj);
+        renderProjects(currentData);
+        calculateAll();
+        saveCurrentStateOnly();
+    };
+
+    // 刪除劇目
+    function removeProject(idx) {
+        let currentData = captureAllDataObjects();
+        currentData.splice(idx, 1);
+        renderProjects(currentData);
+        calculateAll();
+        saveCurrentStateOnly();
+    }
+
+    // 撈取畫面上最新變動的物件結構
+    function captureAllDataObjects() {
+        var container = document.getElementById('projects_container');
+        var cards = container.getElementsByClassName('project-card');
+        var list = [];
+
+        for (var i = 0; i < cards.length; i++) {
+            var card = cards[i];
+            
+            // 撈場地
+            var vBlocks = card.getElementsByClassName('venue-sub-block');
+            var vList = [];
+            for(var j=0; j<vBlocks.length; j++) {
+                vList.push({
+                    shows: parseFloat(vBlocks[j].getElementsByClassName('p-shows')[0].value) || 0,
+                    seats: parseFloat(vBlocks[j].getElementsByClassName('p-seats')[0].value) || 0,
+                    price: parseFloat(vBlocks[j].getElementsByClassName('p-price')[0].value) || 0,
+                    fee: parseFloat(vBlocks[j].getElementsByClassName('p-ticket-fee')[0].value) || 0
+                });
+            }
+
+            list.push({
+                title: card.getElementsByClassName('project-title-input')[0].value,
+                salePercent: parseFloat(card.getElementsByClassName('p-sale-slider')[0].value) || 0,
+                isCollapsed: card.classList.contains('collapsed'),
+                venues: vList,
+                director: parseFloat(card.getElementsByClassName('p-director')[0].value) || 0,
+                staff: parseFloat(card.getElementsByClassName('p-staff')[0].value) || 0,
+                actorCount: parseFloat(card.getElementsByClassName('p-actor-count')[0].value) || 0,
+                rehearsalMonths: parseFloat(card.getElementsByClassName('p-rehearsal-months')[0].value) || 0,
+                salaryMonth: parseFloat(card.getElementsByClassName('p-salary-month')[0].value) || 0,
+                salaryShow: parseFloat(card.getElementsByClassName('p-salary-show')[0].value) || 0,
+                stageCount: parseFloat(card.getElementsByClassName('p-stage-count')[0].value) || 0,
+                stageDays: parseFloat(card.getElementsByClassName('p-stage-days')[0].value) || 0,
+                stageSalaryDay: parseFloat(card.getElementsByClassName('p-stage-salary-day')[0].value) || 0,
+                stageEntryFee: parseFloat(card.getElementsByClassName('p-stage-entry-fee')[0].value) || 0,
+                stageSalaryShow: parseFloat(card.getElementsByClassName('p-stage-salary-show')[0].value) || 0,
+                lightCount: parseFloat(card.getElementsByClassName('p-light-count')[0].value) || 0,
+                lightDays: parseFloat(card.getElementsByClassName('p-light-days')[0].value) || 0,
+                lightSalaryDay: parseFloat(card.getElementsByClassName('p-light-salary-day')[0].value) || 0,
+                lightEntryFee: parseFloat(card.getElementsByClassName('p-light-entry-fee')[0].value) || 0,
+                lightSalaryShow: parseFloat(card.getElementsByClassName('p-light-salary-show')[0].value) || 0,
+                soundCount: parseFloat(card.getElementsByClassName('p-sound-count')[0].value) || 0,
+                soundDays: parseFloat(card.getElementsByClassName('p-sound-days')[0].value) || 0,
+                soundSalaryDay: parseFloat(card.getElementsByClassName('p-sound-salary-day')[0].value) || 0,
+                soundEntryFee: parseFloat(card.getElementsByClassName('p-sound-entry-fee')[0].value) || 0,
+                soundSalaryShow: parseFloat(card.getElementsByClassName('p-sound-salary-show')[0].value) || 0,
+                volShows: parseFloat(card.getElementsByClassName('p-vol-shows')[0].value) || 0,
+                volAllowance: parseFloat(card.getElementsByClassName('p-vol-allowance')[0].value) || 0,
+                volCount: parseFloat(card.getElementsByClassName('p-vol-count')[0].value) || 0,
+                scenery: parseFloat(card.getElementsByClassName('p-scenery')[0].value) || 0,
+                lighting: parseFloat(card.getElementsByClassName('p-lighting')[0].value) || 0,
+                sound: parseFloat(card.getElementsByClassName('p-sound')[0].value) || 0,
+                venue: parseFloat(card.getElementsByClassName('p-venue')[0].value) || 0,
+                isAmortized: card.getElementsByClassName('p-is-amortized')[0].checked,
+                amortYears: parseFloat(card.getElementsByClassName('p-amort-years')[0].value) || 3,
+                travelPeople: parseFloat(card.getElementsByClassName('p-travel-people')[0].value) || 0,
+                travelDays: parseFloat(card.getElementsByClassName('p-travel-days')[0].value) || 0,
+                travelFare: parseFloat(card.getElementsByClassName('p-travel-fare')[0].value) || 0,
+                travelHotel: parseFloat(card.getElementsByClassName('p-travel-hotel')[0].value) || 0,
+                travelMeal: parseFloat(card.getElementsByClassName('p-travel-meal')[0].value) || 0,
+                marketing: parseFloat(card.getElementsByClassName('p-marketing')[0].value) || 0,
+                insurance: parseFloat(card.getElementsByClassName('p-insurance')[0].value) || 0,
+                merchCost: parseFloat(card.getElementsByClassName('p-merch-cost')[0].value) || 0,
+                merchRevenue: parseFloat(card.getElementsByClassName('p-merch-revenue')[0].value) || 0,
+                contingency: parseFloat(card.getElementsByClassName('p-contingency')[0].value) || 0,
+                subsidy: parseFloat(card.getElementsByClassName('p-subsidy')[0].value) || 0
+            });
+        }
+        return list;
+    }
+
+    function saveCurrentStateOnly() {
+        localStorage.setItem('theatre_office_rent', document.getElementById('annual_rent').value);
+        localStorage.setItem('theatre_office_salary', document.getElementById('annual_salary').value);
+        localStorage.setItem('theatre_office_software', document.getElementById('annual_software').value);
+        localStorage.setItem('theatre_office_hardware', document.getElementById('annual_hardware').value);
+        localStorage.setItem('theatre_projects_data', JSON.stringify(captureAllDataObjects()));
+    }
+
+    function saveAndCalc() {
+        saveCurrentStateOnly();
+        calculateAll();
+    }
+
+    function clearSavedData() {
+        if(confirm('確定要清除所有在地記憶資料，還原到初始預設值嗎？')) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+
+    var csvGlobalData = { officeTotal: 0, allCost: 0, allRevenue: 0, allProfit: 0, annualNet: 0 };
+
+    // 核心計算引擎
+    function calculateAll() {
+        var rent = parseFloat(document.getElementById('annual_rent').value) || 0;
+        var salary = parseFloat(document.getElementById('annual_salary').value) || 0;
+        var software = parseFloat(document.getElementById('annual_software').value) || 0;
+        var hardware = parseFloat(document.getElementById('annual_hardware').value) || 0;
+        var totalOfficeOverhead = rent + salary + software + hardware;
+        
+        document.getElementById('total_office_overhead_text').innerText = totalOfficeOverhead.toLocaleString();
+        document.getElementById('total_all_office_cost').innerText = '$' + totalOfficeOverhead.toLocaleString();
+
+        var container = document.getElementById('projects_container');
+        var cards = container.getElementsByClassName('project-card');
+        
+        var totalAllCost = 0;
+        var totalAllRevenue = 0;
+        var totalAllProfit = 0;
+
+        for (var i = 0; i < cards.length; i++) {
+            var card = cards[i];
+            var salePercent = parseFloat(card.getElementsByClassName('p-sale-slider')[0].value) || 0;
+
+            var vBlocks = card.getElementsByClassName('venue-sub-block');
+            var totalCardShows = 0;
+            var totalCardTicketNet = 0;
+
+            for (var j = 0; j < vBlocks.length; j++) {
+                var vb = vBlocks[j];
+                var vShows = parseFloat(vb.getElementsByClassName('p-shows')[0].value) || 0;
+                var vSeats = parseFloat(vb.getElementsByClassName('p-seats')[0].value) || 0;
+                var vPrice = parseFloat(vb.getElementsByClassName('p-price')[0].value) || 0;
+                var vFee = parseFloat(vb.getElementsByClassName('p-ticket-fee')[0].value) || 0;
+
+                totalCardShows += vShows;
+                var fullVenueNet = (vShows * vSeats * vPrice) * (1 - (vFee / 100));
+                totalCardTicketNet += fullVenueNet * (salePercent / 100);
+            }
+            card.getElementsByClassName('p-res-ticket-net')[0].innerText = Math.round(totalCardTicketNet).toLocaleString();
+
+            // 1. 人事：演員與行政
+            var director = parseFloat(card.getElementsByClassName('p-director')[0].value) || 0;
+            var staff = parseFloat(card.getElementsByClassName('p-staff')[0].value) || 0;
+            var aCount = parseFloat(card.getElementsByClassName('p-actor-count')[0].value) || 0;
+            var aMonths = parseFloat(card.getElementsByClassName('p-rehearsal-months')[0].value) || 0;
+            var sMonth = parseFloat(card.getElementsByClassName('p-salary-month')[0].value) || 0;
+            var sShow = parseFloat(card.getElementsByClassName('p-salary-show')[0].value) || 0;
+            var totalActorSalary = (aCount * aMonths * sMonth) + (aCount * totalCardShows * sShow);
+            card.getElementsByClassName('p-res-actor-salary')[0].innerText = totalActorSalary.toLocaleString();
+
+            // 2. 技術組（Crew）精細拆分
+            var stCount = parseFloat(card.getElementsByClassName('p-stage-count')[0].value) || 0;
+            var stDays = parseFloat(card.getElementsByClassName('p-stage-days')[0].value) || 0;
+            var stSalDay = parseFloat(card.getElementsByClassName('p-stage-salary-day')[0].value) || 0;
+            var stEntryFee = parseFloat(card.getElementsByClassName('p-stage-entry-fee')[0].value) || 0;
+            var stSalShow = parseFloat(card.getElementsByClassName('p-stage-salary-show')[0].value) || 0;
+            var totalStageCost = stCount * ((stDays * stSalDay) + (totalCardShows * stEntryFee) + (totalCardShows * stSalShow));
+
+            var ltCount = parseFloat(card.getElementsByClassName('p-light-count')[0].value) || 0;
+            var ltDays = parseFloat(card.getElementsByClassName('p-light-days')[0].value) || 0;
+            var ltSalDay = parseFloat(card.getElementsByClassName('p-light-salary-day')[0].value) || 0;
+            var ltEntryFee = parseFloat(card.getElementsByClassName('p-light-entry-fee')[0].value) || 0;
+            var ltSalShow = parseFloat(card.getElementsByClassName('p-light-salary-show')[0].value) || 0;
+            var totalLightCost = ltCount * ((ltDays * ltSalDay) + (totalCardShows * ltEntryFee) + (totalCardShows * ltSalShow));
+
+            var sdCount = parseFloat(card.getElementsByClassName('p-sound-count')[0].value) || 0;
+            var sdDays = parseFloat(card.getElementsByClassName('p-sound-days')[0].value) || 0;
+            var sdSalDay = parseFloat(card.getElementsByClassName('p-sound-salary-day')[0].value) || 0;
+            var sdEntryFee = parseFloat(card.getElementsByClassName('p-sound-entry-fee')[0].value) || 0;
+            var sdSalShow = parseFloat(card.getElementsByClassName('p-sound-salary-show')[0].value) || 0;
+            var totalSoundCost = sdCount * ((sdDays * sdSalDay) + (totalCardShows * sdEntryFee) + (totalCardShows * sdSalShow));
+
+            var totalCrewSalary = totalStageCost + totalLightCost + totalSoundCost;
+            card.getElementsByClassName('p-res-crew-salary')[0].innerText = totalCrewSalary.toLocaleString();
+
+            // ⚙️ 核心修正：計算預估代扣稅額+二代健保 (薪資總額 * 12.11%)
+            var totalLaborCost = director + staff + totalActorSalary + totalCrewSalary;
+            var estimatedTax = Math.round(totalLaborCost * 0.1211);
+            card.getElementsByClassName('p-res-tax')[0].innerText = estimatedTax.toLocaleString();
+
+            // 3. 志工與差旅
+            var vVolShows = parseFloat(card.getElementsByClassName('p-vol-shows')[0].value) || 0;
+            var vAllowance = parseFloat(card.getElementsByClassName('p-vol-allowance')[0].value) || 0;
+            var vCount = parseFloat(card.getElementsByClassName('p-vol-count')[0].value) || 0;
+            var totalVolFee = vVolShows * vAllowance * vCount;
+            card.getElementsByClassName('p-res-vol-salary')[0].innerText = totalVolFee.toLocaleString();
+
+            var tPeople = parseFloat(card.getElementsByClassName('p-travel-people')[0].value) || 0;
+            var tDays = parseFloat(card.getElementsByClassName('p-travel-days')[0].value) || 0;
+            var tFare = parseFloat(card.getElementsByClassName('p-travel-fare')[0].value) || 0;
+            var tHotel = parseFloat(card.getElementsByClassName('p-travel-hotel')[0].value) || 0;
+            var tMeal = parseFloat(card.getElementsByClassName('p-travel-meal')[0].value) || 0;
+            var totalTravel = (tPeople * tFare) + (tDays > 1 ? tPeople * (tDays - 1) * tHotel : 0) + (tPeople * tDays * tMeal);
+            card.getElementsByClassName('p-res-travel')[0].innerText = totalTravel.toLocaleString();
+
+            // 4. 硬體資產與場地（加入攤提換算）
+            var scenery = parseFloat(card.getElementsByClassName('p-scenery')[0].value) || 0;
+            var lighting = parseFloat(card.getElementsByClassName('p-lighting')[0].value) || 0;
+            var sound = parseFloat(card.getElementsByClassName('p-sound')[0].value) || 0;
+            var venue = parseFloat(card.getElementsByClassName('p-venue')[0].value) || 0;
+            
+            var isAmortized = card.getElementsByClassName('p-is-amortized')[0].checked;
+            var amortYears = parseFloat(card.getElementsByClassName('p-amort-years')[0].value) || 3;
+            if(amortYears < 1) amortYears = 1;
+
+            var finalHardwareCost = venue; // 場地租金不攤提
+            if (isAmortized) {
+                // 佈景、燈光、音響進入分年攤提
+                finalHardwareCost += (scenery + lighting + sound) / amortYears;
+            } else {
+                finalHardwareCost += (scenery + lighting + sound);
+            }
+
+            // 5. 雜支與營收加總
+            var marketing = parseFloat(card.getElementsByClassName('p-marketing')[0].value) || 0;
+            var insurance = parseFloat(card.getElementsByClassName('p-insurance')[0].value) || 0;
+            var merchCost = parseFloat(card.getElementsByClassName('p-merch-cost')[0].value) || 0;
+            var contingency = parseFloat(card.getElementsByClassName('p-contingency')[0].value) || 0;
+
+            var projectTotalCost = totalActorSalary + totalCrewSalary + totalVolFee + totalTravel + director + staff + finalHardwareCost + marketing + insurance + merchCost + contingency;
+
+            var subsidy = parseFloat(card.getElementsByClassName('p-subsidy')[0].value) || 0;
+            var merchRev = parseFloat(card.getElementsByClassName('p-merch-revenue')[0].value) || 0;
+
+            var projectTotalRevenue = totalCardTicketNet + subsidy + merchRev;
+            var projectFinalProfit = projectTotalRevenue - projectTotalCost;
+
+            var profitEl = card.getElementsByClassName('p-res-final-profit')[0];
+            profitEl.innerText = '$ ' + Math.round(projectFinalProfit).toLocaleString();
+            profitEl.style.color = projectFinalProfit >= 0 ? 'var(--success-color)' : 'var(--danger-color)';
+
+            totalAllCost += projectTotalCost;
+            totalAllRevenue += projectTotalRevenue;
+            totalAllProfit += projectFinalProfit;
+        }
+
+        document.getElementById('total_all_cost').innerText = '$' + Math.round(totalAllCost).toLocaleString();
+        document.getElementById('total_all_revenue').innerText = '$' + Math.round(totalAllRevenue).toLocaleString();
+        document.getElementById('total_all_profit').innerText = '$' + Math.round(totalAllProfit).toLocaleString();
+
+        var finalAnnualNet = totalAllProfit - totalOfficeOverhead;
+        var statusBox = document.getElementById('annual_status_box');
+
+        if(finalAnnualNet >= 0) {
+            statusBox.className = "profit-status status-success";
+            statusBox.innerHTML = "🎉 全年情境總獲利 $" + Math.round(finalAnnualNet).toLocaleString() + " 元 (硬體資產依設定比例攤提)";
+        } else {
+            statusBox.className = "profit-status status-danger";
+            statusBox.innerHTML = "🚨 全年情境資金缺口 $" + Math.round(Math.abs(finalAnnualNet)).toLocaleString() + " 元";
+        }
+
+        csvGlobalData = {
+            officeTotal: totalOfficeOverhead,
+            allCost: totalAllCost, allRevenue: totalAllRevenue, allProfit: totalAllProfit, annualNet: finalAnnualNet
+        };
+    }
+
+    // 匯出功能 (相容攤提資訊)
+    function exportToCSV() {
+        var csvRows = [];
+        csvRows.push('\uFEFF');
+
+        csvRows.push('=== 損益即時分析儀表板大盤摘要 ===');
+        csvRows.push('項目,金額 (元)');
+        csvRows.push('各劇製作總成本(含攤提計入),' + Math.round(csvGlobalData.allCost));
+        csvRows.push('各劇製作總收入,' + Math.round(csvGlobalData.allRevenue));
+        csvRows.push('各劇動態總盈餘,' + Math.round(csvGlobalData.allProfit));
+        csvRows.push('辦公室年度固定開銷,' + Math.round(csvGlobalData.officeTotal));
+        csvRows.push('【最終全年情境淨損益】,' + Math.round(csvGlobalData.annualNet));
+        csvRows.push(''); 
+
+        csvRows.push('=== 各劇目製作營運明細 ===');
+        var headers = [
+            '劇目名稱', '設定售票率(%)', '是否啟用攤提', '攤提年數', '動態票房實拿', '預估代扣稅額(12.11%)', 
+            '本劇計入總成本', '本劇動態收入', '【本劇預估損益】'
+        ];
+        csvRows.push(headers.join(','));
+
+        let data = captureAllDataObjects();
+        data.forEach(p => {
+            // 用簡易邏輯快速計算單一劇目匯出數字
+            let totalCardShows = 0; let totalCardTicketNet = 0;
+            p.venues.forEach(v => {
+                totalCardShows += v.shows;
+                totalCardTicketNet += (v.shows * v.seats * v.price) * (1 - (v.fee / 100)) * (p.salePercent / 100);
+            });
+            let aSal = (p.actorCount * p.rehearsalMonths * p.salaryMonth) + (p.actorCount * totalCardShows * p.salaryShow);
+            let stC = p.stageCount * ((p.stageDays * p.stageSalaryDay) + (totalCardShows * p.stageEntryFee) + (totalCardShows * p.stageSalaryShow));
+            let ltC = p.lightCount * ((p.lightDays * p.lightSalaryDay) + (totalCardShows * p.lightEntryFee) + (totalCardShows * p.lightSalaryShow));
+            let sdC = p.soundCount * ((p.soundDays * p.soundSalaryDay) + (totalCardShows * p.soundEntryFee) + (totalCardShows * p.soundSalaryShow));
+            let crew = stC + ltC + sdC;
+            let tax = Math.round((p.director + p.staff + aSal + crew) * 0.1211);
+            let hw = p.venue + (p.isAmortized ? (p.scenery + p.lighting + p.sound)/p.amortYears : (p.scenery + p.lighting + p.sound));
+            let vol = p.volShows * p.volAllowance * p.volCount;
+            let tvl = (p.travelPeople * p.travelFare) + (p.travelDays > 1 ? p.travelPeople * (p.travelDays - 1) * p.travelHotel : 0) + (p.travelPeople * p.travelDays * p.travelMeal);
+            
+            let cst = aSal + crew + vol + tvl + p.director + p.staff + hw + p.marketing + p.insurance + p.merchCost + p.contingency;
+            let rev = totalCardTicketNet + p.subsidy + p.merchRevenue;
+
+            csvRows.push([
+                p.title.replace(/,/g, ' '), p.salePercent, p.isAmortized?'是':'否', p.amortYears, 
+                Math.round(totalCardTicketNet), tax, Math.round(cst), Math.round(rev), Math.round(rev - cst)
+            ].join(','));
+        });
+
+        var csvString = csvRows.join('\n');
+        var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+        var link = document.createElement("a");
+        var d = new Date();
+        var dateStr = d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+        
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute("download", "劇團永續預算分析表_" + dateStr + ".csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+
+</body>
+</html>
