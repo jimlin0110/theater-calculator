@@ -73,7 +73,6 @@
             transition: max-height 0.3s ease;
         }
 
-        /* 摺疊標頭樣式 */
         .card-header {
             padding: 12px 16px;
             background: #fafafa;
@@ -87,7 +86,6 @@
         .card-header:hover { background: #f1f5f9; }
         .card-body { padding: 16px; display: block; }
         
-        /* 摺疊狀態的類別 */
         .project-card.collapsed .card-body { display: none; }
         .toggle-icon { font-size: 12px; color: #94a3b8; transition: transform 0.2s; }
         .project-card.collapsed .toggle-icon { transform: rotate(-90deg); }
@@ -115,7 +113,6 @@
         .tax-note { font-size: 10px; color: #7f8c8d; font-style: italic; margin-top: 2px; display: block; }
         .tech-sub-box { border-left: 3px solid var(--info-color); padding-left: 6px; margin-bottom: 10px; }
 
-        /* 攤提區區塊樣式 */
         .amortization-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px; margin-bottom: 10px; }
         .amortization-title { display: flex; align-items: center; font-size: 11px; font-weight: bold; color: #166534; gap: 4px; }
 
@@ -136,6 +133,7 @@
             .sticky-dashboard { padding: 8px 12px; }
             .result-block { padding: 4px; }
             .result-block .value { font-size: 12px; }
+            .fixed-card .form-row { grid-template-columns: repeat(2, 1fr) !important; }
         }
         @media (min-width: 768px) {
             .scroll-container { overflow-x: visible; flex-wrap: wrap; }
@@ -164,14 +162,15 @@
         
     <div class="fixed-card">
         <h2>🏢 劇團年度辦公室固定開銷</h2>
-        <div class="form-row" style="grid-template-columns: repeat(4, 1fr); gap: 6px;">
+        <div class="form-row" style="grid-template-columns: repeat(5, 1fr); gap: 6px;">
             <div><label>房租水電</label><input type="number" id="annual_rent" value="240000" oninput="saveAndCalc()"></div>
             <div><label>行政薪資</label><input type="number" id="annual_salary" value="450000" oninput="saveAndCalc()"></div>
+            <div><label>正職勞健保/勞退</label><input type="number" id="annual_insurance" value="65000" oninput="saveAndCalc()"></div>
             <div><label>系統軟體</label><input type="number" id="annual_software" value="12000" oninput="saveAndCalc()"></div>
             <div><label>設備雜支</label><input type="number" id="annual_hardware" value="45000" oninput="saveAndCalc()"></div>
         </div>
         <p style="font-size: 12px; color: var(--info-color); font-weight: bold; margin-top: 6px; text-align: right;">
-            辦公室開銷：$ <span id="total_office_overhead_text">0</span> 元
+            辦公室開銷總計：$ <span id="total_office_overhead_text">0</span> 元
         </p>
     </div>
 
@@ -197,7 +196,6 @@
 </div>
 
 <script>
-    // 預設第一個劇目的初始資料結構
     const defaultProjects = [
         {
             title: "年度大戲《劇目 1》",
@@ -218,19 +216,28 @@
         }
     ];
 
-    // 初始化與記憶庫讀取
     window.onload = function() {
-        if (localStorage.getItem('theatre_office_rent')) {
-            document.getElementById('annual_rent').value = localStorage.getItem('theatre_office_rent');
-            document.getElementById('annual_salary').value = localStorage.getItem('theatre_office_salary');
-            document.getElementById('annual_software').value = localStorage.getItem('theatre_office_software');
-            document.getElementById('annual_hardware').value = localStorage.getItem('theatre_office_hardware');
-        }
-        
-        let savedProjects = localStorage.getItem('theatre_projects_data');
-        if (savedProjects) {
-            renderProjects(JSON.parse(savedProjects));
-        } else {
+        try {
+            if (localStorage.getItem('theatre_office_rent') !== null) {
+                document.getElementById('annual_rent').value = localStorage.getItem('theatre_office_rent');
+                document.getElementById('annual_salary').value = localStorage.getItem('theatre_office_salary');
+                document.getElementById('annual_insurance').value = localStorage.getItem('theatre_office_insurance') || "65000";
+                document.getElementById('annual_software').value = localStorage.getItem('theatre_office_software');
+                document.getElementById('annual_hardware').value = localStorage.getItem('theatre_office_hardware');
+            }
+            
+            let savedProjects = localStorage.getItem('theatre_projects_data');
+            if (savedProjects) {
+                let parsed = JSON.parse(savedProjects);
+                if(!Array.isArray(parsed) || parsed.length === 0 || !parsed[0].venues) {
+                    throw new Error("格式衝突，啟用自動重設");
+                }
+                renderProjects(parsed);
+            } else {
+                renderProjects(defaultProjects);
+            }
+        } catch (e) {
+            localStorage.clear();
             renderProjects(defaultProjects);
         }
         calculateAll();
@@ -243,7 +250,6 @@
             const card = document.createElement('div');
             card.className = `project-card ${p.isCollapsed ? 'collapsed' : ''}`;
             
-            // 建立巡迴場地區塊
             let venueHtml = '';
             p.venues.forEach((v, vIdx) => {
                 venueHtml += `
@@ -322,7 +328,7 @@
                             <div><label>裝台天數 (日)</label><input type="number" class="p-light-days" value="${p.lightDays}" oninput="saveAndCalc()"></div>
                         </div>
                         <div class="form-row">
-                            <div><label>裝台日薪</label><input type="number" class="p-light-salary-day" value="${p.stageSalaryDay}" oninput="saveAndCalc()"></div>
+                            <div><label>裝台日薪</label><input type="number" class="p-light-salary-day" value="${p.lightSalaryDay}" oninput="saveAndCalc()"></div>
                             <div><label>演出日進館費/天</label><input type="number" class="p-light-entry-fee" value="${p.lightEntryFee}" oninput="saveAndCalc()"></div>
                         </div>
                         <div class="form-row">
@@ -419,7 +425,6 @@
         });
     }
 
-    // 摺疊與展開控制
     function toggleCollapse(headerEl, idx) {
         const card = headerEl.parentElement;
         card.classList.toggle('collapsed');
@@ -431,7 +436,6 @@
         txtSpan.innerText = sliderElement.value;
     }
 
-    // 新增場地
     function addVenueBlockData(projIdx) {
         let currentData = captureAllDataObjects();
         currentData[projIdx].venues.push({ shows: 2, seats: 300, price: 1000, fee: 5 });
@@ -440,7 +444,6 @@
         saveCurrentStateOnly();
     }
 
-    // 移除場地
     function removeVenue(btn, projIdx, venueIdx) {
         let currentData = captureAllDataObjects();
         currentData[projIdx].venues.splice(venueIdx, 1);
@@ -449,7 +452,6 @@
         saveCurrentStateOnly();
     }
 
-    // 新增劇目
     document.getElementById('add_btn_trigger').onclick = function() {
         let currentData = captureAllDataObjects();
         let newProj = JSON.parse(JSON.stringify(defaultProjects[0])); 
@@ -461,7 +463,6 @@
         saveCurrentStateOnly();
     };
 
-    // 刪除劇目
     function removeProject(idx) {
         let currentData = captureAllDataObjects();
         currentData.splice(idx, 1);
@@ -470,7 +471,6 @@
         saveCurrentStateOnly();
     }
 
-    // 撈取畫面上最新變動的物件結構
     function captureAllDataObjects() {
         var container = document.getElementById('projects_container');
         var cards = container.getElementsByClassName('project-card');
@@ -478,8 +478,6 @@
 
         for (var i = 0; i < cards.length; i++) {
             var card = cards[i];
-            
-            // 撈場地
             var vBlocks = card.getElementsByClassName('venue-sub-block');
             var vList = [];
             for(var j=0; j<vBlocks.length; j++) {
@@ -545,6 +543,7 @@
     function saveCurrentStateOnly() {
         localStorage.setItem('theatre_office_rent', document.getElementById('annual_rent').value);
         localStorage.setItem('theatre_office_salary', document.getElementById('annual_salary').value);
+        localStorage.setItem('theatre_office_insurance', document.getElementById('annual_insurance').value);
         localStorage.setItem('theatre_office_software', document.getElementById('annual_software').value);
         localStorage.setItem('theatre_office_hardware', document.getElementById('annual_hardware').value);
         localStorage.setItem('theatre_projects_data', JSON.stringify(captureAllDataObjects()));
@@ -556,7 +555,7 @@
     }
 
     function clearSavedData() {
-        if(confirm('確定要清除所有在地記憶資料，還原到初始預設值嗎？')) {
+        if(confirm('確定要清除所有劇目資料，還原到初始預設值嗎？')) {
             localStorage.clear();
             location.reload();
         }
@@ -564,13 +563,14 @@
 
     var csvGlobalData = { officeTotal: 0, allCost: 0, allRevenue: 0, allProfit: 0, annualNet: 0 };
 
-    // 核心計算引擎
     function calculateAll() {
+        // 修正點：精準抓取 5 大欄位，防呆確保不出錯
         var rent = parseFloat(document.getElementById('annual_rent').value) || 0;
         var salary = parseFloat(document.getElementById('annual_salary').value) || 0;
+        var ins = parseFloat(document.getElementById('annual_insurance').value) || 0;
         var software = parseFloat(document.getElementById('annual_software').value) || 0;
         var hardware = parseFloat(document.getElementById('annual_hardware').value) || 0;
-        var totalOfficeOverhead = rent + salary + software + hardware;
+        var totalOfficeOverhead = rent + salary + ins + software + hardware;
         
         document.getElementById('total_office_overhead_text').innerText = totalOfficeOverhead.toLocaleString();
         document.getElementById('total_all_office_cost').innerText = '$' + totalOfficeOverhead.toLocaleString();
@@ -603,7 +603,6 @@
             }
             card.getElementsByClassName('p-res-ticket-net')[0].innerText = Math.round(totalCardTicketNet).toLocaleString();
 
-            // 1. 人事：演員與行政
             var director = parseFloat(card.getElementsByClassName('p-director')[0].value) || 0;
             var staff = parseFloat(card.getElementsByClassName('p-staff')[0].value) || 0;
             var aCount = parseFloat(card.getElementsByClassName('p-actor-count')[0].value) || 0;
@@ -613,7 +612,6 @@
             var totalActorSalary = (aCount * aMonths * sMonth) + (aCount * totalCardShows * sShow);
             card.getElementsByClassName('p-res-actor-salary')[0].innerText = totalActorSalary.toLocaleString();
 
-            // 2. 技術組（Crew）精細拆分
             var stCount = parseFloat(card.getElementsByClassName('p-stage-count')[0].value) || 0;
             var stDays = parseFloat(card.getElementsByClassName('p-stage-days')[0].value) || 0;
             var stSalDay = parseFloat(card.getElementsByClassName('p-stage-salary-day')[0].value) || 0;
@@ -638,12 +636,10 @@
             var totalCrewSalary = totalStageCost + totalLightCost + totalSoundCost;
             card.getElementsByClassName('p-res-crew-salary')[0].innerText = totalCrewSalary.toLocaleString();
 
-            // ⚙️ 核心修正：計算預估代扣稅額+二代健保 (薪資總額 * 12.11%)
             var totalLaborCost = director + staff + totalActorSalary + totalCrewSalary;
             var estimatedTax = Math.round(totalLaborCost * 0.1211);
             card.getElementsByClassName('p-res-tax')[0].innerText = estimatedTax.toLocaleString();
 
-            // 3. 志工與差旅
             var vVolShows = parseFloat(card.getElementsByClassName('p-vol-shows')[0].value) || 0;
             var vAllowance = parseFloat(card.getElementsByClassName('p-vol-allowance')[0].value) || 0;
             var vCount = parseFloat(card.getElementsByClassName('p-vol-count')[0].value) || 0;
@@ -658,7 +654,6 @@
             var totalTravel = (tPeople * tFare) + (tDays > 1 ? tPeople * (tDays - 1) * tHotel : 0) + (tPeople * tDays * tMeal);
             card.getElementsByClassName('p-res-travel')[0].innerText = totalTravel.toLocaleString();
 
-            // 4. 硬體資產與場地（加入攤提換算）
             var scenery = parseFloat(card.getElementsByClassName('p-scenery')[0].value) || 0;
             var lighting = parseFloat(card.getElementsByClassName('p-lighting')[0].value) || 0;
             var sound = parseFloat(card.getElementsByClassName('p-sound')[0].value) || 0;
@@ -668,21 +663,19 @@
             var amortYears = parseFloat(card.getElementsByClassName('p-amort-years')[0].value) || 3;
             if(amortYears < 1) amortYears = 1;
 
-            var finalHardwareCost = venue; // 場地租金不攤提
+            var finalHardwareCost = venue;
             if (isAmortized) {
-                // 佈景、燈光、音響進入分年攤提
                 finalHardwareCost += (scenery + lighting + sound) / amortYears;
             } else {
                 finalHardwareCost += (scenery + lighting + sound);
             }
 
-            // 5. 雜支與營收加總
             var marketing = parseFloat(card.getElementsByClassName('p-marketing')[0].value) || 0;
             var insurance = parseFloat(card.getElementsByClassName('p-insurance')[0].value) || 0;
             var merchCost = parseFloat(card.getElementsByClassName('p-merch-cost')[0].value) || 0;
             var contingency = parseFloat(card.getElementsByClassName('p-contingency')[0].value) || 0;
 
-            var projectTotalCost = totalActorSalary + totalCrewSalary + totalVolFee + totalTravel + director + staff + finalHardwareCost + marketing + insurance + merchCost + contingency;
+            var projectTotalCost = totalLaborCost + totalVolFee + totalTravel + finalHardwareCost + marketing + insurance + merchCost + contingency;
 
             var subsidy = parseFloat(card.getElementsByClassName('p-subsidy')[0].value) || 0;
             var merchRev = parseFloat(card.getElementsByClassName('p-merch-revenue')[0].value) || 0;
@@ -720,7 +713,6 @@
         };
     }
 
-    // 匯出功能 (相容攤提資訊)
     function exportToCSV() {
         var csvRows = [];
         csvRows.push('\uFEFF');
@@ -743,7 +735,6 @@
 
         let data = captureAllDataObjects();
         data.forEach(p => {
-            // 用簡易邏輯快速計算單一劇目匯出數字
             let totalCardShows = 0; let totalCardTicketNet = 0;
             p.venues.forEach(v => {
                 totalCardShows += v.shows;
@@ -759,7 +750,7 @@
             let vol = p.volShows * p.volAllowance * p.volCount;
             let tvl = (p.travelPeople * p.travelFare) + (p.travelDays > 1 ? p.travelPeople * (p.travelDays - 1) * p.travelHotel : 0) + (p.travelPeople * p.travelDays * p.travelMeal);
             
-            let cst = aSal + crew + vol + tvl + p.director + p.staff + hw + p.marketing + p.insurance + p.merchCost + p.contingency;
+            let cst = p.director + p.staff + aSal + crew + vol + tvl + hw + p.marketing + p.insurance + p.merchCost + p.contingency;
             let rev = totalCardTicketNet + p.subsidy + p.merchRevenue;
 
             csvRows.push([
