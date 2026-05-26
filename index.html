@@ -55,8 +55,10 @@
         .toggle-icon { font-size: 12px; color: #94a3b8; transition: transform 0.2s; }
         .project-card.collapsed .toggle-icon { transform: rotate(-90deg); }
 
-        .remove-btn { background: #fee2e2; color: var(--danger-color); border: 1px solid #fca5a5; padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
-        .project-title-input { font-size: 15px; font-weight: bold; border: none; border-bottom: 2px solid #cbd5e1; background: transparent; padding: 2px; width: 160px; color: var(--primary-color); }
+        .header-btn-group { display: flex; align-items: center; gap: 4px; }
+        .copy-btn { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .remove-btn { background: #fee2e2; color: var(--danger-color); border: 1px solid #fca5a5; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .project-title-input { font-size: 15px; font-weight: bold; border: none; border-bottom: 2px solid #cbd5e1; background: transparent; padding: 2px; width: 150px; color: var(--primary-color); }
         .section-title { font-size: 12px; font-weight: bold; color: #475569; margin: 12px 0 6px 0; background: #f1f5f9; padding: 4px 6px; border-radius: 4px; }
 
         .slider-box { background: #fff7ed; border: 1px solid #ffedd5; border-radius: 8px; padding: 10px; margin-bottom: 12px; }
@@ -85,6 +87,7 @@
 
         .break-even-badge { background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px; border-radius: 6px; margin-top: 6px; font-size: 11px; color: #1e40af; display: flex; justify-content: space-between; align-items: center; }
         .cashflow-badge { background: #fff1f2; border: 1px solid #fecdd3; padding: 6px; border-radius: 6px; margin-top: 6px; font-size: 11px; color: #9f1239; display: flex; justify-content: space-between; align-items: center; }
+        .cashflow-warning-badge { background: #fff7ed; border: 1px solid #ffedd5; padding: 6px; border-radius: 6px; margin-top: 6px; font-size: 11px; color: #c2410c; display: flex; flex-direction: column; gap: 2px; text-align: left; }
 
         .sticky-dashboard { position: fixed; bottom: 0; left: 0; right: 0; background: var(--primary-color); color: white; border-radius: 16px 16px 0 0; padding: 12px 16px; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); z-index: 999; }
         .sticky-dashboard-inner { max-width: 1400px; margin: 0 auto; }
@@ -149,7 +152,7 @@
 
     <div class="sticky-dashboard">
         <div class="sticky-dashboard-inner">
-            <h2>📊 全年度損益即時分析儀表板</h2>
+            <h2>📊 全年度損益即時 analysis 儀表板</h2>
             <div class="result-grid">
                 <div class="result-block"><div class="title">各劇總成本 (含稅/攤提)</div><div class="value" id="total_all_cost">$0</div></div>
                 <div class="result-block"><div class="title">各劇總收入 (已扣手續費)</div><div class="value" id="total_all_revenue">$0</div></div>
@@ -168,9 +171,10 @@
             title: "年度大戲《劇目 1》",
             salePercent: 75,
             isCollapsed: false,
-            venues: [{ shows: 3, seats: 500, earlyBirdPercent: 30, earlyBirdPrice: 960, regularPrice: 1200, systemFee: 6, bankFee: 2 }],
+            venues: [{ shows: 3, seats: 500, earlyBirdPercent: 30, earlyBirdPrice: 960, regularPrice: 1200, systemFee: 6, bankFee: 2, vipSeats: 20 }],
             director: 80000, staff: 120000, paybackPercent: 10,
             actorCount: 5, rehearsalMonths: 2.5, salaryMonth: 15000, salaryShow: 3000,
+            actorGhi: true, crewGhi: true, 
             stageCount: 2, stageDays: 2, stageSalaryDay: 3500, stageEntryFee: 1500, stageSalaryShow: 2000,
             lightCount: 2, lightDays: 2, lightSalaryDay: 3500, lightEntryFee: 1500, lightSalaryShow: 2000,
             soundCount: 1, soundDays: 2, soundSalaryDay: 3500, soundEntryFee: 1500, soundSalaryShow: 2000,
@@ -184,7 +188,7 @@
             travelFare: 1500, travelHotel: 1000, travelMeal: 250,
             marketing: 40000, marketingTax: false,
             insurance: 15000, merchCost: 20000, merchRevenue: 35000, contingency: 20000,
-            subsidy: 450000
+            subsidy: 450000 
         }
     ];
 
@@ -197,7 +201,7 @@
                 document.getElementById('annual_software').value = localStorage.getItem('theatre_office_software');
                 document.getElementById('annual_hardware').value = localStorage.getItem('theatre_office_hardware');
             }
-            let savedProjects = localStorage.getItem('theatre_projects_data_v3');
+            let savedProjects = localStorage.getItem('theatre_projects_data_v5');
             if (savedProjects) {
                 renderProjects(JSON.parse(savedProjects));
             } else {
@@ -221,6 +225,7 @@
                 let ebP = v.earlyBirdPercent !== undefined ? v.earlyBirdPercent : 30;
                 let ebPr = v.earlyBirdPrice !== undefined ? v.earlyBirdPrice : 960;
                 let regPr = v.regularPrice !== undefined ? v.regularPrice : 1200;
+                let vSeats = v.vipSeats !== undefined ? v.vipSeats : 0;
 
                 venueHtml += `
                     <div class="venue-sub-block">
@@ -230,15 +235,16 @@
                             <div><label>總座位 (席)</label><input type="number" class="p-seats" value="${v.seats}" oninput="saveAndCalc()"></div>
                         </div>
                         <div class="form-row">
+                            <div><label style="color:var(--danger-color); font-weight:bold;">每場公關留座</label><input type="number" class="p-vip-seats" value="${vSeats}" oninput="saveAndCalc()"></div>
                             <div><label>早鳥比例 (%)</label><input type="number" class="p-eb-percent" value="${ebP}" oninput="saveAndCalc()"></div>
+                        </div>
+                        <div class="form-row">
                             <div><label>早鳥票價 ($)</label><input type="number" class="p-eb-price" value="${ebPr}" oninput="saveAndCalc()"></div>
-                        </div>
-                        <div class="form-row">
                             <div><label>一般票價 ($)</label><input type="number" class="p-reg-price" value="${regPr}" oninput="saveAndCalc()"></div>
-                            <div><label>售票服務費 (%)</label><input type="number" class="p-system-fee" value="${sFee}" oninput="saveAndCalc()"></div>
                         </div>
                         <div class="form-row">
-                            <div style="grid-column: span 2;"><label>💳 刷卡/超商手續費 (%)</label><input type="number" class="p-bank-fee" value="${bFee}" oninput="saveAndCalc()"></div>
+                            <div><label>售票服務費 (%)</label><input type="number" class="p-system-fee" value="${sFee}" oninput="saveAndCalc()"></div>
+                            <div><label>💳 刷卡/超商手續費 (%)</label><input type="number" class="p-bank-fee" value="${bFee}" oninput="saveAndCalc()"></div>
                         </div>
                     </div>
                 `;
@@ -249,13 +255,18 @@
             let tCrewEd = p.travelCrewEarlyDays !== undefined ? p.travelCrewEarlyDays : 2;
             let tActC = p.travelActorCount !== undefined ? p.travelActorCount : 10;
             let tTotD = p.travelTotalDays !== undefined ? p.travelTotalDays : 4;
+            let currentSubsidy = p.subsidy !== undefined ? p.subsidy : 450000;
+            
+            let actGhi = p.actorGhi !== undefined ? p.actorGhi : true;
+            let crwGhi = p.crewGhi !== undefined ? p.crewGhi : true;
 
             let card = document.createElement('div');
             card.className = `project-card ${p.isCollapsed ? 'collapsed' : ''}`;
             card.innerHTML = `
                 <div class="card-header" onclick="toggleCollapse(this, ${idx})">
                     <input type="text" class="project-title-input" value="${p.title}" onclick="event.stopPropagation()" oninput="saveAndCalc()">
-                    <div>
+                    <div class="header-btn-group">
+                        <button class="copy-btn" onclick="event.stopPropagation(); copyProject(${idx});">👯 複製</button>
                         <button class="remove-btn" onclick="event.stopPropagation(); removeProject(${idx});">❌ 刪除</button>
                         <span class="toggle-icon">▼</span>
                     </div>
@@ -274,7 +285,7 @@
                     <div class="venue-list">${venueHtml}</div>
                     <button class="btn-add-venue" onclick="addVenueBlockData(${idx})">➕ 新增巡迴場地/條件</button>
 
-                    <div class="section-title">👥 人事、正職回撥補貼</div>
+                    <div class="section-title">👥 人事、正職回撥與二代健保</div>
                     <div class="form-row">
                         <div><label>導演酬勞</label><input type="number" class="p-director" value="${p.director}" oninput="saveAndCalc()"></div>
                         <div><label>專案行政執行</label><input type="number" class="p-staff" value="${p.staff}" oninput="saveAndCalc()"></div>
@@ -291,12 +302,19 @@
                         <div><label>每人月排練</label><input type="number" class="p-salary-month" value="${p.salaryMonth}" oninput="saveAndCalc()"></div>
                         <div><label>每人每演出</label><input type="number" class="p-salary-show" value="${p.salaryShow}" oninput="saveAndCalc()"></div>
                     </div>
+                    <div class="tax-row" style="margin-top:4px;">
+                        <label class="tax-checkbox-label" style="color:var(--warning-color);"><input type="checkbox" class="p-actor-ghi" ${actGhi?'checked':''} onchange="saveAndCalc()"> 演員/導演單筆跨2萬提撥二代健保 (2.11%)</label>
+                    </div>
                     <div class="auto-calc-box">
                         🤖 演員薪資總計：$ <span class="p-res-actor-salary">0</span>
                         <span class="tax-note">⚠️ 預估勞務代扣/二代健保約 $ <span class="p-res-tax">0</span> 元</span>
                     </div>
 
                     <div class="section-title">🛠️ Crew 技術組 (裝台與演出拆分)</div>
+                    <div class="tax-row" style="margin-bottom: 6px;">
+                        <label class="tax-checkbox-label" style="color:var(--warning-color);"><input type="checkbox" class="p-crew-ghi" ${crwGhi?'checked':''} onchange="saveAndCalc()"> 技術組總報酬提撥劇團二代健保 (2.11%)</label>
+                    </div>
+
                     <div class="tech-sub-box">
                         <div class="form-row">
                             <div><label>舞台組 (人)</label><input type="number" class="p-stage-count" value="${p.stageCount}" oninput="saveAndCalc()"></div>
@@ -415,7 +433,7 @@
 
                     <div class="section-title">💰 外部收入來源</div>
                     <div class="form-row">
-                        <div style="grid-column: span 2;"><label>政府補助 + 企業贊助總額</label><input type="number" class="p-subsidy" value="${p.subsidy}" oninput="saveAndCalc()"></div>
+                        <div style="grid-column: span 2;"><label>政府補助 + 企業贊助總額</label><input type="number" class="p-subsidy" value="${currentSubsidy}" oninput="saveAndCalc()"></div>
                     </div>
 
                     <div class="auto-calc-box" style="background:#fff7ed; border-left-color: var(--accent-color); color: #c2410c;">
@@ -431,6 +449,12 @@
                     <div class="cashflow-badge">
                         <span>🚨 期初自籌現金流防線：</span>
                         <span class="break-even-value p-res-cashflow" style="color:var(--danger-color);">計算中...</span>
+                    </div>
+
+                    <div class="cashflow-warning-badge">
+                        <span style="font-weight:bold;">⏳ 票房解凍前「絕對流動金防線」：</span>
+                        <span style="font-size:12px; font-weight:bold; color:var(--warning-color);" class="p-res-cashflow-warning">計算中...</span>
+                        <span style="font-size:10px; color:#9a3412;">⚠️ 票房卡在售票系統、補助僅到首期時，現付硬體尾款與全劇團薪資所需的最低戶頭存量。</span>
                     </div>
                 </div>
             `;
@@ -449,7 +473,7 @@
 
     function addVenueBlockData(projIdx) {
         let currentData = captureAllDataObjects();
-        currentData[projIdx].venues.push({ shows: 2, seats: 300, earlyBirdPercent: 30, earlyBirdPrice: 800, regularPrice: 1000, systemFee: 6, bankFee: 2 });
+        currentData[projIdx].venues.push({ shows: 2, seats: 300, earlyBirdPercent: 30, earlyBirdPrice: 800, regularPrice: 1000, systemFee: 6, bankFee: 2, vipSeats: 10 });
         renderProjects(currentData);
         calculateAll();
     }
@@ -477,6 +501,15 @@
         calculateAll();
     }
 
+    function copyProject(idx) {
+        let currentData = captureAllDataObjects();
+        let copiedProj = JSON.parse(JSON.stringify(currentData[idx]));
+        copiedProj.title = copiedProj.title + " (複製)";
+        currentData.splice(idx + 1, 0, copiedProj); 
+        renderProjects(currentData);
+        calculateAll();
+    }
+
     function captureAllDataObjects() {
         var container = document.getElementById('projects_container');
         var cards = container.getElementsByClassName('project-card');
@@ -490,6 +523,7 @@
                 vList.push({
                     shows: parseFloat(vBlocks[j].getElementsByClassName('p-shows')[0].value) || 0,
                     seats: parseFloat(vBlocks[j].getElementsByClassName('p-seats')[0].value) || 0,
+                    vipSeats: parseFloat(vBlocks[j].getElementsByClassName('p-vip-seats')[0].value) || 0,
                     earlyBirdPercent: parseFloat(vBlocks[j].getElementsByClassName('p-eb-percent')[0].value) || 0,
                     systemFee: parseFloat(vBlocks[j].getElementsByClassName('p-system-fee')[0].value) || 0,
                     bankFee: parseFloat(vBlocks[j].getElementsByClassName('p-bank-fee')[0].value) || 0,
@@ -510,6 +544,8 @@
                 rehearsalMonths: parseFloat(card.getElementsByClassName('p-rehearsal-months')[0].value) || 0,
                 salaryMonth: parseFloat(card.getElementsByClassName('p-salary-month')[0].value) || 0,
                 salaryShow: parseFloat(card.getElementsByClassName('p-salary-show')[0].value) || 0,
+                actorGhi: card.getElementsByClassName('p-actor-ghi')[0].checked,
+                crewGhi: card.getElementsByClassName('p-crew-ghi')[0].checked,
                 stageCount: parseFloat(card.getElementsByClassName('p-stage-count')[0].value) || 0,
                 stageDays: parseFloat(card.getElementsByClassName('p-stage-days')[0].value) || 0,
                 stageSalaryDay: parseFloat(card.getElementsByClassName('p-stage-salary-day')[0].value) || 0,
@@ -563,7 +599,7 @@
         localStorage.setItem('theatre_office_insurance', document.getElementById('annual_insurance').value);
         localStorage.setItem('theatre_office_software', document.getElementById('annual_software').value);
         localStorage.setItem('theatre_office_hardware', document.getElementById('annual_hardware').value);
-        localStorage.setItem('theatre_projects_data_v3', JSON.stringify(captureAllDataObjects()));
+        localStorage.setItem('theatre_projects_data_v5', JSON.stringify(captureAllDataObjects()));
     }
 
     function saveAndCalc() {
@@ -603,6 +639,7 @@
                 var vb = vBlocks[j];
                 var vShows = parseFloat(vb.getElementsByClassName('p-shows')[0].value) || 0;
                 var vSeats = parseFloat(vb.getElementsByClassName('p-seats')[0].value) || 0;
+                var vipSeats = parseFloat(vb.getElementsByClassName('p-vip-seats')[0].value) || 0;
                 var sysFee = parseFloat(vb.getElementsByClassName('p-system-fee')[0].value) || 0;
                 var bkFee = parseFloat(vb.getElementsByClassName('p-bank-fee')[0].value) || 0;
                 var ebPercent = parseFloat(vb.getElementsByClassName('p-eb-percent')[0].value) || 0;
@@ -611,8 +648,11 @@
 
                 totalCardShows += vShows;
 
-                var ebSeats = vSeats * (ebPercent / 100);
-                var regSeats = vSeats * (1 - (ebPercent / 100));
+                var sellableSeats = vSeats - vipSeats;
+                if (sellableSeats < 0) sellableSeats = 0;
+
+                var ebSeats = sellableSeats * (ebPercent / 100);
+                var regSeats = sellableSeats * (1 - (ebPercent / 100));
                 var venueGross100 = vShows * ((ebSeats * ebPrice) + (regSeats * regPrice));
                 
                 var venueNet100 = venueGross100 * (1 - (sysFee / 100) - (bkFee / 100));
@@ -655,8 +695,15 @@
             var totalTechnicalGroupCost = totalStageCost + totalLightCost + totalSoundCost;
             card.getElementsByClassName('p-res-crew-salary')[0].innerText = totalTechnicalGroupCost.toLocaleString();
 
+            var actGhiChecked = card.getElementsByClassName('p-actor-ghi')[0].checked;
+            var crwGhiChecked = card.getElementsByClassName('p-crew-ghi')[0].checked;
+            
             var totalLaborCost = director + staff + totalActorSalary + totalTechnicalGroupCost;
-            card.getElementsByClassName('p-res-tax')[0].innerText = Math.round(totalLaborCost * 0.1211).toLocaleString();
+            var calculatedGhiTax = (totalLaborCost * 0.10); 
+            if(actGhiChecked) { calculatedGhiTax += (director + staff + totalActorSalary) * 0.0211; }
+            if(crwGhiChecked) { calculatedGhiTax += totalTechnicalGroupCost * 0.0211; }
+
+            card.getElementsByClassName('p-res-tax')[0].innerText = Math.round(calculatedGhiTax).toLocaleString();
 
             var vVolShows = parseFloat(card.getElementsByClassName('p-vol-shows')[0].value) || 0;
             var vAllowance = parseFloat(card.getElementsByClassName('p-vol-allowance')[0].value) || 0;
@@ -698,7 +745,7 @@
             var contingency = parseFloat(card.getElementsByClassName('p-contingency')[0].value) || 0;
 
             var paybackPercent = parseFloat(card.getElementsByClassName('p-payback-percent')[0].value) || 0;
-            var baseProjectCost = totalLaborCost + totalVolFee + totalTravelExp + finalHardwareCost + marketing + insurance + merchCost + contingency;
+            var baseProjectCost = totalLaborCost + calculatedGhiTax + totalVolFee + totalTravelExp + finalHardwareCost + marketing + insurance + merchCost + contingency;
             var officeContribution = baseProjectCost * (paybackPercent / 100);
             totalProjectPaybackToOffice += officeContribution;
 
@@ -716,18 +763,23 @@
             var breakEvenEl = card.getElementsByClassName('p-res-break-even')[0];
             var netCostNeeded = projectTotalCost - (subsidy + merchRev);
             if (netCostNeeded <= 0) {
-                breakEvenEl.innerText = "0% (靠補助與周邊已保本)";
+                breakEvenEl.innerText = "0% (靠補助已保本)";
                 breakEvenEl.style.color = "var(--success-color)";
             } else if (max100PercentTicketRevenueNet <= 0) {
                 breakEvenEl.innerText = "無法計算";
             } else {
                 var breakEvenPercent = (netCostNeeded / max100PercentTicketRevenueNet) * 100;
-                breakEvenEl.innerText = breakEvenPercent > 100 ? Math.round(breakEvenPercent) + "% (即使滿座也未保本🚨)" : Math.round(breakEvenPercent) + " %";
+                breakEvenEl.innerText = breakEvenPercent > 100 ? Math.round(breakEvenPercent) + "% (滿座也未保本🚨)" : Math.round(breakEvenPercent) + " %";
                 if(breakEvenPercent > 100) breakEvenEl.style.color = "var(--danger-color)";
             }
 
             var cashFlowNeeded = (director + staff + (aCount * aMonths * sMonth) + scenery + lighting + sound + venue + marketing + insurance) * 0.75 + totalTravelExp;
             card.getElementsByClassName('p-res-cashflow')[0].innerText = '$ ' + Math.round(cashFlowNeeded).toLocaleString();
+
+            var actualShowPaidCrew = totalTechnicalGroupCost + (aCount * totalCardShows * sShow); 
+            var totalFreezeBarrier = cashFlowNeeded + actualShowPaidCrew + totalVolFee - (subsidy * 0.30);
+            if(totalFreezeBarrier < 0) totalFreezeBarrier = 0;
+            card.getElementsByClassName('p-res-cashflow-warning')[0].innerText = '$ ' + Math.round(totalFreezeBarrier).toLocaleString() + ' 元';
 
             totalAllCost += projectTotalCost;
             totalAllRevenue += projectTotalRevenue;
@@ -748,7 +800,7 @@
 
         if(finalAnnualNet >= 0) {
             statusBox.className = "profit-status status-success";
-            statusBox.innerHTML = "🎉 全年最終淨獲利 $" + Math.round(finalAnnualNet).toLocaleString() + " 元 (已計入實際拆分之差旅、金流手續費與專案回撥)";
+            statusBox.innerHTML = "🎉 全年最終淨獲利 $" + Math.round(finalAnnualNet).toLocaleString() + " 元 (已計入扣除公關座之動態票房與行政回撥)";
         } else {
             statusBox.className = "profit-status status-danger";
             statusBox.innerHTML = "🚨 全年最終資金缺口 $" + Math.round(Math.abs(finalAnnualNet)).toLocaleString() + " 元";
