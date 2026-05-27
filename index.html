@@ -3,13 +3,16 @@
 <html class="light" lang="zh-TW"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
-<title>劇場營運計算機 - 專業進階版 v52.0</title>
+<title>劇場營運精細計算機 - 專業進階版 v69.0</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;family=Noto+Sans:wght@400;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;family=Noto+Sans+TC:wght@400;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <style>
         :root { scroll-behavior: smooth; }
-        body { -webkit-overflow-scrolling: touch; }
+        body { 
+            -webkit-overflow-scrolling: touch; 
+            font-family: 'Noto Sans TC', 'Inter', sans-serif;
+        }
         input[type="range"].custom-slider {
             -webkit-appearance: none;
             width: 100%;
@@ -17,22 +20,21 @@
         }
         input[type="range"].custom-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 28px;
-            width: 28px;
+            height: 24px;
+            width: 24px;
             border-radius: 50%;
             background: #ffffff;
-            border: 2px solid #091426;
+            border: 2px solid #0f172a;
             cursor: pointer;
-            margin-top: -12px;
+            margin-top: -10px;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            transition: transform 0.1s ease;
         }
         input[type="range"].custom-slider::-webkit-slider-runnable-track {
             width: 100%;
-            height: 6px;
+            height: 4px;
             cursor: pointer;
             background: #e2e8f0;
-            border-radius: 3px;
+            border-radius: 2px;
         }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -40,6 +42,7 @@
         }
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         
@@ -48,78 +51,75 @@
             height: 8px;
             border-radius: 50%;
             background: #cbd5e1;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .dot-indicator.active {
-            width: 24px;
-            background: #091426;
+            width: 20px;
+            background: #0f172a;
             border-radius: 4px;
         }
         
-        .active-scale:active { transform: scale(0.96); opacity: 0.8; }
-        .snapshot-mode .admin-ui { display: none !important; }
-        .snapshot-mode .interactive-element { border-color: transparent !important; background: transparent !important; pointer-events: none !important; }
-        .snapshot-mode .card-shadow { box-shadow: none !important; border: 1px solid #f1f5f9 !important; }
+        .active-scale:active { transform: scale(0.96); opacity: 0.9; }
         
         #plays-wrapper {
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
         }
 
-        .card-locked { opacity: 0.85; position: relative; }
-        .card-locked::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            z-index: 40;
-            cursor: not-allowed;
-        }
-
         .sticky-section-label {
             position: sticky;
             top: 64px;
             z-index: 30;
-            background: rgba(248, 250, 252, 0.95);
-            backdrop-filter: blur(8px);
-        }
-        
-        /* Touch targets optimization */
-        .touch-target {
-            min-width: 44px;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: rgba(248, 250, 252, 0.9);
+            backdrop-filter: blur(12px);
         }
 
-        .overlay-active {
-            overflow: hidden;
-        }
-
-        .snapshot-only { display: none; }
-        .snapshot-mode .snapshot-only { display: block; }
-
-        /* Dashboard Transitions */
         #summary-bar-content {
-            transition: max-height 0.3s ease-out, opacity 0.2s ease-in-out;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin 0.4s ease;
         }
         .dashboard-minimized #summary-bar-content {
             max-height: 0;
             opacity: 0;
             margin-bottom: 0;
-            padding-bottom: 0;
             overflow: hidden;
         }
         .dashboard-expanded #summary-bar-content {
-            max-height: 400px;
+            max-height: 500px;
             opacity: 1;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
         }
         #summary-toggle-btn {
-            transition: transform 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .dashboard-expanded #summary-toggle-btn {
             transform: rotate(180deg);
+        }
+
+        .snapshot-mode .admin-ui { display: none !important; }
+
+        .toggle-group {
+            display: flex;
+            background: #f1f5f9;
+            padding: 2px;
+            border-radius: 8px;
+        }
+        .toggle-btn {
+            flex: 1;
+            padding: 4px 8px;
+            font-size: 10px;
+            font-weight: 900;
+            text-align: center;
+            border-radius: 6px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .toggle-btn.active {
+            background: #ffffff;
+            color: #0f172a;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .toggle-btn:not(.active) {
+            color: #64748b;
         }
     </style>
 <script id="tailwind-config">
@@ -127,782 +127,735 @@
             darkMode: "class",
             theme: {
                 extend: {
-                    "colors": {
-                        "primary": "#091426",
+                    colors: {
+                        primary: "#0f172a",
+                        secondary: "#059669",
+                        error: "#dc2626",
+                        background: "#f8fafc",
+                        "surface-container": "#f1f5f9",
                         "on-surface": "#1e293b",
                         "on-surface-variant": "#64748b",
-                        "outline-variant": "#e2e8f0",
-                        "surface-container-low": "#f8f9fa",
-                        "surface-container": "#f1f5f9",
-                        "surface-container-high": "#e2e8f0",
-                        "background": "#f8f9fa",
-                        "secondary": "#10b981",
-                        "error": "#ef4444",
-                        "slate-accent": "#475569"
+                        "outline-variant": "#e2e8f0"
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-background text-on-surface font-body-md min-h-screen overflow-x-hidden transition-all duration-500 pb-32">
-<header class="sticky top-0 w-full z-50 bg-white/95 backdrop-blur-xl border-b border-outline-variant shadow-sm admin-ui">
+<body class="bg-background text-on-surface min-h-screen pb-48">
+<header class="sticky top-0 w-full z-50 bg-white/90 backdrop-blur-xl border-b border-outline-variant admin-ui">
 <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
 <div class="flex items-center gap-2">
 <span class="material-symbols-outlined text-primary font-bold">account_balance</span>
-<h1 class="font-bold text-primary tracking-tight">劇場營運精細計算機 <span class="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-black ml-1 uppercase">v52.0 VULCAN</span></h1>
+<h1 class="font-bold text-primary tracking-tight text-sm sm:text-base">劇場營運精細計算機 <span class="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-black ml-1 uppercase">v69.0 VULCAN PRO</span></h1>
 </div>
 <div class="flex items-center gap-1">
-<button class="touch-target text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all active-scale" onclick="toggleSnapshotMode()" title="分享模式">
-<span class="material-symbols-outlined">ios_share</span>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container rounded-full transition-all active-scale" onclick="window.print()" title="列印報表">
+<span class="material-symbols-outlined">print</span>
 </button>
-<button class="touch-target text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all active-scale" onclick="resetData()">
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container rounded-full transition-all active-scale" onclick="resetState()">
 <span class="material-symbols-outlined">restart_alt</span>
 </button>
 </div>
 </div>
 <div class="max-w-7xl mx-auto px-4 border-t border-outline-variant/30 overflow-x-auto scrollbar-hide">
-<nav class="flex items-center gap-2 py-2 text-[10px] font-black uppercase tracking-widest text-slate-accent whitespace-nowrap">
-<a class="px-4 py-3 hover:text-primary transition-colors hover:bg-primary/5 rounded-lg flex items-center gap-1.5 active-scale" href="#office-section">
+<nav class="flex items-center gap-4 py-2 text-[10px] font-black uppercase tracking-widest text-on-surface-variant whitespace-nowrap">
+<a class="flex items-center gap-1.5 py-2 px-3 hover:text-primary transition-colors" href="#office-section">
 <span class="material-symbols-outlined text-sm">business_center</span> 總部營運
             </a>
-<div class="h-4 w-px bg-outline-variant"></div>
-<a class="px-4 py-3 hover:text-primary transition-colors hover:bg-primary/5 rounded-lg flex items-center gap-1.5 active-scale" href="#plays-section">
-<span class="material-symbols-outlined text-sm">theater_comedy</span> 年度劇目
+<a class="flex items-center gap-1.5 py-2 px-3 hover:text-primary transition-colors" href="#analytics-section">
+<span class="material-symbols-outlined text-sm">analytics</span> 年度分析
             </a>
-<div class="h-4 w-px bg-outline-variant"></div>
-<a class="px-4 py-3 hover:text-primary transition-colors hover:bg-primary/5 rounded-lg flex items-center gap-1.5 active-scale" href="#visual-section">
-<span class="material-symbols-outlined text-sm">bar_chart</span> 數據視覺化
+<a class="flex items-center gap-1.5 py-2 px-3 hover:text-primary transition-colors" href="#plays-section">
+<span class="material-symbols-outlined text-sm">theater_comedy</span> 年度劇目
             </a>
 </nav>
 </div>
 </header>
-<main class="max-w-7xl mx-auto px-4 md:px-8 py-4 space-y-12">
-<!-- Snapshot Header (Hidden by default) -->
-<div class="hidden text-center py-6 space-y-2" id="snapshot-header">
-<h2 class="text-2xl font-black text-primary">年度營運計畫預估報告</h2>
-<p class="text-sm text-on-surface-variant font-bold">匯出日期：<span id="snapshot-date"></span></p>
-</div>
-<!-- Administrative Section Label -->
-<div class="sticky-section-label py-3 border-b border-outline-variant mb-4 admin-ui">
+<main class="max-w-7xl mx-auto px-4 py-6 space-y-12">
+<!-- Administrative Section -->
+<div class="sticky-section-label py-3 border-b border-outline-variant admin-ui">
 <div class="flex items-center gap-2">
 <div class="w-1.5 h-4 bg-primary rounded-full"></div>
-<span class="text-xs font-black uppercase tracking-widest text-primary">ADMINISTRATIVE / 總部營運</span>
+<span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">ADMINISTRATIVE / 總部營運</span>
 </div>
 </div>
-<!-- Office Costs Section -->
 <section class="scroll-mt-32" id="office-section">
-<div class="bg-white border border-outline-variant p-6 rounded-2xl shadow-sm card-shadow">
-<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-<div class="flex items-center gap-3">
-<div class="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center border border-primary/10 shrink-0">
-<span class="material-symbols-outlined text-primary text-2xl">corporate_fare</span>
+<div class="bg-white border border-outline-variant p-6 rounded-2xl shadow-sm">
+<div class="flex items-center gap-4 mb-8">
+<div class="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center border border-primary/10">
+<span class="material-symbols-outlined text-primary">corporate_fare</span>
 </div>
 <div>
-<h2 class="font-bold text-primary text-lg">總部營運攤提</h2>
-<p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-wide">Monthly Administrative Allocation</p>
+<h2 class="font-bold text-primary text-lg leading-tight">總部營運月預估</h2>
+<p class="text-[10px] text-on-surface-variant font-black uppercase tracking-wider">Fixed Monthly Overhead</p>
 </div>
 </div>
-<!-- Tax Toggle -->
-<div class="flex items-center justify-between sm:justify-end gap-3 bg-surface-container-low p-3 rounded-xl border border-outline-variant admin-ui">
-<span class="text-[10px] font-black text-on-surface-variant uppercase leading-none">代扣稅金 (9B &gt; 2萬)</span>
-<button class="w-12 h-6 bg-outline-variant rounded-full p-1 transition-all relative active-scale" id="tax-toggle" onclick="toggleWithholdingTax()">
-<div class="w-4 h-4 bg-white rounded-full transition-all shadow-sm" id="tax-toggle-dot"></div>
-</button>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="office-costs-container">
+<!-- Injected via JS -->
 </div>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6" id="office-costs-container"></div>
 </div>
 </section>
-<!-- Projects Section Label -->
-<div class="sticky-section-label py-3 border-b border-outline-variant mb-4 admin-ui">
+<!-- Annual Analytics Section (New) -->
+<div class="sticky-section-label py-3 border-b border-outline-variant admin-ui">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-4 bg-blue-600 rounded-full"></div>
+<span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">ANNUAL ANALYTICS / 年度數據分析</span>
+</div>
+</div>
+<section class="scroll-mt-32" id="analytics-section">
+<div class="bg-white border border-outline-variant rounded-2xl shadow-sm overflow-hidden">
+<div class="p-4 border-b border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">monitoring</span>
+<span class="text-xs font-bold text-primary">視覺化獲利預測</span>
+</div>
+<div class="toggle-group w-auto">
+<div class="toggle-btn active" id="tab-profit" onclick="setAnalyticsTab('profit')">損益對比</div>
+<div class="toggle-btn" id="tab-cashflow" onclick="setAnalyticsTab('cashflow')">現金流趨勢</div>
+</div>
+</div>
+<div class="p-6">
+<div class="relative h-[250px] w-full">
+<canvas id="analyticsChart"></canvas>
+</div>
+</div>
+</div>
+</section>
+<!-- Projects Section -->
+<div class="sticky-section-label py-3 border-b border-outline-variant admin-ui">
 <div class="flex items-center gap-2">
 <div class="w-1.5 h-4 bg-secondary rounded-full"></div>
-<span class="text-xs font-black uppercase tracking-widest text-primary">PROJECTS / 年度劇目計畫</span>
+<span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">PROJECTS / 年度劇目計畫</span>
 </div>
 </div>
-<!-- Plays Section -->
 <section class="scroll-mt-32" id="plays-section">
 <div class="flex flex-col gap-1 mb-6">
 <h2 class="text-xl font-bold text-primary tracking-tight">年度劇目模擬</h2>
 <p class="text-xs text-on-surface-variant font-medium">左右滑動切換專案，即時連動年度損益分析</p>
 </div>
-<div class="flex justify-center gap-2 mb-6 admin-ui" id="carousel-dots"></div>
-<div class="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-12 gap-6" id="plays-wrapper" onscroll="updateDots()"></div>
-</section>
-<!-- Visualization Section Label -->
-<div class="sticky-section-label py-3 border-b border-outline-variant mb-4 admin-ui">
-<div class="flex items-center gap-2">
-<div class="w-1.5 h-4 bg-slate-accent rounded-full"></div>
-<span class="text-xs font-black uppercase tracking-widest text-primary">VISUALIZATION / 數據視覺化</span>
+<div class="flex justify-center gap-2 mb-6 admin-ui" id="carousel-dots">
+<!-- Injected via JS -->
 </div>
-</div>
-<!-- Visualization Section -->
-<section class="scroll-mt-32" id="visual-section">
-<div class="bg-white border border-outline-variant p-6 rounded-2xl shadow-sm card-shadow">
-<div class="flex items-center gap-3 mb-10">
-<div class="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center border border-primary/10">
-<span class="material-symbols-outlined text-primary">analytics</span>
-</div>
-<div>
-<h2 class="font-bold text-primary text-lg">數據視覺化中心</h2>
-<p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-wide">Real-time Performance Analysis</p>
-</div>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-<div class="space-y-6">
-<h3 class="text-xs font-black text-slate-accent uppercase tracking-[0.2em] text-center border-b border-outline-variant/30 pb-2">年度支出結構</h3>
-<div class="relative h-[300px] flex items-center justify-center">
-<canvas id="costStructureChart"></canvas>
-<div class="absolute inset-0 flex items-center justify-center pointer-events-none" id="chart-overlay-cost">
-<div class="text-center">
-<p class="text-[10px] font-black text-on-surface-variant uppercase" id="chart-label-cost">年度分配</p>
-<p class="text-xl font-bold text-primary" id="chart-value-cost"></p>
-</div>
-</div>
-</div>
-<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4 px-4" id="cost-legend"></div>
-</div>
-<div class="space-y-6">
-<h3 class="text-xs font-black text-slate-accent uppercase tracking-[0.2em] text-center border-b border-outline-variant/30 pb-2">損益平衡趨勢</h3>
-<div class="relative h-[300px] flex items-center justify-center">
-<canvas id="pnlTrendChart"></canvas>
-</div>
-<div class="flex justify-center gap-6 mt-4">
-<div class="flex items-center gap-2">
-<div class="w-4 h-1 rounded-full bg-error"></div>
-<span class="text-[10px] font-bold text-on-surface-variant uppercase">預計總支出</span>
-</div>
-<div class="flex items-center gap-2">
-<div class="w-4 h-1 rounded-full bg-secondary"></div>
-<span class="text-[10px] font-bold text-on-surface-variant uppercase">預估總營收</span>
-</div>
-</div>
-</div>
-</div>
+<div class="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-8 gap-6" id="plays-wrapper">
+<!-- Injected via JS -->
 </div>
 </section>
 </main>
-<!-- Detailed Summary Overlay -->
-<div class="fixed inset-0 z-[200] bg-primary/40 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4" id="summary-overlay" onclick="toggleSummaryOverlay()">
-<div class="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-10" onclick="event.stopPropagation()">
-<div class="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
-<h3 class="font-bold text-primary">收支詳細分析</h3>
-<button class="touch-target" onclick="toggleSummaryOverlay()">
-<span class="material-symbols-outlined">close</span>
+<!-- Sticky Bottom Dashboard -->
+<nav class="fixed bottom-0 left-0 right-0 z-[100] transition-all duration-500 dashboard-minimized border-t border-white/10" id="summary-bar">
+<div class="max-w-4xl mx-auto px-4 py-4">
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-white" id="summary-bar-content">
+<div class="bg-black/20 p-3 rounded-xl border border-white/10">
+<p class="text-[9px] font-black uppercase opacity-60 mb-1">年度總支出</p>
+<p class="font-bold text-sm" id="global-total-cost">NT$ 0</p>
+</div>
+<div class="bg-black/20 p-3 rounded-xl border border-white/10">
+<p class="text-[9px] font-black uppercase opacity-60 mb-1">預估總營收 (含加權)</p>
+<p class="font-bold text-sm" id="global-total-revenue">NT$ 0</p>
+</div>
+<div class="bg-black/20 p-3 rounded-xl border border-white/10 hidden md:block">
+<p class="text-[9px] font-black uppercase opacity-60 mb-1">稅務與風險預留</p>
+<p class="font-bold text-sm" id="global-total-tax">NT$ 0</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="w-12 h-12 flex items-center justify-center bg-white/20 rounded-full border border-white/10 text-white admin-ui transition-all active-scale" onclick="toggleDashboard()">
+<span class="material-symbols-outlined" id="summary-toggle-btn">expand_less</span>
 </button>
+<div class="flex-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg">
+<span class="text-[10px] font-black text-white/70 uppercase tracking-[0.2em] mb-1">年度預估淨利</span>
+<span class="text-2xl font-black text-white" id="global-net-profit">NT$ 0</span>
 </div>
-<div class="p-6 space-y-6">
-<div class="space-y-4" id="summary-overlay-content">
-<!-- Content injected via JS -->
-</div>
-<button class="w-full py-4 bg-primary text-white font-bold rounded-xl active-scale" onclick="toggleSummaryOverlay()">關閉視窗</button>
-</div>
-</div>
-</div>
-<!-- Collapsible Bottom Summary Bar -->
-<nav class="fixed bottom-0 left-0 right-0 z-[100] transition-all duration-500 dashboard-minimized bg-secondary shadow-[0_-8px_30px_rgba(0,0,0,0.3)] text-white" id="summary-bar">
-<div class="max-w-7xl mx-auto px-4 py-3 md:py-4">
-<!-- Expandable Content Section -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3 items-end mb-0 border-b border-white/0 transition-all duration-300" id="summary-bar-content">
-<div class="space-y-0.5">
-<span class="text-[8px] uppercase font-black opacity-70 block">年度總支出</span>
-<span class="font-bold text-sm md:text-lg" id="total-cost-display">NT$ 0</span>
-</div>
-<div class="space-y-0.5">
-<span class="text-[8px] uppercase font-black opacity-70 block">總預估營收</span>
-<span class="font-bold text-sm md:text-lg" id="total-revenue-display">NT$ 0</span>
-</div>
-<div class="space-y-0.5">
-<span class="text-[8px] uppercase font-black opacity-70 block">稅金及二代健保</span>
-<span class="font-bold text-sm md:text-lg" id="total-tax-display">NT$ 0</span>
-</div>
-<div class="space-y-0.5 bg-white/10 p-2 rounded-lg border border-white/20">
-<div class="flex justify-between items-center">
-<span class="text-[8px] uppercase font-black opacity-80 block">現金流安全墊</span>
-<span class="material-symbols-outlined text-[14px] opacity-70">umbrella</span>
-</div>
-<span class="font-bold text-sm md:text-lg" id="safety-buffer-display">約 0 個月</span>
-</div>
-</div>
-<!-- Primary Always-Visible Row -->
-<div class="flex flex-col md:flex-row justify-between items-center gap-3">
-<div class="flex items-center gap-3 w-full md:w-auto flex-1">
-<button class="touch-target bg-white/15 hover:bg-white/25 rounded-full w-10 h-10 flex items-center justify-center border border-white/10 admin-ui transition-all" id="dashboard-toggle-container" onclick="toggleDashboardExpansion()">
-<span class="material-symbols-outlined text-xl" id="summary-toggle-btn">expand_less</span>
+<button class="w-12 h-12 flex items-center justify-center bg-white text-primary rounded-2xl shadow-xl admin-ui transition-all active-scale" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+<span class="material-symbols-outlined">arrow_upward</span>
 </button>
-<div class="bg-white/15 rounded-xl px-5 py-2 flex-1 text-center border border-white/10 shadow-inner flex flex-col justify-center cursor-pointer" id="profit-box" onclick="toggleSummaryOverlay()">
-<span class="text-[9px] uppercase font-black opacity-80 block mb-0.5 tracking-wider">年度預估淨利 (信心加權)</span>
-<span class="font-black text-xl md:text-2xl leading-none" id="total-profit-display">NT$ 0</span>
-</div>
-</div>
-<div class="flex gap-2 admin-ui w-full md:w-auto">
-<button class="touch-target bg-white/15 hover:bg-white/25 rounded-xl transition-all active-scale text-white border border-white/10" onclick="copyDataJSON()" title="複製數據">
-<span class="material-symbols-outlined text-lg">content_copy</span>
-</button>
-<button class="h-10 bg-white text-primary hover:bg-white/90 rounded-xl transition-all active-scale font-black text-[11px] uppercase tracking-[0.2em] flex-1 md:px-8 border border-white/20" onclick="toggleSnapshotMode()">
-                    匯出報表
-                </button>
-</div>
 </div>
 </div>
 </nav>
 <script>
-    let appData = {
-        withholdingTaxEnabled: true,
-        snapshotMode: false,
-        dashboardExpanded: false,
-        themeColors: ['#091426', '#EF4444', '#10B981', '#F59E0B', '#3B82F6', '#8B5CF6', '#EC4899', '#06B6D4', '#64748b'],
-        officeCosts: {
-            rent: { value: 25000, limit: 30000, label: '辦公房租' },
-            salary: { value: 120000, limit: 150000, label: '固定薪資' },
-            insurance: { value: 15000, limit: 20000, label: '勞健勞退' },
-            software: { value: 5000, limit: 8000, label: '訂閱工具' },
-            hardware: { value: 180000, limit: 200000, label: '年度硬體攤銷' }
+    let state = {
+        office: {
+            rent: 25000,
+            salary: 120000,
+            insurance: 15000,
+            misc: 5000
         },
         plays: [
             {
-                id: Date.now(),
-                name: '示範計畫：星際劇場',
-                locked: false,
-                tourCount: 4,
-                capacity: 400,
-                prSeats: 20,
-                earlyBirdRatio: 30,
-                earlyBirdPrice: 960,
-                avgTicketPrice: 1200,
-                ticketRate: 75,
-                confidenceLevel: 90,
+                id: 1,
+                name: "年度大型巡演",
+                type: 'new',
+                shows: 5,
+                saleRate: 80,
+                earlyBirdRate: 30,
+                compSeats: 20,
                 platformFee: 8,
-                merchRevenue: 50000,
-                sponsorship: 100000,
-                marketingBudget: 150000,
-                officeContributionRate: 15,
-                ghiRate: 2.11,
-                production: {
-                    creative: { label: '編導創作', unitCost: 40000, count: 3, taxType: '9B', limit: 150000, icon: 'brush' },
-                    performers: { label: '演員演出', unitCost: 25000, count: 6, taxType: '50', limit: 160000, icon: 'groups' },
-                    lighting: { label: '燈光音響', unitCost: 15000, count: 2, taxType: 'corp', limit: 40000, icon: 'wb_incandescent' },
-                    stage: { label: '舞台美術', unitCost: 60000, count: 1, taxType: 'corp', limit: 80000, icon: 'architecture' },
-                    costume: { label: '服裝造型', unitCost: 35000, count: 1, taxType: 'corp', limit: 40000, icon: 'checkroom' },
-                    props: { label: '道具製作', unitCost: 15000, count: 1, taxType: 'corp', limit: 20000, icon: 'category' },
-                    misc: { label: '其他雜項', unitCost: 10000, count: 1, taxType: 'corp', limit: 50000, icon: 'more_horiz' }
-                }
+                confidence: 90,
+                bufferRate: 10,
+                tiers: [
+                    { name: 'VIP', price: 2000, seats: 50 },
+                    { name: '一般', price: 1200, seats: 300 },
+                    { name: '視線不良', price: 800, seats: 50 }
+                ],
+                expenses: {
+                    creative: { qty: 1, rate: 100000 },
+                    cast: { qty: 5, rate: 30000 },
+                    technical: { qty: 1, rate: 80000 },
+                    stage: { qty: 1, rate: 50000 },
+                    costume: { qty: 1, rate: 30000 },
+                    props: { qty: 1, rate: 20000 },
+                    meals: { qty: 40, rate: 500 },
+                    volunteer: { qty: 10, rate: 1000 },
+                    accommodation: { qty: 20, rate: 2000 },
+                    transportation: { qty: 1, rate: 15000 },
+                    misc: { qty: 1, rate: 20000 }
+                },
+                marketing: 50000
             }
-        ]
+        ],
+        ui: {
+            isExpanded: false,
+            analyticsTab: 'profit'
+        }
     };
 
-    const STORAGE_KEY = 'theatre_ledger_v52_vulcan';
-    let costChart, pnlChart;
+    const STORAGE_KEY = 'THEATRE_LEDGER_STATE_V69';
+    let myChart = null;
 
-    function init() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try { 
-                const parsed = JSON.parse(saved);
-                parsed.plays.forEach(p => {
-                    if(!p.production.misc) {
-                        p.production.misc = { label: '其他雜項', unitCost: 0, count: 1, taxType: 'corp', limit: 50000, icon: 'more_horiz' };
-                    }
-                });
-                appData = { ...appData, ...parsed };
-                // Default to minimized on fresh load regardless of saved state for better UX
-                appData.dashboardExpanded = false;
-            } catch(e) { console.error("Data load error", e); }
-        }
-        
-        updateTaxToggleUI();
-        initCharts();
-        renderOffice();
-        renderPlays();
-        updateTotals();
-        updateDashboardState();
+    function saveState() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        calculate();
     }
 
-    function initCharts() {
-        const costCtx = document.getElementById('costStructureChart').getContext('2d');
-        const pnlCtx = document.getElementById('pnlTrendChart').getContext('2d');
-
-        costChart = new Chart(costCtx, {
-            type: 'doughnut',
-            data: {
-                labels: [],
-                datasets: [{
-                    data: [],
-                    backgroundColor: appData.themeColors,
-                    borderWidth: 4,
-                    borderColor: '#ffffff',
-                    hoverOffset: 15
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                cutout: '72%',
-                onHover: (event, elements) => {
-                    if (elements.length > 0) {
-                        const index = elements[0].index;
-                        const label = costChart.data.labels[index];
-                        const val = costChart.data.datasets[0].data[index];
-                        document.getElementById('chart-label-cost').textContent = label;
-                        document.getElementById('chart-value-cost').textContent = `NT$ ${Math.round(val).toLocaleString()}`;
-                    } else {
-                        document.getElementById('chart-label-cost').textContent = '年度分配';
-                        document.getElementById('chart-value-cost').textContent = '';
-                    }
-                }
-            }
-        });
-
-        pnlChart = new Chart(pnlCtx, {
-            type: 'line',
-            data: {
-                labels: ['Q1 籌備', 'Q2 排練', 'Q3 巡演', 'Q4 結案'],
-                datasets: [
-                    { label: '支出', data: [], borderColor: '#EF4444', borderWidth: 4, pointRadius: 6, pointHoverRadius: 10, pointBackgroundColor: '#ffffff', pointBorderWidth: 3, tension: 0.4, fill: false },
-                    { label: '營收', data: [], borderColor: '#10B981', borderWidth: 4, pointRadius: 6, pointHoverRadius: 10, pointBackgroundColor: '#ffffff', pointBorderWidth: 3, tension: 0.4, fill: false }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { 
-                    legend: { display: false },
-                    tooltip: {
-                        enabled: true,
-                        backgroundColor: '#091426',
-                        padding: 12,
-                        titleFont: { size: 14, weight: 'bold' },
-                        bodyFont: { size: 12 },
-                        callbacks: {
-                            label: (ctx) => `NT$ ${Math.round(ctx.parsed.y).toLocaleString()}`
-                        }
-                    }
-                },
-                scales: {
-                    y: { grid: { color: 'rgba(0,0,0,0.05)' }, border: { display: false }, ticks: { display: false } },
-                    x: { grid: { display: false }, ticks: { font: { size: 10, weight: '900' }, color: '#64748b', padding: 10 } }
-                }
-            }
-        });
-    }
-
-    function toggleDashboardExpansion() {
-        appData.dashboardExpanded = !appData.dashboardExpanded;
-        updateDashboardState();
-    }
-
-    function updateDashboardState() {
-        const bar = document.getElementById('summary-bar');
-        const content = document.getElementById('summary-bar-content');
-        if (appData.dashboardExpanded) {
-            bar.classList.add('dashboard-expanded');
-            bar.classList.remove('dashboard-minimized');
-            content.classList.add('border-white/20', 'pb-4');
-        } else {
-            bar.classList.remove('dashboard-expanded');
-            bar.classList.add('dashboard-minimized');
-            content.classList.remove('border-white/20', 'pb-4');
-        }
-    }
-
-    function toggleWithholdingTax() {
-        appData.withholdingTaxEnabled = !appData.withholdingTaxEnabled;
-        updateTaxToggleUI();
-        updateTotals();
-    }
-
-    function updateTaxToggleUI() {
-        const dot = document.getElementById('tax-toggle-dot');
-        const btn = document.getElementById('tax-toggle');
-        if (appData.withholdingTaxEnabled) {
-            dot.style.transform = 'translateX(1.5rem)';
-            btn.classList.add('bg-secondary');
-            btn.classList.remove('bg-outline-variant');
-        } else {
-            dot.style.transform = 'translateX(0)';
-            btn.classList.remove('bg-secondary');
-            btn.classList.add('bg-outline-variant');
-        }
-    }
-
-    function toggleLock(idx) {
-        appData.plays[idx].locked = !appData.plays[idx].locked;
-        renderPlays();
-    }
-
-    function toggleSnapshotMode() {
-        appData.snapshotMode = !appData.snapshotMode;
-        if (appData.snapshotMode) {
-            document.body.classList.add('snapshot-mode');
-            document.getElementById('snapshot-header').classList.remove('hidden');
-            document.getElementById('snapshot-date').textContent = new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' });
-            window.scrollTo(0,0);
-            // Auto expand dashboard for snapshot
-            appData.dashboardExpanded = true;
-            updateDashboardState();
-        } else {
-            document.body.classList.remove('snapshot-mode');
-            document.getElementById('snapshot-header').classList.add('hidden');
-        }
-        renderPlays(); 
-    }
-
-    function toggleSummaryOverlay() {
-        const overlay = document.getElementById('summary-overlay');
-        const isOpen = !overlay.classList.contains('hidden');
-        
-        if (isOpen) {
-            overlay.classList.add('hidden');
-            document.body.classList.remove('overlay-active');
-        } else {
-            updateOverlayContent();
-            overlay.classList.remove('hidden');
-            document.body.classList.add('overlay-active');
-        }
-    }
-
-    function updateOverlayContent() {
-        const content = document.getElementById('summary-overlay-content');
-        const totalCost = document.getElementById('total-cost-display').textContent;
-        const totalRev = document.getElementById('total-revenue-display').textContent;
-        const totalTax = document.getElementById('total-tax-display').textContent;
-        const totalProfit = document.getElementById('total-profit-display').textContent;
-        
-        content.innerHTML = `
-            <div class="space-y-4">
-                <div class="flex justify-between items-center py-3 border-b border-outline-variant/30">
-                    <span class="text-on-surface-variant font-bold text-sm">年度預計總支出</span>
-                    <span class="font-black text-primary">${totalCost}</span>
-                </div>
-                <div class="flex justify-between items-center py-3 border-b border-outline-variant/30">
-                    <span class="text-on-surface-variant font-bold text-sm">信心加權總營收</span>
-                    <span class="font-black text-secondary">${totalRev}</span>
-                </div>
-                <div class="flex justify-between items-center py-3 border-b border-outline-variant/30">
-                    <span class="text-on-surface-variant font-bold text-sm">預估稅務成本</span>
-                    <span class="font-black text-error">${totalTax}</span>
-                </div>
-                <div class="flex justify-between items-center py-4 px-4 bg-primary/5 rounded-xl">
-                    <span class="text-primary font-black">預估淨利</span>
-                    <span class="font-black text-xl ${parseInt(totalProfit.replace(/[^0-9-]/g, '')) >= 0 ? 'text-secondary' : 'text-error'}">${totalProfit}</span>
-                </div>
-                <p class="text-[10px] text-on-surface-variant text-center font-bold uppercase tracking-widest mt-2">Data updated in real-time</p>
-            </div>
-        `;
-    }
-
-    function updateTotals() {
-        const officeMonthly = appData.officeCosts.rent.value + appData.officeCosts.salary.value + appData.officeCosts.insurance.value + appData.officeCosts.software.value;
-        const officeAnnual = (officeMonthly * 12) + appData.officeCosts.hardware.value;
-        
-        let totalRev = 0;
-        let totalCost = officeAnnual;
-        let totalTaxAndGHI = 0;
-        let playCosts = [];
-
-        appData.plays.forEach((play, idx) => {
-            const sellableSeats = play.tourCount * Math.max(0, play.capacity - play.prSeats);
-            const salesCount = sellableSeats * (play.ticketRate / 100);
-            const earlyBirdCount = salesCount * (play.earlyBirdRatio / 100);
-            const normalCount = salesCount - earlyBirdCount;
-            const grossRev = (earlyBirdCount * play.earlyBirdPrice) + (normalCount * play.avgTicketPrice);
-            const netRev = grossRev * (1 - play.platformFee / 100);
-            const weightedRev = (netRev + play.merchRevenue + play.sponsorship) * (play.confidenceLevel / 100);
-            
-            let playProdCost = 0;
-            let playTaxAndGHI = 0;
-            let playStamp = 0;
-            
-            Object.values(play.production).forEach(item => {
-                const subtotal = item.unitCost * item.count;
-                playProdCost += subtotal;
-                
-                if (item.taxType === '9B' || item.taxType === '50') {
-                    playTaxAndGHI += subtotal * (play.ghiRate / 100);
-                }
-                
-                if (appData.withholdingTaxEnabled && item.taxType === '9B' && item.unitCost >= 20000) {
-                    playTaxAndGHI += subtotal * 0.10;
-                }
-                
-                if (item.taxType !== 'corp') {
-                    playStamp += subtotal * 0.004;
-                }
-            });
-
-            const contribution = weightedRev * (play.officeContributionRate / 100);
-            const playTotalCost = playProdCost + playTaxAndGHI + playStamp + play.marketingBudget + contribution;
-            
-            totalRev += weightedRev;
-            totalCost += playTotalCost;
-            totalTaxAndGHI += playTaxAndGHI;
-            playCosts.push({ name: play.name, value: playTotalCost });
-
-            const unitPrice = (play.avgTicketPrice * (1 - play.earlyBirdRatio / 100)) + (play.earlyBirdPrice * (play.earlyBirdRatio / 100));
-            const ticketsNeeded = unitPrice > 0 ? Math.ceil(playTotalCost / (unitPrice * (1 - play.platformFee/100))) : 0;
-            const bepRate = (play.tourCount * play.capacity) > 0 ? (ticketsNeeded / (play.tourCount * play.capacity) * 100).toFixed(1) : 0;
-            
-            updatePlayUI(idx, weightedRev - playTotalCost, bepRate, ticketsNeeded, play.tourCount * play.capacity, playTotalCost);
-        });
-
-        const finalProfit = totalRev - totalCost;
-        const liquidAvailable = (totalRev * 0.35) + (appData.plays[0]?.sponsorship || 0); 
-        const safetyMonths = officeMonthly > 0 ? (liquidAvailable / officeMonthly).toFixed(1) : '∞';
-        
-        document.getElementById('total-cost-display').textContent = `NT$ ${Math.round(totalCost).toLocaleString()}`;
-        document.getElementById('total-revenue-display').textContent = `NT$ ${Math.round(totalRev).toLocaleString()}`;
-        document.getElementById('total-tax-display').textContent = `NT$ ${Math.round(totalTaxAndGHI).toLocaleString()}`;
-        document.getElementById('total-profit-display').textContent = `NT$ ${Math.round(finalProfit).toLocaleString()}`;
-        document.getElementById('safety-buffer-display').textContent = `約 ${safetyMonths} 個月`;
-
-        const bar = document.getElementById('summary-bar');
-        bar.className = `fixed bottom-0 left-0 right-0 z-[100] text-white shadow-[0_-8px_30px_rgba(0,0,0,0.3)] transition-all duration-500 ${appData.dashboardExpanded ? 'dashboard-expanded' : 'dashboard-minimized'} ${finalProfit >= 0 ? 'bg-secondary' : 'bg-error'}`;
-        
-        updateChartsData(officeAnnual, playCosts, totalCost, totalRev);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-    }
-
-    function updateChartsData(officeTotal, plays, totalCost, totalRev) {
-        if(!costChart || !pnlChart) return;
-        const labels = ['總部行政', ...plays.map(p => p.name)];
-        const data = [officeTotal, ...plays.map(p => p.value)];
-        costChart.data.labels = labels;
-        costChart.data.datasets[0].data = data;
-        costChart.update();
-
-        const legend = document.getElementById('cost-legend');
-        legend.innerHTML = labels.map((l, i) => `
-            <div class="flex items-center gap-2 overflow-hidden bg-surface-container-low p-2 rounded-lg border border-outline-variant/30">
-                <div class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${appData.themeColors[i % appData.themeColors.length]}"></div>
-                <span class="text-[9px] font-black truncate text-on-surface-variant uppercase">${l}</span>
-            </div>
-        `).join('');
-
-        pnlChart.data.datasets[0].data = [officeTotal * 0.2, totalCost * 0.4, totalCost * 0.85, totalCost];
-        pnlChart.data.datasets[1].data = [0, totalRev * 0.05, totalRev * 0.7, totalRev];
-        pnlChart.update();
-    }
-
-    function updatePlayUI(idx, profit, bepRate, tickets, cap, cost) {
-        const card = document.getElementById(`play-card-${idx}`);
-        if (!card) return;
-        const profitEl = card.querySelector('.play-profit-display');
-        if (profitEl) {
-            profitEl.textContent = `NT$ ${Math.round(profit).toLocaleString()}`;
-            profitEl.className = `play-profit-display font-black text-lg ${profit >= 0 ? 'text-secondary' : 'text-error'}`;
-        }
-        card.querySelector('.bep-sub').textContent = `${tickets.toLocaleString()} / ${cap.toLocaleString()} 張`;
-        card.querySelector('.bep-text').textContent = `保本門檻 ${bepRate}%`;
-        card.querySelector('.bep-bar').style.width = `${Math.min(bepRate, 100)}%`;
-        card.querySelector('.bep-bar').className = `bep-bar h-full transition-all duration-1000 ${bepRate > 90 ? 'bg-error' : 'bg-secondary'}`;
-        card.querySelector('.play-total-cost-display').textContent = `NT$ ${Math.round(cost).toLocaleString()}`;
-    }
-
-    function renderOffice() {
-        const container = document.getElementById('office-costs-container');
-        container.innerHTML = Object.entries(appData.officeCosts).map(([key, data]) => `
-            <div class="space-y-2">
-                <label class="text-[9px] font-black uppercase text-on-surface-variant block px-1 tracking-wider">${data.label}</label>
-                <div class="flex items-center bg-white border-2 border-outline-variant rounded-xl h-14 overflow-hidden focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 transition-all interactive-element shadow-sm">
-                    <button class="touch-target w-12 hover:bg-surface-container active:bg-outline-variant/30 text-on-surface-variant admin-ui" onclick="const i=this.nextElementSibling; i.value=Math.max(0, (parseInt(i.value)||0)-1000); i.dispatchEvent(new Event('input'))">
-                        <span class="material-symbols-outlined text-sm">remove</span>
-                    </button>
-                    <input type="number" value="${data.value}" oninput="appData.officeCosts.${key}.value=parseInt(this.value)||0; updateTotals()" class="w-full text-center border-none bg-transparent focus:ring-0 font-black text-base text-on-surface p-0">
-                    <button class="touch-target w-12 hover:bg-surface-container active:bg-outline-variant/30 text-on-surface-variant admin-ui" onclick="const i=this.previousElementSibling; i.value=(parseInt(i.value)||0)+1000; i.dispatchEvent(new Event('input'))">
-                        <span class="material-symbols-outlined text-sm">add</span>
-                    </button>
-                </div>
-            </div>`).join('');
-    }
-
-    function renderPlays() {
-        const wrapper = document.getElementById('plays-wrapper');
-        const dots = document.getElementById('carousel-dots');
-        dots.innerHTML = appData.plays.map((_, i) => `<div class="dot-indicator ${i === 0 ? 'active' : ''}"></div>`).join('') + (appData.snapshotMode ? '' : '<div class="dot-indicator"></div>');
-
-        wrapper.innerHTML = appData.plays.map((play, idx) => `
-            <div id="play-card-${idx}" class="flex-shrink-0 w-[90vw] md:w-[500px] snap-center bg-white rounded-3xl border border-outline-variant shadow-xl flex flex-col overflow-hidden h-fit card-shadow ${play.locked ? 'card-locked' : ''} active-scale">
-                <div class="p-6 bg-surface-container-low border-b border-outline-variant/50 flex justify-between items-center">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center shadow-lg transform rotate-3">
-                            <span class="material-symbols-outlined text-2xl">${play.locked ? 'lock' : 'theater_comedy'}</span>
-                        </div>
-                        <div>
-                            <input type="text" value="${play.name}" oninput="appData.plays[${idx}].name=this.value; updateTotals()" class="font-black text-lg border-none bg-transparent focus:ring-0 p-0 text-primary w-full interactive-element focus:border-b-2 focus:border-primary">
-                            <div class="play-profit-display">NT$ 0</div>
-                        </div>
-                    </div>
-                    <div class="flex gap-1 admin-ui">
-                        <button onclick="toggleLock(${idx})" class="touch-target hover:bg-black/5 rounded-full text-on-surface-variant transition-all active-scale">
-                            <span class="material-symbols-outlined text-xl">${play.locked ? 'lock_open' : 'lock'}</span>
-                        </button>
-                        <button onclick="deletePlay(${idx})" class="touch-target hover:bg-error/10 rounded-full text-error transition-all active-scale">
-                            <span class="material-symbols-outlined text-xl">delete</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="p-6 space-y-8 bg-white">
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-end">
-                            <span class="text-[10px] font-black text-primary uppercase tracking-[0.1em]">保本進度分析</span>
-                            <div class="text-right">
-                                <span class="bep-sub text-[10px] font-bold text-on-surface"></span>
-                                <div class="bep-text text-[11px] font-black uppercase"></div>
-                            </div>
-                        </div>
-                        <div class="w-full h-3 bg-surface-container-high rounded-full overflow-hidden shadow-inner p-0.5">
-                            <div class="bep-bar h-full rounded-full shadow-sm" style="width: 0%"></div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-6">
-                        ${createStepper('巡演場次', play.tourCount, (v) => { appData.plays[idx].tourCount = v; updateTotals(); })}
-                        ${createStepper('單場席數', play.capacity, (v) => { appData.plays[idx].capacity = v; updateTotals(); })}
-                        ${createStepper('公關留座', play.prSeats, (v) => { appData.plays[idx].prSeats = v; updateTotals(); })}
-                        ${createStepper('服務費 %', play.platformFee, (v) => { appData.plays[idx].platformFee = v; updateTotals(); })}
-                    </div>
-
-                    <div class="p-5 bg-surface-container-low rounded-2xl space-y-5 border border-outline-variant/60 interactive-element">
-                        <div class="space-y-2">
-                            <div class="flex justify-between items-center text-[10px] font-black text-primary uppercase">
-                                <span>預計平均銷售率</span>
-                                <span class="bg-primary text-white px-2 py-0.5 rounded-full font-black">${play.ticketRate}%</span>
-                            </div>
-                            <input type="range" min="0" max="100" value="${play.ticketRate}" oninput="appData.plays[${idx}].ticketRate=parseInt(this.value); updateTotals(); this.parentElement.querySelector('span:last-child').textContent=this.value+'%'" class="custom-slider my-2">
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
-                        <div class="text-[10px] font-black text-on-surface-variant uppercase border-b border-outline-variant/50 pb-2 flex justify-between">
-                            <span>重點製作支出</span>
-                            <span>金額 (預估)</span>
-                        </div>
-                        ${Object.entries(play.production).map(([key, item]) => `
-                            <div class="flex justify-between items-center py-2">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center border border-outline-variant/30 shrink-0">
-                                        <span class="material-symbols-outlined text-[18px] text-on-surface-variant">${item.icon}</span>
-                                    </div>
-                                    <span class="text-[11px] font-bold text-on-surface">${item.label}</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <div class="flex items-center bg-surface-container-low border border-outline-variant rounded-lg h-9 overflow-hidden admin-ui">
-                                        <button onclick="const i=this.nextElementSibling; i.value=Math.max(0, (parseInt(i.value)||0)-5000); i.dispatchEvent(new Event('input'))" class="w-7 h-full flex items-center justify-center hover:bg-outline-variant/20 active:bg-outline-variant/40 transition-colors text-on-surface-variant">
-                                            <span class="material-symbols-outlined text-xs">remove</span>
-                                        </button>
-                                        <input type="number" value="${item.unitCost}" 
-                                            oninput="appData.plays[${idx}].production['${key}'].unitCost=parseInt(this.value)||0; updateTotals();" 
-                                            class="w-16 text-center border-none bg-transparent p-0 focus:ring-0 font-black text-[11px] text-primary">
-                                        <button onclick="const i=this.previousElementSibling; i.value=(parseInt(i.value)||0)+5000; i.dispatchEvent(new Event('input'))" class="w-7 h-full flex items-center justify-center hover:bg-outline-variant/20 active:bg-outline-variant/40 transition-colors text-on-surface-variant">
-                                            <span class="material-symbols-outlined text-xs">add</span>
-                                        </button>
-                                    </div>
-                                    <span class="snapshot-only text-[11px] font-black text-primary">NT$ ${(item.unitCost * item.count).toLocaleString()}</span>
-                                    <div class="flex admin-ui">
-                                        <button onclick="toggleTaxType(${idx}, '${key}')" class="touch-target !w-auto h-auto min-h-0 text-[9px] font-black px-2 py-1 rounded-md border border-outline-variant bg-surface-container text-on-surface-variant uppercase active-scale shadow-sm">${item.taxType}</button>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-
-                <div class="p-6 bg-surface-container border-t border-outline-variant/50 mt-auto flex justify-between items-end">
-                    <div>
-                        <p class="text-[9px] text-on-surface-variant font-black uppercase tracking-widest">Project Total Weighted Cost</p>
-                        <p class="play-total-cost-display font-black text-primary text-2xl">NT$ 0</p>
-                    </div>
-                </div>
-            </div>
-        `).join('') + `
-            <div class="flex-shrink-0 w-[90vw] md:w-[500px] snap-center admin-ui">
-                <button onclick="addNewPlay()" class="w-full h-full min-h-[500px] border-4 border-dashed border-outline-variant hover:border-primary/20 bg-white/50 hover:bg-white rounded-3xl flex flex-col items-center justify-center gap-6 transition-all active-scale group shadow-sm">
-                    <div class="w-20 h-20 rounded-full bg-outline-variant/20 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                        <span class="material-symbols-outlined text-5xl text-outline-variant group-hover:text-primary transition-colors">add_circle</span>
-                    </div>
-                    <div class="text-center">
-                        <span class="font-black text-primary block uppercase tracking-[0.2em] text-sm">新增專案</span>
-                        <span class="text-[10px] font-bold text-on-surface-variant uppercase mt-1 block">New Performance Project</span>
-                    </div>
-                </button>
-            </div>
-        `;
-        updateTotals();
-    }
-
-    function createStepper(label, value, onChange) {
-        return `
-        <div class="space-y-2">
-            <label class="text-[9px] font-black text-on-surface-variant uppercase block px-1 tracking-wider">${label}</label>
-            <div class="flex items-center bg-white border-2 border-outline-variant rounded-xl h-12 overflow-hidden focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/5 transition-all interactive-element shadow-sm">
-                <button onclick="const i=this.nextElementSibling; i.stepDown(); i.dispatchEvent(new Event('input'))" class="touch-target w-10 hover:bg-surface-container active:bg-outline-variant/30 transition-colors shrink-0 text-on-surface-variant admin-ui">
-                    <span class="material-symbols-outlined text-base">remove</span>
-                </button>
-                <input type="number" value="${value}" oninput="(${onChange.toString()})(parseInt(this.value) || 0)" class="w-full text-center border-none p-0 focus:ring-0 text-sm font-black bg-transparent text-on-surface">
-                <button onclick="const i=this.previousElementSibling; i.stepUp(); i.dispatchEvent(new Event('input'))" class="touch-target w-10 hover:bg-surface-container active:bg-outline-variant/30 transition-colors shrink-0 text-on-surface-variant admin-ui">
-                    <span class="material-symbols-outlined text-base">add</span>
-                </button>
-            </div>
-        </div>`;
-    }
-
-    function toggleTaxType(idx, key) {
-        const types = ['9B', '50', 'corp'];
-        const current = appData.plays[idx].production[key].taxType;
-        const next = types[(types.indexOf(current) + 1) % types.length];
-        appData.plays[idx].production[key].taxType = next;
-        renderPlays();
-    }
-
-    function addNewPlay() {
-        const newPlay = JSON.parse(JSON.stringify(appData.plays[0]));
-        newPlay.id = Date.now();
-        newPlay.name = `新劇目計畫 ${appData.plays.length + 1}`;
-        newPlay.locked = false;
-        appData.plays.push(newPlay);
-        renderPlays();
-        const wrapper = document.getElementById('plays-wrapper');
-        setTimeout(() => wrapper.scrollTo({ left: wrapper.scrollWidth, behavior: 'smooth' }), 50);
-    }
-
-    function deletePlay(idx) {
-        if (appData.plays.length > 1 && confirm('確定刪除此專案？')) {
-            appData.plays.splice(idx, 1);
-            renderPlays();
-        }
-    }
-
-    function updateDots() {
-        const wrapper = document.getElementById('plays-wrapper');
-        const dotsContainer = document.getElementById('carousel-dots');
-        if (!dotsContainer) return;
-        const dots = dotsContainer.children;
-        const cardWidth = wrapper.offsetWidth * 0.90;
-        const index = Math.round(wrapper.scrollLeft / (cardWidth + 24)); 
-        Array.from(dots).forEach((dot, i) => {
-            if (i === index) dot.classList.add('active');
-            else if (dot.classList) dot.classList.remove('active');
-        });
-    }
-
-    function copyDataJSON() {
-        navigator.clipboard.writeText(JSON.stringify(appData, null, 2));
-        const btn = event.currentTarget;
-        const originalIcon = btn.innerHTML;
-        btn.innerHTML = '<span class="material-symbols-outlined">check</span>';
-        setTimeout(() => btn.innerHTML = originalIcon, 2000);
-    }
-
-    function resetData() {
-        if(confirm('重設所有數據至預設值？這將無法復原。')) {
+    function resetState() {
+        if(confirm('確定要重設所有數據嗎？')) {
             localStorage.removeItem(STORAGE_KEY);
             location.reload();
         }
     }
 
-    window.onload = init;
+    function setAnalyticsTab(tab) {
+        state.ui.analyticsTab = tab;
+        document.getElementById('tab-profit').classList.toggle('active', tab === 'profit');
+        document.getElementById('tab-cashflow').classList.toggle('active', tab === 'cashflow');
+        renderAnalyticsChart();
+    }
+
+    function calculate() {
+        const officeMonthly = Object.values(state.office).reduce((a, b) => a + b, 0);
+        const officeAnnual = officeMonthly * 12;
+
+        let totalRev = 0;
+        let totalCost = officeAnnual;
+        let totalTaxAndBuffer = 0;
+
+        state.plays.forEach(play => {
+            const totalCapacityPerShow = play.tiers.reduce((acc, tier) => acc + tier.seats, 0);
+            const billableRatio = Math.max(0, (totalCapacityPerShow - (play.compSeats || 0)) / totalCapacityPerShow);
+            
+            let tierRevenuePotential = play.tiers.reduce((acc, tier) => {
+                const tierSeats = tier.seats * billableRatio;
+                const earlyBirdSeats = tierSeats * (play.earlyBirdRate / 100);
+                const regularSeats = tierSeats - earlyBirdSeats;
+                const ebPrice = tier.price * 0.8; 
+                return acc + (earlyBirdSeats * ebPrice) + (regularSeats * tier.price);
+            }, 0);
+
+            const afterPlatformRev = (tierRevenuePotential * play.shows) * (play.saleRate / 100) * (1 - (play.platformFee / 100));
+            const weightedRev = afterPlatformRev * (play.confidence / 100);
+            
+            const prodCost = Object.values(play.expenses).reduce((a, b) => a + (b.qty * b.rate), 0);
+            const playBaseCost = prodCost + (play.marketing || 0);
+            
+            const emergencyBuffer = playBaseCost * (play.bufferRate / 100);
+            const playTotalCostIncludingBuffer = playBaseCost + emergencyBuffer;
+            
+            const incomeTax = prodCost * 0.05; 
+            const vat = weightedRev * 0.05;
+            const estimatedTax = incomeTax + vat;
+
+            const totalSeatsAllShows = totalCapacityPerShow * play.shows;
+            const avgWeightedPrice = tierRevenuePotential / totalCapacityPerShow;
+            const bepTickets = Math.ceil((playBaseCost + emergencyBuffer + estimatedTax) / (avgWeightedPrice * (1 - play.platformFee/100)));
+
+            play.calculated = {
+                revenue: weightedRev,
+                prodCost: prodCost,
+                totalCost: playBaseCost,
+                bufferAmount: emergencyBuffer,
+                profit: weightedRev - playBaseCost - emergencyBuffer - estimatedTax,
+                bepTickets: bepTickets,
+                totalSeats: totalSeatsAllShows,
+                avgPrice: avgWeightedPrice
+            };
+
+            totalRev += weightedRev;
+            totalCost += playBaseCost;
+            totalTaxAndBuffer += estimatedTax + emergencyBuffer;
+        });
+
+        const netProfit = totalRev - totalCost - totalTaxAndBuffer;
+        updateUI(officeAnnual, totalRev, totalCost, totalTaxAndBuffer, netProfit);
+    }
+
+    function renderAnalyticsChart() {
+        const ctx = document.getElementById('analyticsChart').getContext('2d');
+        if (myChart) myChart.destroy();
+
+        const labels = state.plays.map(p => p.name);
+        
+        if (state.ui.analyticsTab === 'profit') {
+            const data = state.plays.map(p => p.calculated.profit);
+            const colors = data.map(v => v >= 0 ? 'rgba(5, 150, 105, 0.8)' : 'rgba(220, 38, 38, 0.8)');
+            const borderColors = data.map(v => v >= 0 ? '#059669' : '#dc2626');
+
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '專案淨利',
+                        data: data,
+                        backgroundColor: colors,
+                        borderColor: borderColors,
+                        borderWidth: 1,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            grid: { color: '#e2e8f0' },
+                            ticks: { font: { size: 10, weight: 'bold' } }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { font: { size: 10, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        } else {
+            // Cash Flow Trend (Cumulative)
+            const officeMonthly = Object.values(state.office).reduce((a, b) => a + b, 0);
+            let cumulative = - (officeMonthly * 12);
+            const flowData = [cumulative];
+            const flowLabels = ['期初(營運)'];
+            
+            state.plays.forEach(p => {
+                cumulative += p.calculated.profit;
+                flowData.push(cumulative);
+                flowLabels.push(p.name);
+            });
+
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: flowLabels,
+                    datasets: [{
+                        label: '累積損益',
+                        data: flowData,
+                        borderColor: '#0f172a',
+                        backgroundColor: 'rgba(15, 23, 42, 0.05)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: flowData.map(v => v >= 0 ? '#059669' : '#dc2626'),
+                        pointRadius: 6,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            grid: { color: '#e2e8f0' },
+                            ticks: { font: { size: 10, weight: 'bold' } }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { font: { size: 10, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    function updateUI(officeAnnual, totalRev, totalCost, totalTaxAndBuffer, netProfit) {
+        document.getElementById('global-total-cost').textContent = `NT$ ${Math.round(totalCost).toLocaleString()}`;
+        document.getElementById('global-total-revenue').textContent = `NT$ ${Math.round(totalRev).toLocaleString()}`;
+        document.getElementById('global-total-tax').textContent = `NT$ ${Math.round(totalTaxAndBuffer).toLocaleString()}`;
+        document.getElementById('global-net-profit').textContent = `NT$ ${Math.round(netProfit).toLocaleString()}`;
+
+        const bar = document.getElementById('summary-bar');
+        if (netProfit >= 0) {
+            bar.classList.remove('bg-error');
+            bar.classList.add('bg-secondary');
+        } else {
+            bar.classList.remove('bg-secondary');
+            bar.classList.add('bg-error');
+        }
+
+        renderOffice();
+        renderPlays();
+        renderAnalyticsChart();
+    }
+
+    function toggleDashboard() {
+        state.ui.isExpanded = !state.ui.isExpanded;
+        const bar = document.getElementById('summary-bar');
+        if(state.ui.isExpanded) {
+            bar.classList.add('dashboard-expanded');
+            bar.classList.remove('dashboard-minimized');
+        } else {
+            bar.classList.remove('dashboard-expanded');
+            bar.classList.add('dashboard-minimized');
+        }
+    }
+
+    function renderOffice() {
+        const container = document.getElementById('office-costs-container');
+        const labels = { rent: '辦公室租金', salary: '固定薪資', insurance: '勞健退提撥', misc: '行政雜項' };
+        
+        container.innerHTML = Object.entries(state.office).map(([key, val]) => `
+            <div class="space-y-1.5">
+                <label class="text-[10px] font-black uppercase text-on-surface-variant px-1">${labels[key]}</label>
+                <div class="relative">
+                    <input type="number" value="${val}" 
+                        onchange="state.office.${key} = Number(this.value); saveState();"
+                        class="w-full bg-surface-container border-none rounded-xl py-3 px-4 font-bold focus:ring-2 focus:ring-primary/20 text-sm">
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-on-surface-variant">NT$</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function setPlayType(idx, type) {
+        state.plays[idx].type = type;
+        if(type === 'revival') {
+            // Suggest cost reduction for revivals
+            if(state.plays[idx].expenses.stage.rate > 20000) state.plays[idx].expenses.stage.rate *= 0.5;
+        }
+        saveState();
+    }
+
+    function addTier(idx) {
+        state.plays[idx].tiers.push({ name: '新票種', price: 1000, seats: 100 });
+        saveState();
+    }
+
+    function removeTier(pIdx, tIdx) {
+        if(state.plays[pIdx].tiers.length <= 1) return;
+        state.plays[pIdx].tiers.splice(tIdx, 1);
+        saveState();
+    }
+
+    function renderPlays() {
+        const wrapper = document.getElementById('plays-wrapper');
+        const dotsContainer = document.getElementById('carousel-dots');
+        
+        dotsContainer.innerHTML = state.plays.map((_, i) => `<div class="dot-indicator"></div>`).join('');
+        
+        const expenseConfigs = [
+            { key: 'creative', label: '導演編創', icon: 'edit_note' },
+            { key: 'cast', label: '演員演出', icon: 'groups' },
+            { key: 'technical', label: '燈光音響', icon: 'settings_input_component' },
+            { key: 'stage', label: '舞台美術', icon: 'foundation' },
+            { key: 'costume', label: '服裝造型', icon: 'checkroom' },
+            { key: 'props', label: '道具製作', icon: 'category' },
+            { key: 'meals', label: '餐飲費', icon: 'restaurant' },
+            { key: 'volunteer', label: '志工費', icon: 'group' },
+            { key: 'accommodation', label: '住宿費', icon: 'hotel' },
+            { key: 'transportation', label: '交通費', icon: 'directions_bus' },
+            { key: 'misc', label: '其他雜項', icon: 'more_horiz' }
+        ];
+
+        wrapper.innerHTML = state.plays.map((play, idx) => `
+            <div class="flex-shrink-0 w-[88vw] sm:w-[520px] snap-center bg-white border border-outline-variant rounded-3xl overflow-hidden shadow-sm flex flex-col">
+                <!-- Header -->
+                <div class="p-5 border-b border-outline-variant bg-surface-container/30">
+                    <div class="flex justify-between items-center mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-primary text-white flex items-center justify-center rounded-xl">
+                                <span class="material-symbols-outlined text-xl">theater_comedy</span>
+                            </div>
+                            <input type="text" value="${play.name}" onchange="state.plays[${idx}].name=this.value; saveState();"
+                                class="font-black text-primary border-none bg-transparent p-0 focus:ring-0 text-base w-48">
+                        </div>
+                        <div class="flex gap-1 admin-ui">
+                            <button onclick="duplicatePlay(${idx})" class="w-8 h-8 flex items-center justify-center hover:bg-primary/5 rounded-full text-on-surface-variant transition-all active-scale">
+                                <span class="material-symbols-outlined text-lg">content_copy</span>
+                            </button>
+                            <button onclick="deletePlay(${idx})" class="w-8 h-8 flex items-center justify-center hover:bg-error/5 rounded-full text-error transition-all active-scale">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="toggle-group">
+                        <div onclick="setPlayType(${idx}, 'new')" class="toggle-btn ${play.type === 'new' ? 'active' : ''}">新製作 (New)</div>
+                        <div onclick="setPlayType(${idx}, 'revival')" class="toggle-btn ${play.type === 'revival' ? 'active' : ''}">重製 (Revival)</div>
+                    </div>
+                </div>
+                
+                <div class="p-6 space-y-8 flex-1 overflow-y-auto max-h-[70vh] scrollbar-hide">
+                    
+                    <!-- Advanced Ticketing -->
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Price Tiers / 票價結構</span>
+                            <button onclick="addTier(${idx})" class="text-[10px] font-black text-primary hover:underline flex items-center gap-1">
+                                <span class="material-symbols-outlined text-xs">add</span> 新增票種
+                            </button>
+                        </div>
+                        <div class="space-y-2">
+                            ${play.tiers.map((tier, tIdx) => `
+                                <div class="grid grid-cols-12 gap-2 items-center bg-surface-container/40 p-2 rounded-xl border border-outline-variant/30">
+                                    <div class="col-span-4">
+                                        <input type="text" value="${tier.name}" onchange="state.plays[${idx}].tiers[${tIdx}].name=this.value; saveState();"
+                                            placeholder="等級" class="w-full bg-white border-none rounded-lg py-1.5 px-2 text-[11px] font-bold">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <div class="relative">
+                                            <input type="number" value="${tier.price}" onchange="state.plays[${idx}].tiers[${tIdx}].price=Number(this.value); saveState();"
+                                                class="w-full bg-white border-none rounded-lg py-1.5 px-2 text-[11px] font-black text-right">
+                                            <span class="absolute left-1 top-1/2 -translate-y-1/2 text-[7px] font-black opacity-30">NT$</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-3">
+                                        <div class="relative">
+                                            <input type="number" value="${tier.seats}" onchange="state.plays[${idx}].tiers[${tIdx}].seats=Number(this.value); saveState();"
+                                                class="w-full bg-white border-none rounded-lg py-1.5 px-2 text-[11px] font-black text-right">
+                                            <span class="absolute left-1 top-1/2 -translate-y-1/2 text-[7px] font-black opacity-30">座</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-2 flex justify-center">
+                                        <button onclick="removeTier(${idx}, ${tIdx})" class="text-on-surface-variant hover:text-error transition-colors">
+                                            <span class="material-symbols-outlined text-sm">close</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <label class="text-[9px] font-black uppercase text-on-surface-variant">演出場次</label>
+                                <input type="number" value="${play.shows}" onchange="state.plays[${idx}].shows=Number(this.value); saveState();"
+                                    class="w-full bg-surface-container border-none rounded-lg py-2 px-3 font-bold text-xs">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[9px] font-black uppercase text-on-surface-variant">平均銷售率 (%)</label>
+                                <input type="number" value="${play.saleRate}" onchange="state.plays[${idx}].saleRate=Number(this.value); saveState();"
+                                    class="w-full bg-surface-container border-none rounded-lg py-2 px-3 font-bold text-xs">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-3 bg-primary/5 p-3 rounded-xl border border-primary/10">
+                            <div class="space-y-1">
+                                <label class="text-[8px] font-black uppercase text-primary/70">早鳥比例 (%)</label>
+                                <input type="number" value="${play.earlyBirdRate}" onchange="state.plays[${idx}].earlyBirdRate=Number(this.value); saveState();"
+                                    class="w-full bg-white border-none rounded-lg py-2 px-3 font-bold text-[10px]">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[8px] font-black uppercase text-primary/70">公關保留 (單場)</label>
+                                <input type="number" value="${play.compSeats}" onchange="state.plays[${idx}].compSeats=Number(this.value); saveState();"
+                                    class="w-full bg-white border-none rounded-lg py-2 px-3 font-bold text-[10px]">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[8px] font-black uppercase text-primary/70">售票抽成 (%)</label>
+                                <input type="number" value="${play.platformFee}" onchange="state.plays[${idx}].platformFee=Number(this.value); saveState();"
+                                    class="w-full bg-white border-none rounded-lg py-2 px-3 font-bold text-[10px]">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Production Budget -->
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2">
+                            <div class="h-[1px] flex-1 bg-outline-variant"></div>
+                            <span class="text-[10px] font-black text-on-surface-variant uppercase">Production Budget / 預算詳情</span>
+                            <div class="h-[1px] flex-1 bg-outline-variant"></div>
+                        </div>
+                        <div class="space-y-2">
+                            ${expenseConfigs.map(cfg => `
+                                <div class="bg-surface-container/30 p-3 rounded-xl border border-outline-variant/30">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-sm text-on-surface-variant">${cfg.icon}</span>
+                                            <span class="text-[11px] font-bold text-primary">${cfg.label}</span>
+                                        </div>
+                                        <span class="text-[11px] font-black text-primary">NT$ ${(play.expenses[cfg.key].qty * play.expenses[cfg.key].rate).toLocaleString()}</span>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div class="relative">
+                                            <input type="number" value="${play.expenses[cfg.key].qty}" 
+                                                onchange="state.plays[${idx}].expenses.${cfg.key}.qty=Number(this.value); saveState();"
+                                                class="w-full bg-white border border-outline-variant/50 rounded-lg py-1.5 px-2 text-[10px] font-bold">
+                                            <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[8px] font-black opacity-30 uppercase tracking-tighter">Qty</span>
+                                        </div>
+                                        <div class="relative">
+                                            <input type="number" value="${play.expenses[cfg.key].rate}" 
+                                                onchange="state.plays[${idx}].expenses.${cfg.key}.rate=Number(this.value); saveState();"
+                                                class="w-full bg-white border border-outline-variant/50 rounded-lg py-1.5 px-2 text-right text-[10px] font-black">
+                                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[8px] font-black opacity-30">$/Unit</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                            
+                            <div class="bg-primary/5 p-3 rounded-xl border border-primary/20">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-sm text-primary">campaign</span>
+                                        <span class="text-[11px] font-bold text-primary">行銷宣傳費</span>
+                                    </div>
+                                    <div class="relative w-32">
+                                        <input type="number" value="${play.marketing}" onchange="state.plays[${idx}].marketing=Number(this.value); saveState();"
+                                            class="w-full bg-white border-none rounded-lg py-1.5 px-2 text-right font-black text-[11px]">
+                                        <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[7px] font-black opacity-30">NT$</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Risk & Results -->
+                    <div class="space-y-4 pt-2">
+                        <div class="flex items-center gap-2">
+                            <div class="h-[1px] flex-1 bg-outline-variant"></div>
+                            <span class="text-[10px] font-black text-on-surface-variant uppercase">Risk & Confidence / 信心加權</span>
+                            <div class="h-[1px] flex-1 bg-outline-variant"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-[9px] font-black text-primary uppercase">
+                                    <span>預備金 ${play.bufferRate}%</span>
+                                </div>
+                                <input type="range" min="0" max="30" step="5" value="${play.bufferRate}" 
+                                    oninput="state.plays[${idx}].bufferRate=Number(this.value); saveState();"
+                                    class="custom-slider">
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-[9px] font-black text-primary uppercase">
+                                    <span>信心 ${play.confidence}%</span>
+                                </div>
+                                <input type="range" min="50" max="100" step="5" value="${play.confidence}" 
+                                    oninput="state.plays[${idx}].confidence=Number(this.value); saveState();"
+                                    class="custom-slider">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-6 border-t border-outline-variant space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-black text-on-surface-variant uppercase">保本門檻 (BEP)</span>
+                            <span class="text-xs font-bold text-primary">${play.calculated.bepTickets.toLocaleString()} / ${play.calculated.totalSeats.toLocaleString()} 張</span>
+                        </div>
+                        <div class="h-2 bg-surface-container rounded-full overflow-hidden">
+                            <div class="h-full bg-secondary transition-all" style="width: ${Math.min(100, (play.calculated.bepTickets / play.calculated.totalSeats * 100))}%"></div>
+                        </div>
+                        <p class="text-[8px] text-center text-on-surface-variant font-medium">基於平均票價 NT$ ${Math.round(play.calculated.avgPrice).toLocaleString()} 計算</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 pt-2">
+                        <div class="bg-surface-container p-3 rounded-xl border border-outline-variant/30">
+                            <p class="text-[8px] font-black text-on-surface-variant uppercase mb-1">專案淨利</p>
+                            <p class="text-sm font-black ${play.calculated.profit >= 0 ? 'text-secondary' : 'text-error'}">NT$ ${Math.round(play.calculated.profit).toLocaleString()}</p>
+                        </div>
+                        <div class="bg-surface-container p-3 rounded-xl border border-outline-variant/30">
+                            <p class="text-[8px] font-black text-on-surface-variant uppercase mb-1">總預算額</p>
+                            <p class="text-sm font-black text-primary">NT$ ${Math.round(play.calculated.totalCost).toLocaleString()}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('') + `
+            <div class="flex-shrink-0 w-[88vw] sm:w-[520px] snap-center admin-ui">
+                <button onclick="addPlay()" class="w-full h-full min-h-[500px] border-4 border-dashed border-outline-variant rounded-3xl flex flex-col items-center justify-center gap-4 hover:bg-white transition-all active-scale text-on-surface-variant hover:text-primary">
+                    <span class="material-symbols-outlined text-4xl">add_circle</span>
+                    <span class="font-black text-sm uppercase tracking-widest">新增演出專案</span>
+                </button>
+            </div>
+        `;
+
+        updateDots();
+    }
+
+    function updateDots() {
+        const wrapper = document.getElementById('plays-wrapper');
+        const dots = document.querySelectorAll('.dot-indicator');
+        if (!dots.length) return;
+        const index = Math.round(wrapper.scrollLeft / (window.innerWidth * 0.88));
+        dots.forEach((dot, i) => {
+            if(i === index) dot.classList.add('active');
+            else dot.classList.remove('active');
+        });
+    }
+
+    document.getElementById('plays-wrapper').addEventListener('scroll', updateDots);
+
+    function addPlay() {
+        state.plays.push({
+            id: Date.now(),
+            name: "新劇目計畫",
+            type: 'new',
+            shows: 3,
+            saleRate: 70,
+            confidence: 85,
+            bufferRate: 10,
+            earlyBirdRate: 20,
+            compSeats: 10,
+            platformFee: 8,
+            tiers: [
+                { name: '一般', price: 1000, seats: 300 }
+            ],
+            expenses: {
+                creative: { qty: 1, rate: 50000 },
+                cast: { qty: 3, rate: 20000 },
+                technical: { qty: 1, rate: 30000 },
+                stage: { qty: 1, rate: 20000 },
+                costume: { qty: 1, rate: 10000 },
+                props: { qty: 1, rate: 5000 },
+                meals: { qty: 0, rate: 100 },
+                volunteer: { qty: 0, rate: 0 },
+                accommodation: { qty: 0, rate: 0 },
+                transportation: { qty: 0, rate: 0 },
+                misc: { qty: 1, rate: 10000 }
+            },
+            marketing: 30000
+        });
+        saveState();
+    }
+
+    function duplicatePlay(idx) {
+        const copy = JSON.parse(JSON.stringify(state.plays[idx]));
+        copy.id = Date.now();
+        copy.name += " (複本)";
+        state.plays.splice(idx + 1, 0, copy);
+        saveState();
+    }
+
+    function deletePlay(idx) {
+        if(state.plays.length <= 1) return alert('至少需保留一個專案');
+        if(confirm('確定刪除此專案？')) {
+            state.plays.splice(idx, 1);
+            saveState();
+        }
+    }
+
+    window.onload = () => {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if(saved) {
+            state = JSON.parse(saved);
+        }
+        calculate();
+    };
 </script>
 </body></html>
