@@ -1,900 +1,865 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>劇團年度營運精細計算機 v6</title>
-    <style>
+
+<html class="light" lang="zh-TW"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>劇場營運計算機 - 專業進階版 v37.1</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;family=Noto+Sans:wght@400;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
         :root {
-            --primary-color: #2c3e50;
-            --accent-color: #e67e22;
-            --success-color: #27ae60;
-            --danger-color: #c0392b;
-            --info-color: #2980b9;
-            --warning-color: #d35400;
-            --bg-color: #f1f5f9;
-            --card-bg: #ffffff;
-            --input-border: #cbd5e1;
+            scroll-behavior: smooth;
+        }
+        body {
+            -webkit-overflow-scrolling: touch;
+        }
+        /* Custom Range Slider Styling */
+        input[type="range"].custom-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type="range"].custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid #091426;
+            cursor: pointer;
+            margin-top: -10px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            transition: transform 0.1s ease;
+        }
+        input[type="range"].custom-slider:active::-webkit-slider-thumb {
+            transform: scale(0.9);
+        }
+        input[type="range"].custom-slider::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #e5e7eb;
+            border-radius: 2px;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .dot-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            transition: all 0.3s ease;
+        }
+        .dot-indicator.active {
+            width: 24px;
+            background: #091426;
+            border-radius: 4px;
+        }
+        #summary-bar { transition: background-color 0.4s ease; }
+        
+        /* Mobile Interaction Feedback */
+        button:active, .interactive-input:active {
+            transform: scale(0.97);
+        }
+        .active-scale {
+            transition: transform 0.1s ease-out;
+        }
+        .active-scale:active {
+            transform: scale(0.95);
+        }
+        
+        #plays-wrapper {
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif; }
-        body { background-color: var(--bg-color); color: #334155; line-height: 1.4; padding: 12px; display: flex; flex-direction: column; min-height: 100vh; }
-        .container { width: 100%; max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; flex: 1; padding-bottom: 220px; }
-        
-        header { text-align: center; margin: 10px 0 15px 0; }
-        header h1 { color: var(--primary-color); font-size: 22px; font-weight: bold; }
-        
-        .header-sub-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 6px; }
-        .header-sub-row p { color: #64748b; font-size: 13px; }
-        .btn-export { background-color: var(--success-color); color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: inline-flex; align-items: center; }
-        .btn-export:hover { background-color: #219653; }
-        .btn-clear { background-color: #7f8c8d; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; margin-left: 5px; }
-
-        .fixed-card { background: var(--card-bg); border-radius: 12px; padding: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 16px; border: 1px solid #e2e8f0; }
-        .fixed-card h2 { font-size: 15px; color: var(--primary-color); margin-bottom: 10px; border-left: 4px solid var(--info-color); padding-left: 8px; }
-
-        .scroll-container { display: flex; gap: 16px; width: 100%; overflow-x: auto; padding-bottom: 15px; -webkit-overflow-scrolling: touch; }
-        #projects_container { display: flex; gap: 16px; }
-
-        .project-card {
-            flex: 0 0 380px;
-            background: var(--card-bg);
-            border-radius: 14px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            border-top: 6px solid var(--accent-color);
-            position: relative;
-            border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+        .color-option {
+            cursor: pointer;
+            transition: transform 0.2s;
         }
-
-        .card-header { padding: 12px 16px; background: #fafafa; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; align-items: center; justify-content: space-between; user-select: none; }
-        .card-body { padding: 16px; display: block; }
-        .project-card.collapsed .card-body { display: none; }
-        .toggle-icon { font-size: 12px; color: #94a3b8; transition: transform 0.2s; }
-        .project-card.collapsed .toggle-icon { transform: rotate(-90deg); }
-
-        .header-btn-group { display: flex; align-items: center; gap: 4px; }
-        .copy-btn { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
-        .remove-btn { background: #fee2e2; color: var(--danger-color); border: 1px solid #fca5a5; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
-        .project-title-input { font-size: 15px; font-weight: bold; border: none; border-bottom: 2px solid #cbd5e1; background: transparent; padding: 2px; width: 165px; color: var(--primary-color); }
-        .section-title { font-size: 12px; font-weight: bold; color: #475569; margin: 12px 0 6px 0; background: #f1f5f9; padding: 4px 6px; border-radius: 4px; }
-
-        .slider-box { background: #fff7ed; border: 1px solid #ffedd5; border-radius: 8px; padding: 10px; margin-bottom: 12px; }
-        .slider-title { display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; color: #c2410c; margin-bottom: 4px; }
-        .slider-input { width: 100%; accent-color: var(--accent-color); cursor: pointer; margin: 4px 0; }
-
-        .venue-list { width: 100%; }
-        .venue-sub-block { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; margin-bottom: 12px; position: relative; }
-        .venue-sub-block .del-venue-btn { position: absolute; top: 4px; right: 4px; background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 10px; }
-        .venue-sub-title { font-size: 11px; font-weight: bold; color: var(--info-color); margin-bottom: 6px; padding-bottom: 2px; border-bottom: 1px dotted #cbd5e1; }
-
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 4px; align-items: center; }
-        .tax-row { display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: #64748b; margin-top: -2px; margin-bottom: 4px; }
-        .tax-checkbox-label { display: flex; align-items: center; gap: 3px; cursor: pointer; color: #7f8c8d; font-weight: 500; }
-        
-        label { display: block; font-size: 11px; color: #64748b; margin-bottom: 1px; }
-        input[type="number"] { width: 100%; padding: 5px 6px; border: 1px solid var(--input-border); border-radius: 6px; font-size: 12px; color: #1e293b; }
-        
-        .btn-add { flex: 0 0 90px; background: #fff; color: var(--accent-color); border: 2px dashed var(--accent-color); border-radius: 14px; cursor: pointer; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; min-height: 400px; }
-        .btn-add-venue { background: #fff; color: var(--info-color); border: 1px dashed var(--info-color); padding: 5px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px; text-align: center; }
-        .auto-calc-box { background: #f8fafc; padding: 6px; border-radius: 4px; font-size: 11px; color: #64748b; margin-top: 4px; border-left: 3px solid #94a3b8; }
-        .tax-note { font-size: 10px; color: #7f8c8d; font-style: italic; margin-top: 2px; display: block; }
-        .tech-sub-box { border-left: 3px solid var(--info-color); padding-left: 6px; margin-bottom: 10px; }
-
-        .amortization-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px; margin-bottom: 10px; }
-        .amortization-title { display: flex; align-items: center; font-size: 11px; font-weight: bold; color: #166534; gap: 4px; }
-
-        .break-even-badge { background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px; border-radius: 6px; margin-top: 6px; font-size: 11px; color: #1e40af; display: flex; justify-content: space-between; align-items: center; }
-        .cashflow-badge { background: #fff1f2; border: 1px solid #fecdd3; padding: 6px; border-radius: 6px; margin-top: 6px; font-size: 11px; color: #9f1239; display: flex; justify-content: space-between; align-items: center; }
-        .cashflow-warning-badge { background: #fff7ed; border: 1px solid #ffedd5; padding: 6px; border-radius: 6px; margin-top: 6px; font-size: 11px; color: #c2410c; display: flex; flex-direction: column; gap: 2px; text-align: left; }
-
-        .sticky-dashboard { position: fixed; bottom: 0; left: 0; right: 0; background: var(--primary-color); color: white; border-radius: 16px 16px 0 0; padding: 12px 16px; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); z-index: 999; }
-        .sticky-dashboard-inner { max-width: 1400px; margin: 0 auto; }
-        .sticky-dashboard h2 { color: white; font-size: 13px; margin-bottom: 8px; border-left: 4px solid white; padding-left: 6px; }
-        .result-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 8px; }
-        .result-block { text-align: center; padding: 6px; background: rgba(255,255,255,0.08); border-radius: 6px; }
-        .result-block .title { font-size: 10px; color: #cbd5e1; }
-        .result-block .value { font-size: 13px; font-weight: bold; margin-top: 2px; }
-        .profit-status { font-size: 13px; font-weight: bold; padding: 8px; border-radius: 6px; text-align: center; }
-        .status-success { background-color: var(--success-color); color: white; }
-        .status-danger { background-color: var(--danger-color); color: white; }
-
-        @media (max-width: 767px) {
-            .project-card { flex: 0 0 90vw; }
-            .sticky-dashboard { padding: 8px 12px; }
-            .fixed-card .form-row { grid-template-columns: repeat(2, 1fr) !important; }
+        .color-option:active {
+            transform: scale(0.9);
         }
-        @media (min-width: 768px) {
-            .scroll-container { overflow-x: visible; flex-wrap: wrap; }
-            #projects_container { flex-wrap: wrap; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; width: calc(100% - 106px); }
-            .project-card { flex: none; width: 100%; }
-            .btn-add { flex: 0 0 90px; min-height: auto; height: auto; align-self: stretch; }
-            .result-grid { grid-template-columns: repeat(4, 1fr); }
+        .color-option.selected {
+            ring: 2px;
+            ring-offset: 1px;
+            ring-primary;
         }
-        @media (min-width: 1100px) { #projects_container { grid-template-columns: repeat(3, 1fr); } }
     </style>
-</head>
-<body>
-
-<div class="container">
-    <header>
-        <h1>🎭 劇團年度營運精細計算機 v6</h1>
-        <div class="header-sub-row">
-            <p>場地獨立綁定差旅負線、整合周邊商品動態銷售與二代健保防呆機制</p>
-            <div>
-                <button class="btn-export" onclick="exportToCSV()">📥 匯出至 Excel</button>
-                <button class="btn-clear" onclick="clearSavedData()">🔄 重設全部</button>
-            </div>
-        </div>
-    </header>
-        
-    <div class="fixed-card">
-        <h2>🏢 劇團年度辦公室固定開銷</h2>
-        <div class="form-row" style="grid-template-columns: repeat(5, 1fr); gap: 6px;">
-            <div><label>房租水電</label><input type="number" id="annual_rent" value="240000" oninput="saveAndCalc()"></div>
-            <div><label>行政薪資</label><input type="number" id="annual_salary" value="450000" oninput="saveAndCalc()"></div>
-            <div><label>正職勞健保</label><input type="number" id="annual_insurance" value="65000" oninput="saveAndCalc()"></div>
-            <div><label>系統軟體</label><input type="number" id="annual_software" value="12000" oninput="saveAndCalc()"></div>
-            <div><label>設備雜支</label><input type="number" id="annual_hardware" value="45000" oninput="saveAndCalc()"></div>
-        </div>
-        <p style="font-size: 12px; color: var(--info-color); font-weight: bold; margin-top: 6px; text-align: right;">
-            辦公室常態開銷總計：$ <span id="total_office_overhead_text">0</span> 元 
-            <span style="color:#7f8c8d; font-weight:normal;">(已扣除專案回撥補貼：$ <span id="total_office_subsidized_text">0</span> 元)</span>
-        </p>
-    </div>
-
-    <div class="scroll-container">
-        <div id="projects_container">
-            </div>
-        <button class="btn-add" id="add_btn_trigger">➕<br><br>新<br>增<br>劇<br>目</button>
-    </div>
-
-    <div class="sticky-dashboard">
-        <div class="sticky-dashboard-inner">
-            <h2>📊 全年度損益即時分析儀表板</h2>
-            <div class="result-grid">
-                <div class="result-block"><div class="title">各劇總成本 (含稅/攤提/差旅)</div><div class="value" id="total_all_cost">$0</div></div>
-                <div class="result-block"><div class="title">各劇總收入 (已扣手續費/含周邊)</div><div class="value" id="total_all_revenue">$0</div></div>
-                <div class="result-block" style="background: rgba(39, 174, 96, 0.25);"><div class="title" style="color: #2ecc71;">各劇總盈餘</div><div class="value" id="total_all_profit">$0</div></div>
-                <div class="result-block" style="background: rgba(192, 57, 43, 0.25);"><div class="title" style="color: #ff7675;">辦公室最終負擔</div><div class="value" id="total_all_office_cost">$0</div></div>
-            </div>
-            <div id="annual_status_box" class="profit-status">計算中...</div>
-        </div>
-    </div>
-
-</div>
-
-<script>
-    const defaultProjects = [
-        {
-            title: "年度大戲《劇目 1》",
-            salePercent: 75,
-            merchSalePercent: 50,
-            isCollapsed: false,
-            venues: [
-                { 
-                    vName: "台北主場", shows: 3, seats: 500, earlyBirdPercent: 30, earlyBirdPrice: 960, regularPrice: 1200, systemFee: 6, bankFee: 2, vipSeats: 20,
-                    tCrewCount: 0, tCrewEarlyDays: 0, tActorCount: 0, tTotalDays: 0, tFare: 0, tHotel: 0, tMeal: 150
-                },
-                { 
-                    vName: "高雄巡演場", shows: 2, seats: 400, earlyBirdPercent: 20, earlyBirdPrice: 800, regularPrice: 1000, systemFee: 6, bankFee: 2, vipSeats: 15,
-                    tCrewCount: 5, tCrewEarlyDays: 2, tActorCount: 10, tTotalDays: 4, tFare: 1500, tHotel: 1200, tMeal: 250
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#091426",
+                        "on-surface": "#1e293b",
+                        "on-surface-variant": "#64748b",
+                        "outline-variant": "#e2e8f0",
+                        "surface-container-low": "#f8f9fa",
+                        "surface-container": "#f1f5f9",
+                        "surface-container-high": "#e2e8f0",
+                        "background": "#f8f9fa",
+                        "secondary": "#10b981",
+                        "error": "#ef4444",
+                        "slate-accent": "#475569"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Noto Sans"],
+                        "number-display": ["Inter"]
+                    }
                 }
-            ],
-            director: 80000, staff: 120000, paybackPercent: 10,
-            actorCount: 5, rehearsalMonths: 2.5, salaryMonth: 15000, salaryShow: 3000,
-            actorGhi: true, crewGhi: true, 
-            stageCount: 2, stageDays: 2, stageSalaryDay: 3500, stageEntryFee: 1500, stageSalaryShow: 2000,
-            lightCount: 2, lightDays: 2, lightSalaryDay: 3500, lightEntryFee: 1500, lightSalaryShow: 2000,
-            soundCount: 1, soundDays: 2, soundSalaryDay: 3500, soundEntryFee: 1500, soundSalaryShow: 2000,
-            volShows: 5, volAllowance: 300, volCount: 6,
-            scenery: 150000, sceneryTax: false, 
-            lighting: 100000, lightingTax: false, 
-            sound: 80000, soundTax: false, 
-            venue: 140000, venueTax: false,
-            isAmortized: false, amortYears: 3,
-            marketing: 50000, marketingTax: false,
-            insurance: 15000, contingency: 20000,
-            merchTotalCost: 40000, merchUnitPrice: 350, merchTotalQty: 300,
-            subsidy: 450000 
-        }
-    ];
-
-    window.onload = function() {
-        try {
-            if (localStorage.getItem('theatre_office_rent') !== null) {
-                document.getElementById('annual_rent').value = localStorage.getItem('theatre_office_rent');
-                document.getElementById('annual_salary').value = localStorage.getItem('theatre_office_salary');
-                document.getElementById('annual_insurance').value = localStorage.getItem('theatre_office_insurance') || "65000";
-                document.getElementById('annual_software').value = localStorage.getItem('theatre_office_software');
-                document.getElementById('annual_hardware').value = localStorage.getItem('theatre_office_hardware');
             }
-            let savedProjects = localStorage.getItem('theatre_projects_data_v6');
-            if (savedProjects) {
-                renderProjects(JSON.parse(savedProjects));
-            } else {
-                renderProjects(defaultProjects);
-            }
-        } catch (e) {
-            localStorage.clear();
-            renderProjects(defaultProjects);
         }
-        calculateAll();
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen pb-72 md:pb-32 overflow-x-hidden">
+<header class="sticky top-0 w-full z-50 bg-white/95 backdrop-blur-xl border-b border-outline-variant shadow-sm">
+<div class="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary font-bold">account_balance</span>
+<h1 class="font-bold text-primary tracking-tight">劇場營運精細計算機 <span class="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-black ml-1 uppercase">v37.2 PRO</span></h1>
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all active-scale" onclick="resetData()">
+<span class="material-symbols-outlined">restart_alt</span>
+</button>
+</div>
+<div class="max-w-7xl mx-auto px-4 border-t border-outline-variant/30 overflow-x-auto scrollbar-hide">
+<nav class="flex items-center gap-2 py-2 text-[10px] font-black uppercase tracking-widest text-slate-accent whitespace-nowrap">
+<a class="px-4 py-2 hover:text-primary transition-colors hover:bg-primary/5 rounded-lg flex items-center gap-1.5 active-scale" href="#office-section">
+<span class="material-symbols-outlined text-sm">business_center</span> 總部營運
+            </a>
+<div class="h-4 w-px bg-outline-variant"></div>
+<a class="px-4 py-2 hover:text-primary transition-colors hover:bg-primary/5 rounded-lg flex items-center gap-1.5 active-scale" href="#plays-section">
+<span class="material-symbols-outlined text-sm">theater_comedy</span> 年度劇目
+            </a>
+<div class="h-4 w-px bg-outline-variant"></div>
+<a class="px-4 py-2 hover:text-primary transition-colors hover:bg-primary/5 rounded-lg flex items-center gap-1.5 active-scale" href="#visual-section">
+<span class="material-symbols-outlined text-sm">bar_chart</span> 數據視覺化
+            </a>
+</nav>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-4 md:px-8 py-8 space-y-12">
+<!-- Office Costs Section -->
+<section class="scroll-mt-24" id="office-section">
+<div class="bg-white border border-outline-variant p-6 rounded-xl shadow-sm">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center border border-primary/10">
+<span class="material-symbols-outlined text-primary">corporate_fare</span>
+</div>
+<div>
+<h2 class="font-bold text-primary">總部營運攤提</h2>
+<p class="text-[10px] text-on-surface-variant">辦公室與行政支出的月均攤提</p>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6" id="office-costs-container">
+<!-- JS Generated -->
+</div>
+</div>
+</section>
+<!-- Plays Section -->
+<section class="scroll-mt-24" id="plays-section">
+<div class="flex flex-col gap-1 mb-6">
+<h2 class="text-xl font-bold text-primary tracking-tight">年度劇目計畫</h2>
+<p class="text-xs text-on-surface-variant">模擬多專案併行的損益平衡點 (左右滑動切換專案)</p>
+</div>
+<div class="flex justify-center gap-2 mb-6" id="carousel-dots"></div>
+<div class="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-12 gap-6" id="plays-wrapper" onscroll="updateDots()">
+<!-- JS Generated -->
+</div>
+</section>
+<!-- Visualization Section -->
+<section class="scroll-mt-24" id="visual-section">
+<div class="bg-white border border-outline-variant p-6 rounded-xl shadow-sm">
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center border border-primary/10">
+<span class="material-symbols-outlined text-primary">analytics</span>
+</div>
+<div>
+<h2 class="font-bold text-primary">年度數據視覺化</h2>
+<p class="text-[10px] text-on-surface-variant">年度支出結構與損益趨勢即時分析</p>
+</div>
+</div>
+<div class="relative">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg border border-outline-variant/30 active-scale transition-all flex items-center gap-1.5" id="color-palette-btn" onclick="toggleColorPalette()">
+<span class="material-symbols-outlined text-lg">palette</span>
+<span class="text-[10px] font-black uppercase hidden sm:inline">調色盤</span>
+</button>
+<!-- Color Palette Dropdown -->
+<div class="hidden absolute right-0 mt-2 w-56 bg-white border border-outline-variant shadow-xl rounded-xl z-[60] p-4 space-y-4" id="palette-dropdown">
+<div class="space-y-3">
+<p class="text-[10px] font-black uppercase text-slate-accent tracking-widest">配色方案預設</p>
+<div class="grid grid-cols-1 gap-2">
+<button class="flex items-center gap-3 p-2 hover:bg-surface-container rounded-lg text-left transition-colors" onclick="setTheme('classic')">
+<div class="flex -space-x-1">
+<div class="w-3 h-3 rounded-full bg-error ring-1 ring-white"></div>
+<div class="w-3 h-3 rounded-full bg-secondary ring-1 ring-white"></div>
+</div>
+<span class="text-xs font-bold text-on-surface">經典對比</span>
+</button>
+<button class="flex items-center gap-3 p-2 hover:bg-surface-container rounded-lg text-left transition-colors" onclick="setTheme('ocean')">
+<div class="flex -space-x-1">
+<div class="w-3 h-3 rounded-full bg-[#0369a1] ring-1 ring-white"></div>
+<div class="w-3 h-3 rounded-full bg-[#38bdf8] ring-1 ring-white"></div>
+</div>
+<span class="text-xs font-bold text-on-surface">海洋與天空</span>
+</button>
+<button class="flex items-center gap-3 p-2 hover:bg-surface-container rounded-lg text-left transition-colors" onclick="setTheme('sunset')">
+<div class="flex -space-x-1">
+<div class="w-3 h-3 rounded-full bg-[#c2410c] ring-1 ring-white"></div>
+<div class="w-3 h-3 rounded-full bg-[#fcd34d] ring-1 ring-white"></div>
+</div>
+<span class="text-xs font-bold text-on-surface">夕陽琥珀</span>
+</button>
+<button class="flex items-center gap-3 p-2 hover:bg-surface-container rounded-lg text-left transition-colors" onclick="setTheme('forest')">
+<div class="flex -space-x-1">
+<div class="w-3 h-3 rounded-full bg-[#166534] ring-1 ring-white"></div>
+<div class="w-3 h-3 rounded-full bg-[#86efac] ring-1 ring-white"></div>
+</div>
+<span class="text-xs font-bold text-on-surface">翡翠森林</span>
+</button>
+</div>
+</div>
+<div class="pt-3 border-t border-outline-variant/30 space-y-3">
+<p class="text-[10px] font-black uppercase text-slate-accent tracking-widest">自定義主色</p>
+<div class="flex items-center justify-between gap-2">
+<label class="text-[9px] font-bold text-on-surface-variant uppercase">行政費色</label>
+<input class="w-8 h-8 rounded border-none p-0 bg-transparent cursor-pointer" id="custom-admin-color" oninput="updateCustomColors()" type="color"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="space-y-4">
+<h3 class="text-xs font-black text-slate-accent uppercase tracking-widest text-center">支出結構分析</h3>
+<div class="relative h-[250px] flex items-center justify-center">
+<canvas id="costStructureChart"></canvas>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-4" id="cost-legend">
+<!-- Legend JS -->
+</div>
+</div>
+<div class="space-y-4">
+<h3 class="text-xs font-black text-slate-accent uppercase tracking-widest text-center">損益平衡趨勢</h3>
+<div class="relative h-[250px] flex items-center justify-center">
+<canvas id="pnlTrendChart"></canvas>
+</div>
+<div class="flex justify-center gap-6 mt-4">
+<div class="flex items-center gap-2">
+<div class="w-3 h-0.5 bg-error"></div>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">預計總支出</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-0.5 bg-secondary"></div>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">預估總營收</span>
+</div>
+</div>
+<p class="text-[9px] text-center text-on-surface-variant italic">數值依據「信心機率」加權計算後顯示</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Summary Bar -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 bg-secondary text-white shadow-[0_-8px_30px_rgba(0,0,0,0.2)] transition-all" id="summary-bar">
+<div class="max-w-7xl mx-auto px-4 py-4 md:py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="grid grid-cols-3 md:flex items-center gap-4 md:gap-12 text-center md:text-left w-full md:w-auto">
+<div>
+<span class="text-[8px] uppercase font-black opacity-70 block mb-1">年度總支出</span>
+<span class="font-bold text-sm md:text-xl" id="total-cost-display">NT$ 0</span>
+</div>
+<div>
+<span class="text-[8px] uppercase font-black opacity-70 block mb-1">總預估營收</span>
+<span class="font-bold text-sm md:text-xl" id="total-revenue-display">NT$ 0</span>
+</div>
+<div>
+<span class="text-[8px] uppercase font-black opacity-70 block mb-1">二代健保合計</span>
+<span class="font-bold text-sm md:text-xl" id="total-ghi-display">NT$ 0</span>
+</div>
+</div>
+<div class="flex items-center gap-4 w-full md:w-auto">
+<div class="bg-white/10 rounded-xl px-6 py-3 flex-1 md:min-w-[180px] text-center border border-white/20 transition-colors" id="profit-box">
+<span class="text-[10px] uppercase font-black opacity-80 block mb-1">年度預估淨利</span>
+<span class="font-bold text-2xl md:text-3xl" id="total-profit-display">NT$ 0</span>
+</div>
+<div class="flex gap-2">
+<button class="p-4 bg-white/20 hover:bg-white/30 rounded-lg transition-all active-scale" onclick="copyDataJSON()">
+<span class="material-symbols-outlined">content_copy</span>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<script>
+    let appData = {
+        themeColors: ['#EF4444', '#10B981', '#F87171', '#34D399', '#DC2626', '#059669', '#B91C1C'],
+        officeCosts: {
+            rent: { value: 25000, limit: 30000, label: '辦公房租' },
+            salary: { value: 120000, limit: 150000, label: '固定薪資' },
+            insurance: { value: 15000, limit: 20000, label: '勞健勞退' },
+            software: { value: 5000, limit: 8000, label: '訂閱工具' },
+            hardware: { value: 180000, limit: 200000, label: '硬體資產' }
+        },
+        plays: [
+            {
+                id: Date.now(),
+                name: '示範計畫：星際劇場',
+                tourCount: 4,
+                capacity: 400,
+                prSeats: 20,
+                earlyBirdRatio: 30,
+                earlyBirdPrice: 960,
+                avgTicketPrice: 1200,
+                ticketRate: 75,
+                confidenceLevel: 90,
+                platformFee: 8,
+                merchRevenue: 50000,
+                sponsorship: 100000,
+                marketingBudget: 150000,
+                officeContributionRate: 15,
+                ghiRate: 2.11,
+                production: {
+                    creative: { label: '編導創作', unitCost: 40000, count: 3, taxType: '9B', limit: 150000, icon: 'brush' },
+                    performers: { label: '演員演出', unitCost: 25000, count: 6, taxType: '50', limit: 160000, icon: 'groups' },
+                    lighting: { label: '燈光音響', unitCost: 15000, count: 2, taxType: 'corp', limit: 40000, icon: 'wb_incandescent' },
+                    stage: { label: '舞台美術', unitCost: 60000, count: 1, taxType: 'corp', limit: 80000, icon: 'architecture' },
+                    costume: { label: '服裝造型', unitCost: 35000, count: 1, taxType: 'corp', limit: 40000, icon: 'checkroom' },
+                    props: { label: '道具製作', unitCost: 15000, count: 1, taxType: 'corp', limit: 20000, icon: 'category' },
+                    volunteer: { label: '志工津貼', unitCost: 2000, count: 5, taxType: '50', limit: 12000, icon: 'handshake' }
+                }
+            }
+        ]
     };
 
-    function renderProjects(projList) {
-        const pContainer = document.getElementById('projects_container');
-        pContainer.innerHTML = '';
-        projList.forEach((p, idx) => {
-            let venueHtml = '';
-            p.venues.forEach((v, vIdx) => {
-                let vName = v.vName || `地點 ${vIdx + 1}`;
-                let sFee = v.systemFee !== undefined ? v.systemFee : 6;
-                let bFee = v.bankFee !== undefined ? v.bankFee : 2;
-                let ebP = v.earlyBirdPercent !== undefined ? v.earlyBirdPercent : 30;
-                let ebPr = v.earlyBirdPrice !== undefined ? v.earlyBirdPrice : 960;
-                let regPr = v.regularPrice !== undefined ? v.regularPrice : 1200;
-                let vSeats = v.vipSeats !== undefined ? v.vipSeats : 0;
-                
-                let tcCount = v.tCrewCount !== undefined ? v.tCrewCount : 0;
-                let tcEarly = v.tCrewEarlyDays !== undefined ? v.tCrewEarlyDays : 0;
-                let taCount = v.tActorCount !== undefined ? v.tActorCount : 0;
-                let tDays = v.tTotalDays !== undefined ? v.tTotalDays : 0;
-                let tFare = v.tFare !== undefined ? v.tFare : 0;
-                let tHotel = v.tHotel !== undefined ? v.tHotel : 0;
-                let tMeal = v.tMeal !== undefined ? v.tMeal : 150;
-
-                venueHtml += `
-                    <div class="venue-sub-block">
-                        ${vIdx > 0 ? `<button class="del-venue-btn" onclick="removeVenue(this, ${idx}, ${vIdx})">🗑️ 移除</button>` : ''}
-                        <div class="venue-sub-title">📍 場地 & 票房條件設定</div>
-                        <div class="form-row" style="margin-bottom:6px;">
-                            <div style="grid-column: span 2;"><label>場地名稱標籤</label><input type="text" class="p-vname" value="${vName}" style="width:100%; font-weight:bold; color:var(--info-color); padding:3px 6px; border:1px solid #94a3b8; border-radius:4px;" oninput="saveCurrentStateOnly()"></div>
-                        </div>
-                        <div class="form-row">
-                            <div><label>場次 (場)</label><input type="number" class="p-shows" value="${v.shows}" oninput="saveAndCalc()"></div>
-                            <div><label>總座位 (席)</label><input type="number" class="p-seats" value="${v.seats}" oninput="saveAndCalc()"></div>
-                        </div>
-                        <div class="form-row">
-                            <div><label style="color:var(--danger-color); font-weight:bold;">公關留座/每場</label><input type="number" class="p-vip-seats" value="${vSeats}" oninput="saveAndCalc()"></div>
-                            <div><label>早鳥比例 (%)</label><input type="number" class="p-eb-percent" value="${ebP}" oninput="saveAndCalc()"></div>
-                        </div>
-                        <div class="form-row">
-                            <div><label>早鳥票價 ($)</label><input type="number" class="p-eb-price" value="${ebPr}" oninput="saveAndCalc()"></div>
-                            <div><label>一般票價 ($)</label><input type="number" class="p-reg-price" value="${regPr}" oninput="saveAndCalc()"></div>
-                        </div>
-                        <div class="form-row">
-                            <div><label>售票服務費 (%)</label><input type="number" class="p-system-fee" value="${sFee}" oninput="saveAndCalc()"></div>
-                            <div><label>💳 金流手續費 (%)</label><input type="number" class="p-bank-fee" value="${bFee}" oninput="saveAndCalc()"></div>
-                        </div>
-
-                        <div class="venue-sub-title" style="color:#65a30d; border-color:#cbd5e1; margin-top:8px;">🚗 本場地專屬差旅綁定</div>
-                        <div class="form-row">
-                            <div><label>隨團技術組 (人)</label><input type="number" class="p-t-crew-count" value="${tcCount}" oninput="saveAndCalc()"></div>
-                            <div><label>技術提早進館(天)</label><input type="number" class="p-t-crew-early" value="${tcEarly}" oninput="saveAndCalc()"></div>
-                        </div>
-                        <div class="form-row">
-                            <div><label>隨團演員/行政 (人)</label><input type="number" class="p-t-actor-count" value="${taCount}" oninput="saveAndCalc()"></div>
-                            <div><label>本站總停留天數</label><input type="number" class="p-t-total-days" value="${tDays}" oninput="saveAndCalc()"></div>
-                        </div>
-                        <div class="form-row">
-                            <div><label>每人來回高鐵/車資</label><input type="number" class="p-t-fare" value="${tFare}" oninput="saveAndCalc()"></div>
-                            <div><label>每間雙人房/晚</label><input type="number" class="p-t-hotel" value="${tHotel}" oninput="saveAndCalc()"></div>
-                        </div>
-                        <div class="form-row">
-                            <div style="grid-column: span 2;"><label>每人每天餐費補貼</label><input type="number" class="p-t-meal" value="${tMeal}" oninput="saveAndCalc()"></div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            let pbPct = p.paybackPercent !== undefined ? p.paybackPercent : 10;
-            let currentSubsidy = p.subsidy !== undefined ? p.subsidy : 450000;
-            let actGhi = p.actorGhi !== undefined ? p.actorGhi : true;
-            let crwGhi = p.crewGhi !== undefined ? p.crewGhi : true;
-            
-            let mCost = p.merchTotalCost !== undefined ? p.merchTotalCost : 40000;
-            let mPrice = p.merchUnitPrice !== undefined ? p.merchUnitPrice : 350;
-            let mQty = p.merchTotalQty !== undefined ? p.merchTotalQty : 300;
-            let mSalePct = p.merchSalePercent !== undefined ? p.merchSalePercent : 50;
-
-            let card = document.createElement('div');
-            card.className = `project-card ${p.isCollapsed ? 'collapsed' : ''}`;
-            card.innerHTML = `
-                <div class="card-header" onclick="toggleCollapse(this, ${idx})">
-                    <input type="text" class="project-title-input" value="${p.title}" onclick="event.stopPropagation()" oninput="saveAndCalc()">
-                    <div class="header-btn-group">
-                        <button class="copy-btn" onclick="event.stopPropagation(); copyProject(${idx});">👯 複製</button>
-                        <button class="remove-btn" onclick="event.stopPropagation(); removeProject(${idx});">❌ 刪除</button>
-                        <span class="toggle-icon">▼</span>
-                    </div>
-                </div>
-                
-                <div class="card-body">
-                    <div class="slider-box">
-                        <div class="slider-title">
-                            <span>🎟️ 預估總售票率模擬</span>
-                            <span><strong class="p-slider-value">${p.salePercent}</strong> %</span>
-                        </div>
-                        <input type="range" class="slider-input p-sale-slider" min="0" max="100" value="${p.salePercent}" step="5" oninput="updateSliderText(this); saveAndCalc();">
-                    </div>
-
-                    <div class="section-title">🗺️ 巡迴票房與專屬差旅結構</div>
-                    <div class="venue-list">${venueHtml}</div>
-                    <button class="btn-add-venue" onclick="addVenueBlockData(${idx})">➕ 新增巡迴場地(獨立差旅條件)</button>
-
-                    <div class="section-title">👥 人事、正職回撥與二代健保</div>
-                    <div class="form-row">
-                        <div><label>導演酬勞</label><input type="number" class="p-director" value="${p.director}" oninput="saveAndCalc()"></div>
-                        <div><label>專案行政執行</label><input type="number" class="p-staff" value="${p.staff}" oninput="saveAndCalc()"></div>
-                    </div>
-                    <div class="form-row">
-                        <div style="grid-column: span 2; background:#f0f9ff; padding: 4px; border-radius:6px; border:1px solid #bae6fd;"><label style="color:#0369a1; font-weight:bold;">🏢 專案回撥常態行政補貼 (%)</label>
-                        <input type="number" class="p-payback-percent" value="${pbPct}" min="0" max="30" oninput="saveAndCalc()"></div>
-                    </div>
-                    <div class="form-row" style="margin-top:6px;">
-                        <div><label>演員人數</label><input type="number" class="p-actor-count" value="${p.actorCount}" oninput="saveAndCalc()"></div>
-                        <div><label>排練月數</label><input type="number" class="p-rehearsal-months" value="${p.rehearsalMonths}" step="0.5" oninput="saveAndCalc()"></div>
-                    </div>
-                    <div class="form-row">
-                        <div><label>每人月排練</label><input type="number" class="p-salary-month" value="${p.salaryMonth}" oninput="saveAndCalc()"></div>
-                        <div><label>每人每演出</label><input type="number" class="p-salary-show" value="${p.salaryShow}" oninput="saveAndCalc()"></div>
-                    </div>
-                    <div class="tax-row" style="margin-top:4px;">
-                        <label class="tax-checkbox-label" style="color:var(--warning-color);"><input type="checkbox" class="p-actor-ghi" ${actGhi?'checked':''} onchange="saveAndCalc()"> 演員/導演單筆跨2萬提撥二代健保 (2.11%)</label>
-                    </div>
-                    <div class="auto-calc-box">
-                        🤖 演員薪資總計：$ <span class="p-res-actor-salary">0</span>
-                        <span class="tax-note">⚠️ 預估勞務代扣/二代健保約 $ <span class="p-res-tax">0</span> 元</span>
-                    </div>
-
-                    <div class="section-title">🛠️ Crew 技術組 (裝台與演出拆分)</div>
-                    <div class="tax-row" style="margin-bottom: 6px;">
-                        <label class="tax-checkbox-label" style="color:var(--warning-color);"><input type="checkbox" class="p-crew-ghi" ${crwGhi?'checked':''} onchange="saveAndCalc()"> 技術組總報酬提撥劇團二代健保 (2.11%)</label>
-                    </div>
-
-                    <div class="tech-sub-box">
-                        <div class="form-row">
-                            <div><label>舞台組 (人)</label><input type="number" class="p-stage-count" value="${p.stageCount}" oninput="saveAndCalc()"></div>
-                            <div><label>裝台天數 (日)</label><input type="number" class="p-stage-days" value="${p.stageDays}" oninput="saveAndCalc()"></div>
-                        </div>
-                        <div class="form-row">
-                            <div><label>裝台日薪</label><input type="number" class="p-stage-salary-day" value="${p.stageSalaryDay}" oninput="saveAndCalc()"></div>
-                            <div><label>演出日進館費/天</label><input type="number" class="p-stage-entry-fee" value="${p.stageEntryFee}" oninput="saveAndCalc()"></div>
-                        </div>
-                        <div class="form-row">
-                            <div style="grid-column: span 2;"><label>每場演出執行費/場</label><input type="number" class="p-stage-salary-show" value="${p.stageSalaryShow}" oninput="saveAndCalc()"></div>
-                        </div>
-                    </div>
-
-                    <div class="tech-sub-box" style="border-left-color: #9b59b6;">
-                        <div class="form-row">
-                            <div><label>燈光組 (人)</label><input type="number" class="p-light-count" value="${p.lightCount}" oninput="saveAndCalc()"></div>
-                            <div><label>裝台天數 (日)</label><input type="number" class="p-light-days" value="${p.lightDays}" oninput="saveAndCalc()"></div>
-                        </div>
-                        <div class="form-row">
-                            <div><label>裝台日薪</label><input type="number" class="p-light-salary-day" value="${p.lightSalaryDay}" oninput="saveAndCalc()"></div>
-                            <div><label>演出日進館費/天</label><input type="number" class="p-light-entry-fee" value="${p.lightEntryFee}" oninput="saveAndCalc()"></div>
-                        </div>
-                        <div class="form-row">
-                            <div style="grid-column: span 2;"><label>每場演出執行費/場</label><input type="number" class="p-light-salary-show" value="${p.lightSalaryShow}" oninput="saveAndCalc()"></div>
-                        </div>
-                    </div>
-
-                    <div class="tech-sub-box" style="border-left-color: #16a085;">
-                        <div class="form-row">
-                            <div><label>音響組 (人)</label><input type="number" class="p-sound-count" value="${p.soundCount}" oninput="saveAndCalc()"></div>
-                            <div><label>裝台天數 (日)</label><input type="number" class="p-sound-days" value="${p.soundDays}" oninput="saveAndCalc()"></div>
-                        </div>
-                        <div class="form-row">
-                            <div><label>裝台日薪</label><input type="number" class="p-sound-salary-day" value="${p.soundSalaryDay}" oninput="saveAndCalc()"></div>
-                            <div><label>演出日進館費/天</label><input type="number" class="p-sound-entry-fee" value="${p.soundEntryFee}" oninput="saveAndCalc()"></div>
-                        </div>
-                        <div class="form-row">
-                            <div style="grid-column: span 2;"><label>每場演出執行費/場</label><input type="number" class="p-sound-salary-show" value="${p.soundSalaryShow}" oninput="saveAndCalc()"></div>
-                        </div>
-                    </div>
-                    <div class="auto-calc-box">🤖 技術組(Crew)總計：$ <span class="p-res-crew-salary">0</span></div>
-
-                    <div class="section-title">🙋‍♂️ 志工支援津貼</div>
-                    <div class="form-row">
-                        <div><label>總支援場次</label><input type="number" class="p-vol-shows" value="${p.volShows}" oninput="saveAndCalc()"></div>
-                        <div><label>每場車馬</label><input type="number" class="p-vol-allowance" value="${p.volAllowance}" oninput="saveAndCalc()"></div>
-                    </div>
-                    <div class="form-row">
-                        <div style="grid-column: span 2;"><label>志工總人數 (人)</label><input type="number" class="p-vol-count" value="${p.volCount}" oninput="saveAndCalc()"></div>
-                    </div>
-
-                    <div class="section-title">📐 技術硬體與場地 (5%營業稅外加)</div>
-                    <div class="form-row">
-                        <div><label>佈景道具</label><input type="number" class="p-scenery" value="${p.scenery}" oninput="saveAndCalc()"></div>
-                        <div><label>燈光租借</label><input type="number" class="p-lighting" value="${p.lighting}" oninput="saveAndCalc()"></div>
-                    </div>
-                    <div class="tax-row">
-                        <label class="tax-checkbox-label"><input type="checkbox" class="p-scenery-tax" ${p.sceneryTax?'checked':''} onchange="saveAndCalc()"> 外加5%發票稅</label>
-                        <label class="tax-checkbox-label" style="margin-right: 40px;"><input type="checkbox" class="p-lighting-tax" ${p.lightingTax?'checked':''} onchange="saveAndCalc()"> 外加5%發票稅</label>
-                    </div>
-
-                    <div class="form-row">
-                        <div><label>音響工程</label><input type="number" class="p-sound" value="${p.sound}" oninput="saveAndCalc()"></div>
-                        <div><label>劇場總租金</label><input type="number" class="p-venue" value="${p.venue}" oninput="saveAndCalc()"></div>
-                    </div>
-                    <div class="tax-row">
-                        <label class="tax-checkbox-label"><input type="checkbox" class="p-sound-tax" ${p.soundTax?'checked':''} onchange="saveAndCalc()"> 外加5%發票稅</label>
-                        <label class="tax-checkbox-label" style="margin-right: 40px;"><input type="checkbox" class="p-venue-tax" ${p.venueTax?'checked':''} onchange="saveAndCalc()"> 外加5%發票稅</label>
-                    </div>
-
-                    <div class="amortization-box">
-                        <div class="amortization-title">
-                            <input type="checkbox" class="p-is-amortized" ${p.isAmortized ? 'checked' : ''} onchange="saveAndCalc()">
-                            <span>啟用硬體資產攤提換算</span>
-                        </div>
-                        <div class="form-row" style="margin-top: 6px; grid-template-columns: 2fr 1fr;">
-                            <div><label style="color: #166534;">預計巡迴年數/輪數 (年)</label></div>
-                            <div><input type="number" class="p-amort-years" value="${p.amortYears}" min="2" oninput="saveAndCalc()"></div>
-                        </div>
-                    </div>
-
-                    <div class="auto-calc-box" style="background:#f0fdf4; border-left-color:#16a34a; color:#15803d;">
-                        🤖 合計全站動態差旅總開銷：$ <span class="p-res-travel">0</span>
-                    </div>
-
-                    <div class="section-title">🛍️ 周邊商品動態銷售模擬</div>
-                    <div class="form-row">
-                        <div><label>製作總成本 (印製費用)</label><input type="number" class="p-merch-total-cost" value="${mCost}" oninput="saveAndCalc()"></div>
-                        <div><label>總製作數量 (件/本)</label><input type="number" class="p-merch-total-qty" value="${mQty}" oninput="saveAndCalc()"></div>
-                    </div>
-                    <div class="form-row" style="margin-bottom:6px;">
-                        <div style="grid-column: span 2;"><label>單件零售價 ($)</label><input type="number" class="p-merch-unit-price" value="${mPrice}" oninput="saveAndCalc()"></div>
-                    </div>
-                    <div class="slider-box" style="background: #f0fdfa; border-color: #ccfbf1;">
-                        <div class="slider-title" style="color: #0d9488;">
-                            <span>🛍️ 預估周邊銷售率模擬</span>
-                            <span><strong class="p-merch-slider-value">${mSalePct}</strong> %</span>
-                        </div>
-                        <input type="range" class="slider-input p-merch-sale-slider" min="0" max="100" value="${mSalePct}" step="5" oninput="this.parentElement.getElementsByClassName('p-merch-slider-value')[0].innerText = this.value; saveAndCalc();">
-                    </div>
-                    <div class="auto-calc-box" style="background:#f0fdfa; border-left-color:#0d9488;">
-                        🎯 周邊預估營業額：$ <span class="p-res-merch-rev">0</span> (售出 <span class="p-res-merch-sold-qty">0</span> 件)<br>
-                        📦 殘存庫存損失：$ <span class="p-res-merch-loss">0</span> (剩下 <span class="p-res-merch-left-qty">0</span> 件)
-                    </div>
-
-                    <div class="section-title">📢 行銷、宣傳與雜支</div>
-                    <div class="form-row">
-                        <div style="grid-column: span 2;"><label>行銷宣傳</label><input type="number" class="p-marketing" value="${p.marketing}" oninput="saveAndCalc()"></div>
-                    </div>
-                    <div class="tax-row" style="margin-bottom: 6px;">
-                        <label class="tax-checkbox-label"><input type="checkbox" class="p-marketing-tax" ${p.marketingTax?'checked':''} onchange="saveAndCalc()"> 外加5%發票稅</label>
-                    </div>
-                    <div class="form-row">
-                        <div><label>保險授權</label><input type="number" class="p-insurance" value="${p.insurance}" oninput="saveAndCalc()"></div>
-                        <div><label>🚨 緊急預備金</label><input type="number" class="p-contingency" value="${p.contingency}" oninput="saveAndCalc()"></div>
-                    </div>
-
-                    <div class="section-title">💰 外部收入來源</div>
-                    <div class="form-row">
-                        <div style="grid-column: span 2;"><label>政府補助 + 企業贊助總額</label><input type="number" class="p-subsidy" value="${currentSubsidy}" oninput="saveAndCalc()"></div>
-                    </div>
-
-                    <div class="auto-calc-box" style="background:#fff7ed; border-left-color: var(--accent-color); color: #c2410c;">
-                        📈 票房動態實拿：$ <span class="p-res-ticket-net">0</span><br>
-                        📊 本劇預估總損益：<strong class="p-res-final-profit">$ 0</strong>
-                    </div>
-
-                    <div class="break-even-badge">
-                        <span>🎯 最低保本售票率：</span>
-                        <span class="break-even-value p-res-break-even">計算中...</span>
-                    </div>
-
-                    <div class="cashflow-badge">
-                        <span>🚨 期初自籌現金流防線：</span>
-                        <span class="break-even-value p-res-cashflow" style="color:var(--danger-color);">計算中...</span>
-                    </div>
-
-                    <div class="cashflow-warning-badge">
-                        <span style="font-weight:bold;">⏳ 票房解凍前「絕對流動金防線」：</span>
-                        <span style="font-size:12px; font-weight:bold; color:var(--warning-color);" class="p-res-cashflow-warning">計算中...</span>
-                        <span style="font-size:10px; color:#9a3412;">⚠️ 當票款卡在售票系統、政府補助僅拿到首期時，用來支付現付團隊薪資、各地衍生差旅與硬體尾款的劇團戶頭安全水位。</span>
-                    </div>
-                </div>
-            `;
-            pContainer.appendChild(card);
-        });
-    }
-
-    function toggleCollapse(headerEl, idx) {
-        headerEl.parentElement.classList.toggle('collapsed');
-        saveCurrentStateOnly();
-    }
-
-    function updateSliderText(sliderElement) {
-        sliderElement.parentElement.getElementsByClassName('p-slider-value')[0].innerText = sliderElement.value;
-    }
-
-    function addVenueBlockData(projIdx) {
-        let currentData = captureAllDataObjects();
-        currentData[projIdx].venues.push({ vName: `新巡迴站`, shows: 2, seats: 300, earlyBirdPercent: 20, earlyBirdPrice: 800, regularPrice: 1000, systemFee: 6, bankFee: 2, vipSeats: 10, tCrewCount: 0, tCrewEarlyDays: 0, tActorCount: 0, tTotalDays: 0, tFare: 0, tHotel: 0, tMeal: 150 });
-        renderProjects(currentData);
-        calculateAll();
-    }
-
-    function removeVenue(btn, projIdx, venueIdx) {
-        let currentData = captureAllDataObjects();
-        currentData[projIdx].venues.splice(venueIdx, 1);
-        renderProjects(currentData);
-        calculateAll();
-    }
-
-    document.getElementById('add_btn_trigger').onclick = function() {
-        let currentData = captureAllDataObjects();
-        let newProj = JSON.parse(JSON.stringify(defaultProjects[0])); 
-        newProj.title = `新巡迴劇目 ${currentData.length + 1}`;
-        currentData.push(newProj);
-        renderProjects(currentData);
-        calculateAll();
+    const themes = {
+        classic: ['#EF4444', '#10B981', '#F87171', '#34D399', '#DC2626', '#059669', '#B91C1C'],
+        ocean: ['#0369a1', '#38bdf8', '#0ea5e9', '#7dd3fc', '#0284c7', '#bae6fd', '#075985'],
+        sunset: ['#c2410c', '#fcd34d', '#f59e0b', '#fbbf24', '#ea580c', '#fef3c7', '#9a3412'],
+        forest: ['#166534', '#86efac', '#22c55e', '#bbf7d0', '#15803d', '#dcfce7', '#064e3b']
     };
 
-    function removeProject(idx) {
-        let currentData = captureAllDataObjects();
-        currentData.splice(idx, 1);
-        renderProjects(currentData);
-        calculateAll();
-    }
+    const STORAGE_KEY = 'theatre_ledger_pro_v37_2';
+    let costChart, pnlChart;
 
-    function copyProject(idx) {
-        let currentData = captureAllDataObjects();
-        let copiedProj = JSON.parse(JSON.stringify(currentData[idx]));
-        copiedProj.title = copiedProj.title + " (複製)";
-        currentData.splice(idx + 1, 0, copiedProj); 
-        renderProjects(currentData);
-        calculateAll();
-    }
-
-    function captureAllDataObjects() {
-        var container = document.getElementById('projects_container');
-        var cards = container.getElementsByClassName('project-card');
-        var list = [];
-
-        for (var i = 0; i < cards.length; i++) {
-            var card = cards[i];
-            var vBlocks = card.getElementsByClassName('venue-sub-block');
-            var vList = [];
-            for(var j=0; j<vBlocks.length; j++) {
-                vList.push({
-                    vName: vBlocks[j].getElementsByClassName('p-vname')[0].value,
-                    shows: parseFloat(vBlocks[j].getElementsByClassName('p-shows')[0].value) || 0,
-                    seats: parseFloat(vBlocks[j].getElementsByClassName('p-seats')[0].value) || 0,
-                    vipSeats: parseFloat(vBlocks[j].getElementsByClassName('p-vip-seats')[0].value) || 0,
-                    earlyBirdPercent: parseFloat(vBlocks[j].getElementsByClassName('p-eb-percent')[0].value) || 0,
-                    systemFee: parseFloat(vBlocks[j].getElementsByClassName('p-system-fee')[0].value) || 0,
-                    bankFee: parseFloat(vBlocks[j].getElementsByClassName('p-bank-fee')[0].value) || 0,
-                    earlyBirdPrice: parseFloat(vBlocks[j].getElementsByClassName('p-eb-price')[0].value) || 0,
-                    regularPrice: parseFloat(vBlocks[j].getElementsByClassName('p-reg-price')[0].value) || 0,
-                    tCrewCount: parseFloat(vBlocks[j].getElementsByClassName('p-t-crew-count')[0].value) || 0,
-                    tCrewEarlyDays: parseFloat(vBlocks[j].getElementsByClassName('p-t-crew-early')[0].value) || 0,
-                    tActorCount: parseFloat(vBlocks[j].getElementsByClassName('p-t-actor-count')[0].value) || 0,
-                    tTotalDays: parseFloat(vBlocks[j].getElementsByClassName('p-t-total-days')[0].value) || 0,
-                    tFare: parseFloat(vBlocks[j].getElementsByClassName('p-t-fare')[0].value) || 0,
-                    tHotel: parseFloat(vBlocks[j].getElementsByClassName('p-t-hotel')[0].value) || 0,
-                    tMeal: parseFloat(vBlocks[j].getElementsByClassName('p-t-meal')[0].value) || 0
+    function init() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try { 
+                const parsed = JSON.parse(saved);
+                parsed.plays.forEach(p => {
+                    if (p.prSeats === undefined) p.prSeats = 0;
+                    if (p.earlyBirdRatio === undefined) p.earlyBirdRatio = 0;
+                    if (p.earlyBirdPrice === undefined) p.earlyBirdPrice = p.avgTicketPrice;
                 });
-            }
-
-            list.push({
-                title: card.getElementsByClassName('project-title-input')[0].value,
-                salePercent: parseFloat(card.getElementsByClassName('p-sale-slider')[0].value) || 0,
-                merchSalePercent: parseFloat(card.getElementsByClassName('p-merch-sale-slider')[0].value) || 0,
-                isCollapsed: card.classList.contains('collapsed'),
-                venues: vList,
-                director: parseFloat(card.getElementsByClassName('p-director')[0].value) || 0,
-                staff: parseFloat(card.getElementsByClassName('p-staff')[0].value) || 0,
-                paybackPercent: parseFloat(card.getElementsByClassName('p-payback-percent')[0].value) || 0,
-                actorCount: parseFloat(card.getElementsByClassName('p-actor-count')[0].value) || 0,
-                rehearsalMonths: parseFloat(card.getElementsByClassName('p-rehearsal-months')[0].value) || 0,
-                salaryMonth: parseFloat(card.getElementsByClassName('p-salary-month')[0].value) || 0,
-                salaryShow: parseFloat(card.getElementsByClassName('p-salary-show')[0].value) || 0,
-                actorGhi: card.getElementsByClassName('p-actor-ghi')[0].checked,
-                crewGhi: card.getElementsByClassName('p-crew-ghi')[0].checked,
-                stageCount: parseFloat(card.getElementsByClassName('p-stage-count')[0].value) || 0,
-                stageDays: parseFloat(card.getElementsByClassName('p-stage-days')[0].value) || 0,
-                stageSalaryDay: parseFloat(card.getElementsByClassName('p-stage-salary-day')[0].value) || 0,
-                stageEntryFee: parseFloat(card.getElementsByClassName('p-stage-entry-fee')[0].value) || 0,
-                stageSalaryShow: parseFloat(card.getElementsByClassName('p-stage-salary-show')[0].value) || 0,
-                lightCount: parseFloat(card.getElementsByClassName('p-light-count')[0].value) || 0,
-                lightDays: parseFloat(card.getElementsByClassName('p-light-days')[0].value) || 0,
-                lightSalaryDay: parseFloat(card.getElementsByClassName('p-light-salary-day')[0].value) || 0,
-                lightEntryFee: parseFloat(card.getElementsByClassName('p-light-entry-fee')[0].value) || 0,
-                lightSalaryShow: parseFloat(card.getElementsByClassName('p-light-salary-show')[0].value) || 0,
-                soundCount: parseFloat(card.getElementsByClassName('p-sound-count')[0].value) || 0,
-                soundDays: parseFloat(card.getElementsByClassName('p-sound-days')[0].value) || 0,
-                soundSalaryDay: parseFloat(card.getElementsByClassName('p-sound-salary-day')[0].value) || 0,
-                soundEntryFee: parseFloat(card.getElementsByClassName('p-sound-entry-fee')[0].value) || 0,
-                soundSalaryShow: parseFloat(card.getElementsByClassName('p-sound-salary-show')[0].value) || 0,
-                volShows: parseFloat(card.getElementsByClassName('p-vol-shows')[0].value) || 0,
-                volAllowance: parseFloat(card.getElementsByClassName('p-vol-allowance')[0].value) || 0,
-                volCount: parseFloat(card.getElementsByClassName('p-vol-count')[0].value) || 0,
-                scenery: parseFloat(card.getElementsByClassName('p-scenery')[0].value) || 0,
-                sceneryTax: card.getElementsByClassName('p-scenery-tax')[0].checked,
-                lighting: parseFloat(card.getElementsByClassName('p-lighting')[0].value) || 0,
-                lightingTax: card.getElementsByClassName('p-lighting-tax')[0].checked,
-                sound: parseFloat(card.getElementsByClassName('p-sound')[0].value) || 0,
-                soundTax: card.getElementsByClassName('p-sound-tax')[0].checked,
-                venue: parseFloat(card.getElementsByClassName('p-venue')[0].value) || 0,
-                venueTax: card.getElementsByClassName('p-venue-tax')[0].checked,
-                isAmortized: card.getElementsByClassName('p-is-amortized')[0].checked,
-                amortYears: parseFloat(card.getElementsByClassName('p-amort-years')[0].value) || 3,
-                merchTotalCost: parseFloat(card.getElementsByClassName('p-merch-total-cost')[0].value) || 0,
-                merchTotalQty: parseFloat(card.getElementsByClassName('p-merch-total-qty')[0].value) || 0,
-                merchUnitPrice: parseFloat(card.getElementsByClassName('p-merch-unit-price')[0].value) || 0,
-                marketing: parseFloat(card.getElementsByClassName('p-marketing')[0].value) || 0,
-                marketingTax: card.getElementsByClassName('p-marketing-tax')[0].checked,
-                insurance: parseFloat(card.getElementsByClassName('p-insurance')[0].value) || 0,
-                contingency: parseFloat(card.getElementsByClassName('p-contingency')[0].value) || 0,
-                subsidy: parseFloat(card.getElementsByClassName('p-subsidy')[0].value) || 0
-            });
-        }
-        return list;
-    }
-
-    function saveCurrentStateOnly() {
-        localStorage.setItem('theatre_office_rent', document.getElementById('annual_rent').value);
-        localStorage.setItem('theatre_office_salary', document.getElementById('annual_salary').value);
-        localStorage.setItem('theatre_office_insurance', document.getElementById('annual_insurance').value);
-        localStorage.setItem('theatre_office_software', document.getElementById('annual_software').value);
-        localStorage.setItem('theatre_office_hardware', document.getElementById('annual_hardware').value);
-        localStorage.setItem('theatre_projects_data_v6', JSON.stringify(captureAllDataObjects()));
-    }
-
-    function saveAndCalc() {
-        saveCurrentStateOnly();
-        calculateAll();
-    }
-
-    function clearSavedData() {
-        if(confirm('確定要清空所有設定回到預設值嗎？')) { localStorage.clear(); location.reload(); }
-    }
-
-    function calculateAll() {
-        var rent = parseFloat(document.getElementById('annual_rent').value) || 0;
-        var salary = parseFloat(document.getElementById('annual_salary').value) || 0;
-        var ins = parseFloat(document.getElementById('annual_insurance').value) || 0;
-        var software = parseFloat(document.getElementById('annual_software').value) || 0;
-        var hardware = parseFloat(document.getElementById('annual_hardware').value) || 0;
-        var totalOfficeOverhead = rent + salary + ins + software + hardware;
-        
-        var container = document.getElementById('projects_container');
-        var cards = container.getElementsByClassName('project-card');
-        
-        var totalAllCost = 0;
-        var totalAllRevenue = 0;
-        var totalAllProfit = 0;
-        var totalProjectPaybackToOffice = 0; 
-
-        for (var i = 0; i < cards.length; i++) {
-            var card = cards[i];
-            var salePercent = parseFloat(card.getElementsByClassName('p-sale-slider')[0].value) || 0;
-            var merchSalePercent = parseFloat(card.getElementsByClassName('p-merch-sale-slider')[0].value) || 0;
-            var vBlocks = card.getElementsByClassName('venue-sub-block');
-            
-            var totalCardShows = 0;
-            var max100PercentTicketRevenueNet = 0; 
-            var totalProjectTravelCost = 0; 
-
-            for (var j = 0; j < vBlocks.length; j++) {
-                var vb = vBlocks[j];
-                var vShows = parseFloat(vb.getElementsByClassName('p-shows')[0].value) || 0;
-                var vSeats = parseFloat(vb.getElementsByClassName('p-seats')[0].value) || 0;
-                var vipSeats = parseFloat(vb.getElementsByClassName('p-vip-seats')[0].value) || 0;
-                var sysFee = parseFloat(vb.getElementsByClassName('p-system-fee')[0].value) || 0;
-                var bkFee = parseFloat(vb.getElementsByClassName('p-bank-fee')[0].value) || 0;
-                var ebPercent = parseFloat(vb.getElementsByClassName('p-eb-percent')[0].value) || 0;
-                var ebPrice = parseFloat(vb.getElementsByClassName('p-eb-price')[0].value) || 0;
-                var regPrice = parseFloat(vb.getElementsByClassName('p-reg-price')[0].value) || 0;
-
-                totalCardShows += vShows;
-
-                var sellableSeats = vSeats - vipSeats;
-                if (sellableSeats < 0) sellableSeats = 0;
-
-                var ebSeats = sellableSeats * (ebPercent / 100);
-                var regSeats = sellableSeats * (1 - (ebPercent / 100));
-                var venueGross100 = vShows * ((ebSeats * ebPrice) + (regSeats * regPrice));
-                
-                var venueNet100 = venueGross100 * (1 - (sysFee / 100) - (bkFee / 100));
-                max100PercentTicketRevenueNet += venueNet100;
-
-                var tcCount = parseFloat(vb.getElementsByClassName('p-t-crew-count')[0].value) || 0;
-                var tcEarly = parseFloat(vb.getElementsByClassName('p-t-crew-early')[0].value) || 0;
-                var taCount = parseFloat(vb.getElementsByClassName('p-t-actor-count')[0].value) || 0;
-                var tDays = parseFloat(vb.getElementsByClassName('p-t-total-days')[0].value) || 0;
-                var tFare = parseFloat(vb.getElementsByClassName('p-t-fare')[0].value) || 0;
-                var tHotel = parseFloat(vb.getElementsByClassName('p-t-hotel')[0].value) || 0;
-                var tMeal = parseFloat(vb.getElementsByClassName('p-t-meal')[0].value) || 0;
-
-                var crewTotalDays = tDays + tcEarly;
-                var stationTrafficCost = (tcCount + taCount) * tFare;
-                var stationCrewHotel = (tcCount / 2) * (crewTotalDays > 1 ? (crewTotalDays - 1) : 0) * tHotel;
-                var stationActorHotel = (taCount / 2) * (tDays > 1 ? (tDays - 1) : 0) * tHotel;
-                var stationMealCost = (tcCount * crewTotalDays * tMeal) + (taCount * tDays * tMeal);
-                
-                totalProjectTravelCost += (stationTrafficCost + stationCrewHotel + stationActorHotel + stationMealCost);
-            }
-            
-            var totalCardTicketNet = max100PercentTicketRevenueNet * (salePercent / 100);
-            card.getElementsByClassName('p-res-ticket-net')[0].innerText = Math.round(totalCardTicketNet).toLocaleString();
-            card.getElementsByClassName('p-res-travel')[0].innerText = Math.round(totalProjectTravelCost).toLocaleString();
-
-            var director = parseFloat(card.getElementsByClassName('p-director')[0].value) || 0;
-            var staff = parseFloat(card.getElementsByClassName('p-staff')[0].value) || 0;
-            var aCount = parseFloat(card.getElementsByClassName('p-actor-count')[0].value) || 0;
-            var aMonths = parseFloat(card.getElementsByClassName('p-rehearsal-months')[0].value) || 0;
-            var sMonth = parseFloat(card.getElementsByClassName('p-salary-month')[0].value) || 0;
-            var sShow = parseFloat(card.getElementsByClassName('p-salary-show')[0].value) || 0;
-            var totalActorSalary = (aCount * aMonths * sMonth) + (aCount * totalCardShows * sShow);
-            card.getElementsByClassName('p-res-actor-salary')[0].innerText = totalActorSalary.toLocaleString();
-
-            var stCount = parseFloat(card.getElementsByClassName('p-stage-count')[0].value) || 0;
-            var stDays = parseFloat(card.getElementsByClassName('p-stage-days')[0].value) || 0;
-            var stSalDay = parseFloat(card.getElementsByClassName('p-stage-salary-day')[0].value) || 0;
-            var stEntryFee = parseFloat(card.getElementsByClassName('p-stage-entry-fee')[0].value) || 0;
-            var stSalShow = parseFloat(card.getElementsByClassName('p-stage-salary-show')[0].value) || 0;
-            var totalStageCost = stCount * ((stDays * stSalDay) + (totalCardShows * stEntryFee) + (totalCardShows * stSalShow));
-
-            var ltCount = parseFloat(card.getElementsByClassName('p-light-count')[0].value) || 0;
-            var ltDays = parseFloat(card.getElementsByClassName('p-light-days')[0].value) || 0;
-            var ltSalDay = parseFloat(card.getElementsByClassName('p-light-salary-day')[0].value) || 0;
-            var ltEntryFee = parseFloat(card.getElementsByClassName('p-light-entry-fee')[0].value) || 0;
-            var ltSalShow = parseFloat(card.getElementsByClassName('p-light-salary-show')[0].value) || 0;
-            var totalLightCost = ltCount * ((ltDays * ltSalDay) + (totalCardShows * ltEntryFee) + (totalCardShows * ltSalShow));
-
-            var sdCount = parseFloat(card.getElementsByClassName('p-sound-count')[0].value) || 0;
-            var sdDays = parseFloat(card.getElementsByClassName('p-sound-days')[0].value) || 0;
-            var sdSalDay = parseFloat(card.getElementsByClassName('p-sound-salary-day')[0].value) || 0;
-            var sdEntryFee = parseFloat(card.getElementsByClassName('p-sound-entry-fee')[0].value) || 0;
-            var sdSalShow = parseFloat(card.getElementsByClassName('p-sound-salary-show')[0].value) || 0;
-            var totalSoundCost = sdCount * ((sdDays * sdSalDay) + (totalCardShows * sdEntryFee) + (totalCardShows * sdSalShow));
-
-            var totalTechnicalGroupCost = totalStageCost + totalLightCost + totalSoundCost;
-            card.getElementsByClassName('p-res-crew-salary')[0].innerText = totalTechnicalGroupCost.toLocaleString();
-
-            var actGhiChecked = card.getElementsByClassName('p-actor-ghi')[0].checked;
-            var crwGhiChecked = card.getElementsByClassName('p-crew-ghi')[0].checked;
-            
-            var totalLaborCost = director + staff + totalActorSalary + totalTechnicalGroupCost;
-            var calculatedGhiTax = (totalLaborCost * 0.10); 
-            if(actGhiChecked) { calculatedGhiTax += (director + staff + totalActorSalary) * 0.0211; }
-            if(crwGhiChecked) { calculatedGhiTax += totalTechnicalGroupCost * 0.0211; }
-            card.getElementsByClassName('p-res-tax')[0].innerText = Math.round(calculatedGhiTax).toLocaleString();
-
-            var vVolShows = parseFloat(card.getElementsByClassName('p-vol-shows')[0].value) || 0;
-            var vAllowance = parseFloat(card.getElementsByClassName('p-vol-allowance')[0].value) || 0;
-            var vCount = parseFloat(card.getElementsByClassName('p-vol-count')[0].value) || 0;
-            var totalVolFee = vVolShows * vAllowance * vCount;
-
-            var scenery = parseFloat(card.getElementsByClassName('p-scenery')[0].value) || 0; if(card.getElementsByClassName('p-scenery-tax')[0].checked) scenery *= 1.05;
-            var lighting = parseFloat(card.getElementsByClassName('p-lighting')[0].value) || 0; if(card.getElementsByClassName('p-lighting-tax')[0].checked) lighting *= 1.05;
-            var sound = parseFloat(card.getElementsByClassName('p-sound')[0].value) || 0; if(card.getElementsByClassName('p-sound-tax')[0].checked) sound *= 1.05;
-            var venue = parseFloat(card.getElementsByClassName('p-venue')[0].value) || 0; if(card.getElementsByClassName('p-venue-tax')[0].checked) venue *= 1.05;
-            var marketing = parseFloat(card.getElementsByClassName('p-marketing')[0].value) || 0; if(card.getElementsByClassName('p-marketing-tax')[0].checked) marketing *= 1.05;
-            
-            var isAmortized = card.getElementsByClassName('p-is-amortized')[0].checked;
-            var amortYears = parseFloat(card.getElementsByClassName('p-amort-years')[0].value) || 3;
-            var finalHardwareCost = venue + (isAmortized ? (scenery + lighting + sound) / amortYears : (scenery + lighting + sound));
-
-            var insurance = parseFloat(card.getElementsByClassName('p-insurance')[0].value) || 0;
-            var contingency = parseFloat(card.getElementsByClassName('p-contingency')[0].value) || 0;
-
-            var mCost = parseFloat(card.getElementsByClassName('p-merch-total-cost')[0].value) || 0;
-            var mQty = parseFloat(card.getElementsByClassName('p-merch-total-qty')[0].value) || 0;
-            var mPrice = parseFloat(card.getElementsByClassName('p-merch-unit-price')[0].value) || 0;
-            
-            var mSoldQty = Math.round(mQty * (merchSalePercent / 100));
-            var mLeftQty = mQty - mSoldQty;
-            var merchRevenueCalculated = mSoldQty * mPrice;
-            
-            var unitCost = mQty > 0 ? (mCost / mQty) : 0;
-            var merchLossCalculated = mLeftQty * unitCost; 
-
-            card.getElementsByClassName('p-res-merch-rev')[0].innerText = Math.round(merchRevenueCalculated).toLocaleString();
-            card.getElementsByClassName('p-res-merch-sold-qty')[0].innerText = mSoldQty;
-            card.getElementsByClassName('p-res-merch-loss')[0].innerText = Math.round(merchLossCalculated).toLocaleString();
-            card.getElementsByClassName('p-res-merch-left-qty')[0].innerText = mLeftQty;
-
-            var paybackPercent = parseFloat(card.getElementsByClassName('p-payback-percent')[0].value) || 0;
-            var baseProjectCost = totalLaborCost + calculatedGhiTax + totalVolFee + totalProjectTravelCost + finalHardwareCost + marketing + insurance + mCost + contingency;
-            var officeContribution = baseProjectCost * (paybackPercent / 100);
-            totalProjectPaybackToOffice += officeContribution;
-
-            var projectTotalCost = baseProjectCost + officeContribution;
-
-            var subsidy = parseFloat(card.getElementsByClassName('p-subsidy')[0].value) || 0;
-            var projectTotalRevenue = totalCardTicketNet + subsidy + merchRevenueCalculated;
-            var projectFinalProfit = projectTotalRevenue - projectTotalCost;
-
-            var profitEl = card.getElementsByClassName('p-res-final-profit')[0];
-            profitEl.innerText = '$ ' + Math.round(projectFinalProfit).toLocaleString();
-            profitEl.style.color = projectFinalProfit >= 0 ? 'var(--success-color)' : 'var(--danger-color)';
-
-            var breakEvenEl = card.getElementsByClassName('p-res-break-even')[0];
-            var netCostNeeded = projectTotalCost - (subsidy + merchRevenueCalculated);
-            if (netCostNeeded <= 0) {
-                breakEvenEl.innerText = "0% (靠補助與周邊已保本)";
-                breakEvenEl.style.color = "var(--success-color)";
-            } else if (max100PercentTicketRevenueNet <= 0) {
-                breakEvenEl.innerText = "無法計算";
-            } else {
-                var breakEvenPercent = (netCostNeeded / max100PercentTicketRevenueNet) * 100;
-                breakEvenEl.innerText = breakEvenPercent > 100 ? Math.round(breakEvenPercent) + "% (滿座也未保本🚨)" : Math.round(breakEvenPercent) + " %";
-                if(breakEvenPercent > 100) breakEvenEl.style.color = "var(--danger-color)";
-            }
-
-            var cashFlowNeeded = (director + staff + (aCount * aMonths * sMonth) + scenery + lighting + sound + venue + marketing + insurance + mCost) * 0.75 + totalProjectTravelCost;
-            card.getElementsByClassName('p-res-cashflow')[0].innerText = '$ ' + Math.round(cashFlowNeeded).toLocaleString();
-
-            var actualShowPaidCrew = totalTechnicalGroupCost + (aCount * totalCardShows * sShow); 
-            var totalFreezeBarrier = cashFlowNeeded + actualShowPaidCrew + totalVolFee - (subsidy * 0.30);
-            if(totalFreezeBarrier < 0) totalFreezeBarrier = 0;
-            card.getElementsByClassName('p-res-cashflow-warning')[0].innerText = '$ ' + Math.round(totalFreezeBarrier).toLocaleString() + ' 元';
-
-            totalAllCost += projectTotalCost;
-            totalAllRevenue += projectTotalRevenue;
-            totalAllProfit += projectFinalProfit;
-        }
-
-        var finalOfficeBurden = totalOfficeOverhead - totalProjectPaybackToOffice;
-        document.getElementById('total_office_overhead_text').innerText = totalOfficeOverhead.toLocaleString();
-        document.getElementById('total_office_subsidized_text').innerText = Math.round(totalProjectPaybackToOffice).toLocaleString();
-        document.getElementById('total_all_office_cost').innerText = '$' + Math.round(finalOfficeBurden).toLocaleString();
-
-        document.getElementById('total_all_cost').innerText = '$' + Math.round(totalAllCost).toLocaleString();
-        document.getElementById('total_all_revenue').innerText = '$' + Math.round(totalAllRevenue).toLocaleString();
-        document.getElementById('total_all_profit').innerText = '$' + Math.round(totalAllProfit).toLocaleString();
-
-        var finalAnnualNet = totalAllProfit - finalOfficeBurden;
-        var statusBox = document.getElementById('annual_status_box');
-
-        if(finalAnnualNet >= 0) {
-            statusBox.className = "profit-status status-success";
-            statusBox.innerHTML = "🎉 全年最終淨獲利 $" + Math.round(finalAnnualNet).toLocaleString() + " 元 (已動態扣除周邊未售庫存跌價與場地專屬差旅)";
+                if(!parsed.themeColors) parsed.themeColors = themes.classic;
+                appData = parsed; 
+            } catch(e) {}
         } else {
-            statusBox.className = "profit-status status-danger";
-            statusBox.innerHTML = "🚨 全年最終資金缺口 $" + Math.round(Math.abs(finalAnnualNet)).toLocaleString() + " 元";
+            appData.themeColors = themes.classic;
+        }
+        
+        document.getElementById('custom-admin-color').value = appData.themeColors[0];
+        
+        initCharts();
+        renderOffice();
+        renderPlays();
+        updateTotals();
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const btn = document.getElementById('color-palette-btn');
+            const dropdown = document.getElementById('palette-dropdown');
+            if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    }
+
+    function initCharts() {
+        const costCtx = document.getElementById('costStructureChart').getContext('2d');
+        const pnlCtx = document.getElementById('pnlTrendChart').getContext('2d');
+
+        costChart = new Chart(costCtx, {
+            type: 'doughnut',
+            data: {
+                labels: [],
+                datasets: [{
+                    data: [],
+                    backgroundColor: appData.themeColors,
+                    borderWidth: 0,
+                    hoverOffset: 15
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: { enabled: true } },
+                cutout: '70%',
+                animation: { duration: 500 }
+            }
+        });
+
+        pnlChart = new Chart(pnlCtx, {
+            type: 'line',
+            data: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                datasets: [
+                    { 
+                        label: '預計總支出', 
+                        data: [0, 0, 0, 0], 
+                        borderColor: '#EF4444', 
+                        backgroundColor: (context) => {
+                            const chart = context.chart;
+                            const {ctx, chartArea} = chart;
+                            if (!chartArea) return null;
+                            const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                            gradient.addColorStop(0, 'rgba(239, 68, 68, 0)');
+                            gradient.addColorStop(1, 'rgba(239, 68, 68, 0.15)');
+                            return gradient;
+                        },
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 0
+                    },
+                    { 
+                        label: '預估總營收', 
+                        data: [0, 0, 0, 0], 
+                        borderColor: '#10B981', 
+                        backgroundColor: (context) => {
+                            const chart = context.chart;
+                            const {ctx, chartArea} = chart;
+                            if (!chartArea) return null;
+                            const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                            gradient.addColorStop(0, 'rgba(16, 185, 129, 0)');
+                            gradient.addColorStop(1, 'rgba(16, 185, 129, 0.15)');
+                            return gradient;
+                        },
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: '#091426',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': NT$ ' + Math.round(context.parsed.y).toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: { display: false } 
+                    },
+                    x: { 
+                        grid: { display: false },
+                        ticks: {
+                            font: { size: 9, weight: 'bold' },
+                            color: '#64748b'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function toggleColorPalette() {
+        document.getElementById('palette-dropdown').classList.toggle('hidden');
+    }
+
+    function setTheme(themeKey) {
+        appData.themeColors = [...themes[themeKey]];
+        document.getElementById('custom-admin-color').value = appData.themeColors[0];
+        updateTotals();
+    }
+
+    function updateCustomColors() {
+        const val = document.getElementById('custom-admin-color').value;
+        appData.themeColors[0] = val;
+        updateTotals();
+    }
+
+    function updateTotals() {
+        const officeAnnual = (appData.officeCosts.rent.value + appData.officeCosts.salary.value + appData.officeCosts.insurance.value + appData.officeCosts.software.value) * 12 + (appData.officeCosts.hardware.value / 3);
+        
+        let totalRev = 0;
+        let totalCost = officeAnnual;
+        let totalGHI = 0;
+        let playCosts = [];
+
+        appData.plays.forEach((play, idx) => {
+            const totalAvailableSeatsPerShow = Math.max(0, play.capacity - play.prSeats);
+            const totalSellableSeats = play.tourCount * totalAvailableSeatsPerShow;
+            const expectedSalesCount = totalSellableSeats * (play.ticketRate / 100);
+            const earlyBirdCap = expectedSalesCount * (play.earlyBirdRatio / 100);
+            const regularCap = expectedSalesCount - earlyBirdCap;
+            const grossTicketRevenue = (earlyBirdCap * play.earlyBirdPrice) + (regularCap * play.avgTicketPrice);
+            const ticketNet = grossTicketRevenue * (1 - play.platformFee / 100);
+            
+            const playRevenue = (ticketNet + play.merchRevenue + play.sponsorship) * (play.confidenceLevel / 100);
+            
+            let playProdCost = 0;
+            let playGHI = 0;
+            let playStamp = 0;
+            const stampKeys = ['creative', 'performers', 'lighting', 'stage', 'costume', 'props'];
+            
+            Object.entries(play.production).forEach(([key, item]) => {
+                const subtotal = item.unitCost * item.count;
+                playProdCost += subtotal;
+                if (item.taxType === '9B' || item.taxType === '50') {
+                    playGHI += subtotal * (play.ghiRate / 100);
+                }
+                if (stampKeys.includes(key)) {
+                    playStamp += subtotal * 0.004;
+                }
+            });
+
+            const contrib = playRevenue * (play.officeContributionRate / 100);
+            const playTotalCost = playProdCost + playGHI + playStamp + play.marketingBudget + contrib;
+            
+            totalRev += playRevenue;
+            totalCost += playTotalCost;
+            totalGHI += playGHI;
+            playCosts.push({ name: play.name, value: playTotalCost });
+
+            const weightedTicketPrice = (play.avgTicketPrice * (1 - play.earlyBirdRatio / 100)) + (play.earlyBirdPrice * (play.earlyBirdRatio / 100));
+            const unitNet = weightedTicketPrice * (1 - play.platformFee / 100);
+            const ticketsNeeded = unitNet > 0 ? Math.ceil(playTotalCost / unitNet) : 0;
+            const totalCapacity = play.tourCount * play.capacity;
+            const bepRate = totalCapacity > 0 ? ((ticketsNeeded / totalCapacity) * 100).toFixed(1) : 0;
+            const playProfit = playRevenue - playTotalCost;
+
+            updatePlayUI(idx, playProfit, bepRate, ticketsNeeded, totalCapacity, playTotalCost);
+        });
+
+        const finalProfit = totalRev - totalCost;
+        
+        document.getElementById('total-cost-display').textContent = `NT$ ${Math.round(totalCost).toLocaleString()}`;
+        document.getElementById('total-revenue-display').textContent = `NT$ ${Math.round(totalRev).toLocaleString()}`;
+        document.getElementById('total-ghi-display').textContent = `NT$ ${Math.round(totalGHI).toLocaleString()}`;
+        document.getElementById('total-profit-display').textContent = `NT$ ${Math.round(finalProfit).toLocaleString()}`;
+
+        const bar = document.getElementById('summary-bar');
+        if (finalProfit >= 0) {
+            bar.classList.remove('bg-error');
+            bar.classList.add('bg-secondary');
+        } else {
+            bar.classList.remove('bg-secondary');
+            bar.classList.add('bg-error');
+        }
+        
+        updateChartsData(officeAnnual, playCosts, totalCost, totalRev);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    }
+
+    function updateChartsData(officeTotal, plays, totalCost, totalRev) {
+        if(!costChart || !pnlChart) return;
+
+        const labels = ['總部行政', ...plays.map(p => p.name)];
+        const data = [officeTotal, ...plays.map(p => p.value)];
+        
+        costChart.data.labels = labels;
+        costChart.data.datasets[0].data = data;
+        costChart.data.datasets[0].backgroundColor = appData.themeColors;
+        costChart.update();
+
+        const legend = document.getElementById('cost-legend');
+        const colors = appData.themeColors;
+        legend.innerHTML = labels.map((l, i) => `
+            <div class="flex items-center gap-1.5 overflow-hidden">
+                <div class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${colors[i % colors.length]}"></div>
+                <span class="text-[9px] font-bold truncate text-on-surface-variant">${l}</span>
+            </div>
+        `).join('');
+
+        pnlChart.data.datasets[0].data = [officeTotal * 0.25, officeTotal * 0.8, totalCost * 0.85, totalCost];
+        pnlChart.data.datasets[1].data = [0, totalRev * 0.3, totalRev * 0.7, totalRev];
+        pnlChart.update('none');
+    }
+
+    function updatePlayUI(idx, profit, bepRate, tickets, cap, cost) {
+        const card = document.getElementById(`play-card-${idx}`);
+        if (!card) return;
+        
+        const profitEl = card.querySelector('.play-profit-display');
+        if (profitEl) {
+            profitEl.textContent = `${profit >= 0 ? '+' : ''}${Math.round(profit).toLocaleString()}`;
+            profitEl.className = `play-profit-display text-[12px] font-black ${profit >= 0 ? 'text-secondary' : 'text-error'}`;
+        }
+        
+        const bepText = card.querySelector('.bep-text');
+        if (bepText) {
+            bepText.textContent = `門檻率 ${bepRate}%`;
+            bepText.className = `bep-text text-[10px] font-black ${parseFloat(bepRate) > 100 ? 'text-error' : 'text-secondary'}`;
+        }
+        
+        const bepSub = card.querySelector('.bep-sub');
+        if (bepSub) bepSub.textContent = `${tickets.toLocaleString()} / ${cap.toLocaleString()} 張`;
+        
+        const bepBar = card.querySelector('.bep-bar');
+        if (bepBar) {
+            bepBar.style.width = `${Math.min(bepRate, 100)}%`;
+            bepBar.className = `bep-bar h-full transition-all duration-500 ${parseFloat(bepRate) > 100 ? 'bg-error' : 'bg-secondary'}`;
+        }
+
+        const costTotal = card.querySelector('.play-total-cost-display');
+        if (costTotal) costTotal.textContent = `NT$ ${Math.round(cost).toLocaleString()}`;
+    }
+
+    function renderOffice() {
+        const container = document.getElementById('office-costs-container');
+        container.innerHTML = Object.entries(appData.officeCosts).map(([key, data]) => {
+            const isOver = data.value > data.limit;
+            return `
+            <div class="space-y-2">
+                <div class="flex justify-between items-center px-1">
+                    <label class="text-[9px] font-black uppercase text-on-surface-variant">${data.label}</label>
+                    ${isOver ? '<span class="text-[7px] bg-error text-white px-1.5 py-0.5 rounded-full font-bold uppercase">超過預算</span>' : ''}
+                </div>
+                <div class="flex items-center bg-white border-2 ${isOver ? 'border-error/40' : 'border-outline-variant'} rounded-lg h-12 overflow-hidden focus-within:border-primary transition-all active-scale">
+                    <input type="number" value="${data.value}" oninput="updateOfficeVal('${key}', this.value)" class="w-full text-center border-none bg-transparent focus:ring-0 font-bold text-lg text-on-surface">
+                </div>
+                <div class="flex items-center gap-1.5 px-1">
+                    <span class="text-[8px] font-bold text-on-surface-variant uppercase">上限:</span>
+                    <input type="number" value="${data.limit}" oninput="updateOfficeLimit('${key}', this.value)" class="w-full text-[10px] font-bold text-on-surface-variant bg-transparent border-b border-outline-variant focus:border-primary outline-none">
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function renderPlays() {
+        const wrapper = document.getElementById('plays-wrapper');
+        const dots = document.getElementById('carousel-dots');
+        
+        dots.innerHTML = appData.plays.map((_, i) => `<div class="dot-indicator ${i === 0 ? 'active' : ''}"></div>`).join('') + '<div class="dot-indicator"></div>';
+
+        const cards = appData.plays.map((play, idx) => `
+            <div id="play-card-${idx}" class="flex-shrink-0 w-[88vw] md:w-[500px] snap-center bg-white rounded-xl border border-outline-variant shadow-lg flex flex-col overflow-hidden h-fit">
+                <div class="p-6 bg-surface-container-low border-b border-outline-variant/30 flex justify-between items-start">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-md">
+                            <span class="material-symbols-outlined">theater_comedy</span>
+                        </div>
+                        <div class="flex-1">
+                            <input type="text" value="${play.name}" oninput="appData.plays[${idx}].name=this.value; updateTotals()" class="font-bold text-lg border-none bg-transparent focus:ring-0 p-0 text-primary w-full">
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-[9px] font-black text-on-surface-variant uppercase">預估淨利:</span>
+                                <span class="play-profit-display">NT$ 0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="duplicatePlay(${idx})" class="p-2 hover:bg-black/5 rounded-lg text-on-surface-variant active-scale transition-all"><span class="material-symbols-outlined text-sm">content_copy</span></button>
+                        <button onclick="deletePlay(${idx})" class="p-2 hover:bg-error/10 rounded-lg text-error active-scale transition-all"><span class="material-symbols-outlined text-sm">delete</span></button>
+                    </div>
+                </div>
+
+                <div class="px-6 py-5 border-b border-outline-variant/30 bg-white">
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="text-[10px] font-black text-primary uppercase">保本分析儀表板 (BEP)</span>
+                        <div class="text-right">
+                            <div class="bep-sub text-[10px] font-bold text-on-surface">0 / 0 張</div>
+                            <div class="bep-text text-[10px] font-black text-secondary">門檻率 0%</div>
+                        </div>
+                    </div>
+                    <div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+                        <div class="bep-bar h-full bg-secondary transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="p-6 space-y-6 max-h-[600px] overflow-y-auto scrollbar-hide bg-white">
+                    <div class="space-y-4">
+                        <div class="text-[10px] font-black text-on-surface-variant uppercase border-b border-outline-variant pb-1">場地與營收設定</div>
+                        <div class="grid grid-cols-2 gap-4">
+                            ${createInput('巡演場次', play.tourCount, (v) => { appData.plays[idx].tourCount = v; updateTotals(); })}
+                            ${createInput('單場席數', play.capacity, (v) => { appData.plays[idx].capacity = v; updateTotals(); })}
+                            ${createInput('公關票留座/每場', play.prSeats, (v) => { appData.plays[idx].prSeats = v; updateTotals(); })}
+                            ${createInput('售票服務費 %', play.platformFee, (v) => { appData.plays[idx].platformFee = v; updateTotals(); })}
+                        </div>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="col-span-1">${createInput('早鳥比例 %', play.earlyBirdRatio, (v) => { appData.plays[idx].earlyBirdRatio = v; updateTotals(); })}</div>
+                            <div class="col-span-1">${createInput('早鳥票價', play.earlyBirdPrice, (v) => { appData.plays[idx].earlyBirdPrice = v; updateTotals(); })}</div>
+                            <div class="col-span-1">${createInput('一般平均票價', play.avgTicketPrice, (v) => { appData.plays[idx].avgTicketPrice = v; updateTotals(); })}</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-surface-container-low p-4 rounded-xl space-y-4 border border-outline-variant/50">
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-[9px] font-black text-primary uppercase">
+                                <span>預計銷售達成率</span>
+                                <span class="text-primary font-bold">${play.ticketRate}%</span>
+                            </div>
+                            <input type="range" min="0" max="100" value="${play.ticketRate}" oninput="appData.plays[${idx}].ticketRate=parseInt(this.value); this.previousElementSibling.lastElementChild.textContent=this.value+'%'; updateTotals()" class="custom-slider">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-[9px] font-black text-secondary uppercase">
+                                <span>獲利成功機率 (信心)</span>
+                                <span class="text-secondary font-bold">${play.confidenceLevel}%</span>
+                            </div>
+                            <input type="range" min="10" max="100" value="${play.confidenceLevel}" oninput="appData.plays[${idx}].confidenceLevel=parseInt(this.value); this.previousElementSibling.lastElementChild.textContent=this.value+'%'; updateTotals()" class="custom-slider">
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="text-[10px] font-black text-on-surface-variant uppercase border-b border-outline-variant pb-1">製作細項與稅務</div>
+                        ${Object.entries(play.production).map(([key, item]) => `
+                            <div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/30 flex flex-col gap-3">
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-sm text-on-surface-variant">${item.icon}</span>
+                                        <span class="text-[10px] font-black text-on-surface">${item.label}</span>
+                                    </div>
+                                    <span class="text-[10px] font-black text-on-surface-variant">NT$ ${(item.unitCost * item.count).toLocaleString()}</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="flex items-center bg-white border border-outline-variant rounded p-1 active-scale transition-all">
+                                        <input type="number" value="${item.unitCost}" oninput="appData.plays[${idx}].production.${key}.unitCost=parseInt(this.value) || 0; updateTotals(); renderPlays()" class="w-full text-center border-none p-0 focus:ring-0 text-[11px] font-bold text-on-surface">
+                                        <span class="text-xs text-on-surface-variant mx-1">×</span>
+                                        <input type="number" value="${item.count}" oninput="appData.plays[${idx}].production.${key}.count=parseInt(this.value) || 0; updateTotals(); renderPlays()" class="w-8 text-center border-none p-0 focus:ring-0 text-[11px] font-bold text-on-surface">
+                                    </div>
+                                    <div class="flex gap-1">
+                                        ${['9B', '50', 'corp'].map(t => `
+                                            <button onclick="appData.plays[${idx}].production.${key}.taxType='${t}'; updateTotals(); renderPlays()" class="flex-1 text-[8px] font-bold rounded border active-scale transition-all ${item.taxType === t ? 'bg-primary text-white border-primary' : 'bg-white text-on-surface-variant border-outline-variant'}">${t === 'corp' ? '公司' : t}</button>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="space-y-4">
+                        ${createInput('行銷總預算', play.marketingBudget, (v) => { appData.plays[idx].marketingBudget = v; updateTotals(); })}
+                        ${createInput('公積金攤提%', play.officeContributionRate, (v) => { appData.plays[idx].officeContributionRate = v; updateTotals(); })}
+                    </div>
+                </div>
+
+                <div class="p-6 bg-surface-container-low border-t border-outline-variant/30 mt-auto flex justify-between items-end">
+                    <div>
+                        <p class="text-[8px] text-on-surface-variant font-black uppercase">年度專案總成本</p>
+                        <p class="play-total-cost-display font-black text-primary text-xl">NT$ 0</p>
+                    </div>
+                    <div class="text-[8px] text-on-surface-variant font-bold italic">含印花稅 (0.4%) 自動計算</div>
+                </div>
+            </div>
+        `).join('') + `
+            <div class="flex-shrink-0 w-[88vw] md:w-[500px] snap-center">
+                <button onclick="addNewPlay()" class="w-full h-full min-h-[400px] border-4 border-dashed border-outline-variant hover:border-primary/20 bg-white rounded-xl flex flex-col items-center justify-center gap-4 transition-all active-scale group">
+                    <span class="material-symbols-outlined text-4xl text-outline-variant group-hover:text-primary transition-colors">add_circle</span>
+                    <span class="font-bold text-on-surface-variant group-hover:text-primary transition-colors">新增劇目專案</span>
+                </button>
+            </div>
+        `;
+        
+        wrapper.innerHTML = cards;
+        updateTotals();
+    }
+
+    function createInput(label, value, onChange) {
+        return `
+        <div class="space-y-1.5">
+            <label class="text-[8px] font-black text-on-surface-variant uppercase block px-1">${label}</label>
+            <div class="flex items-center bg-white border-2 border-outline-variant rounded-lg h-10 overflow-hidden focus-within:border-primary transition-all active-scale">
+                <button onclick="const i=this.nextElementSibling; i.stepDown(); i.dispatchEvent(new Event('input'))" class="w-8 h-full hover:bg-surface-container active:bg-outline-variant/20 transition-colors shrink-0 text-on-surface-variant">-</button>
+                <input type="number" value="${value}" oninput="(${onChange.toString()})(parseInt(this.value) || 0)" class="w-full text-center border-none p-0 focus:ring-0 text-sm font-bold bg-transparent text-on-surface">
+                <button onclick="const i=this.previousElementSibling; i.stepUp(); i.dispatchEvent(new Event('input'))" class="w-8 h-full hover:bg-surface-container active:bg-outline-variant/20 transition-colors shrink-0 text-on-surface-variant">+</button>
+            </div>
+        </div>`;
+    }
+
+    function updateOfficeVal(key, val) {
+        appData.officeCosts[key].value = parseInt(val) || 0;
+        updateTotals();
+        renderOffice();
+    }
+
+    function updateOfficeLimit(key, val) {
+        appData.officeCosts[key].limit = parseInt(val) || 0;
+        updateTotals();
+        renderOffice();
+    }
+
+    function addNewPlay() {
+        const newPlay = JSON.parse(JSON.stringify(appData.plays[0]));
+        newPlay.id = Date.now();
+        newPlay.name = `新計畫 ${appData.plays.length + 1}`;
+        appData.plays.push(newPlay);
+        renderPlays();
+        const wrapper = document.getElementById('plays-wrapper');
+        wrapper.scrollTo({ left: wrapper.scrollWidth, behavior: 'smooth' });
+    }
+
+    function duplicatePlay(idx) {
+        const copy = JSON.parse(JSON.stringify(appData.plays[idx]));
+        copy.id = Date.now();
+        copy.name += ' (副本)';
+        appData.plays.push(copy);
+        renderPlays();
+    }
+
+    function deletePlay(idx) {
+        if (appData.plays.length > 1 && confirm('確定刪除此專案？')) {
+            appData.plays.splice(idx, 1);
+            renderPlays();
         }
     }
 
-    function exportToCSV() {
-        let officeRent = document.getElementById('annual_rent').value;
-        let officeSalary = document.getElementById('annual_salary').value;
-        let officeIns = document.getElementById('annual_insurance').value;
-        let officeSoft = document.getElementById('annual_software').value;
-        let officeHard = document.getElementById('annual_hardware').value;
-        
-        let csvContent = "\uFEFF"; 
-        csvContent += "劇團年度營運精細數據匯出_v6\n";
-        csvContent += `辦公室常態開銷,房租水電:${officeRent},行政薪資:${officeSalary},勞健保:${officeIns},系統軟體:${officeSoft},設備雜支:${officeHard}\n\n`;
-        
-        let projs = captureAllDataObjects();
-        projs.forEach((p) => {
-            csvContent += `劇目名稱,${p.title},預估總售票率,${p.salePercent}%\n`;
-            csvContent += `導演酬勞,${p.director},專案行政執行,${p.staff},行政回撥比例,${p.paybackPercent}%\n`;
-            csvContent += `演員人數,${p.actorCount},排練月數,${p.rehearsalMonths},月排練薪資,${p.salaryMonth},演出執行費/場,${p.salaryShow}\n`;
-            csvContent += `佈景道具,${p.scenery},燈光租借,${p.lighting},音響工程,${p.sound},劇場總租金,${p.venue}\n`;
-            csvContent += `周邊總成本,${p.merchTotalCost},周邊總數量,${p.merchTotalQty},單件售價,${p.merchUnitPrice},預估周邊銷售率,${p.merchSalePercent}%\n`;
-            csvContent += `行銷宣傳,${p.marketing},保險授權,${p.insurance},緊急預備金,${p.contingency}\n`;
-            csvContent += `政府與企業補助,${p.subsidy}\n\n`;
+    function updateDots() {
+        const wrapper = document.getElementById('plays-wrapper');
+        const dots = document.getElementById('carousel-dots').children;
+        const cardWidth = wrapper.offsetWidth * 0.88;
+        const index = Math.round(wrapper.scrollLeft / (cardWidth + 24)); 
+        Array.from(dots).forEach((dot, i) => {
+            if (i === index) dot.classList.add('active');
+            else dot.classList.remove('active');
         });
-        
-        let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        let link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.setAttribute("download", `劇團營運精細數據_v6_${new Date().toISOString().slice(0,10)}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
     }
-</script>
 
-</body>
-</html>
+    function copyDataJSON() {
+        navigator.clipboard.writeText(JSON.stringify(appData, null, 2));
+        alert('數據 JSON 已複製到剪貼簿');
+    }
+
+    function resetData() {
+        if(confirm('確定要重設所有數據嗎？這將無法復原。')) {
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+        }
+    }
+
+    window.onload = init;
+</script>
+</body></html>
