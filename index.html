@@ -3,18 +3,13 @@
 <html class="light" lang="zh-TW"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
-<title>劇場營運計算機 - 專業進階版 v37.1</title>
+<title>劇場營運計算機 - 專業進階版 v52.0</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;family=Noto+Sans:wght@400;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <style>
-        :root {
-            scroll-behavior: smooth;
-        }
-        body {
-            -webkit-overflow-scrolling: touch;
-        }
-        /* Custom Range Slider Styling */
+        :root { scroll-behavior: smooth; }
+        body { -webkit-overflow-scrolling: touch; }
         input[type="range"].custom-slider {
             -webkit-appearance: none;
             width: 100%;
@@ -22,35 +17,29 @@
         }
         input[type="range"].custom-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 24px;
-            width: 24px;
+            height: 28px;
+            width: 28px;
             border-radius: 50%;
             background: #ffffff;
             border: 2px solid #091426;
             cursor: pointer;
-            margin-top: -10px;
+            margin-top: -12px;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
             transition: transform 0.1s ease;
         }
-        input[type="range"].custom-slider:active::-webkit-slider-thumb {
-            transform: scale(0.9);
-        }
         input[type="range"].custom-slider::-webkit-slider-runnable-track {
             width: 100%;
-            height: 4px;
+            height: 6px;
             cursor: pointer;
-            background: #e5e7eb;
-            border-radius: 2px;
+            background: #e2e8f0;
+            border-radius: 3px;
         }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
             vertical-align: middle;
         }
         input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         
@@ -66,35 +55,71 @@
             background: #091426;
             border-radius: 4px;
         }
-        #summary-bar { transition: background-color 0.4s ease; }
         
-        /* Mobile Interaction Feedback */
-        button:active, .interactive-input:active {
-            transform: scale(0.97);
-        }
-        .active-scale {
-            transition: transform 0.1s ease-out;
-        }
-        .active-scale:active {
-            transform: scale(0.95);
-        }
+        .active-scale:active { transform: scale(0.96); opacity: 0.8; }
+        .snapshot-mode .admin-ui { display: none !important; }
+        .snapshot-mode .interactive-element { border-color: transparent !important; background: transparent !important; pointer-events: none !important; }
+        .snapshot-mode .card-shadow { box-shadow: none !important; border: 1px solid #f1f5f9 !important; }
         
         #plays-wrapper {
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
         }
 
-        .color-option {
-            cursor: pointer;
-            transition: transform 0.2s;
+        .card-locked { opacity: 0.85; position: relative; }
+        .card-locked::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 40;
+            cursor: not-allowed;
         }
-        .color-option:active {
-            transform: scale(0.9);
+
+        .sticky-section-label {
+            position: sticky;
+            top: 64px;
+            z-index: 30;
+            background: rgba(248, 250, 252, 0.95);
+            backdrop-filter: blur(8px);
         }
-        .color-option.selected {
-            ring: 2px;
-            ring-offset: 1px;
-            ring-primary;
+        
+        /* Touch targets optimization */
+        .touch-target {
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .overlay-active {
+            overflow: hidden;
+        }
+
+        .snapshot-only { display: none; }
+        .snapshot-mode .snapshot-only { display: block; }
+
+        /* Dashboard Transitions */
+        #summary-bar-content {
+            transition: max-height 0.3s ease-out, opacity 0.2s ease-in-out;
+        }
+        .dashboard-minimized #summary-bar-content {
+            max-height: 0;
+            opacity: 0;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            overflow: hidden;
+        }
+        .dashboard-expanded #summary-bar-content {
+            max-height: 400px;
+            opacity: 1;
+            margin-bottom: 0.75rem;
+        }
+        #summary-toggle-btn {
+            transition: transform 0.3s ease;
+        }
+        .dashboard-expanded #summary-toggle-btn {
+            transform: rotate(180deg);
         }
     </style>
 <script id="tailwind-config">
@@ -114,212 +139,232 @@
                         "secondary": "#10b981",
                         "error": "#ef4444",
                         "slate-accent": "#475569"
-                    },
-                    "fontFamily": {
-                        "label-md": ["Inter"],
-                        "headline-md": ["Inter"],
-                        "body-md": ["Noto Sans"],
-                        "number-display": ["Inter"]
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-background text-on-surface font-body-md min-h-screen pb-72 md:pb-32 overflow-x-hidden">
-<header class="sticky top-0 w-full z-50 bg-white/95 backdrop-blur-xl border-b border-outline-variant shadow-sm">
-<div class="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+<body class="bg-background text-on-surface font-body-md min-h-screen overflow-x-hidden transition-all duration-500 pb-32">
+<header class="sticky top-0 w-full z-50 bg-white/95 backdrop-blur-xl border-b border-outline-variant shadow-sm admin-ui">
+<div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
 <div class="flex items-center gap-2">
 <span class="material-symbols-outlined text-primary font-bold">account_balance</span>
-<h1 class="font-bold text-primary tracking-tight">劇場營運精細計算機 <span class="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-black ml-1 uppercase">v37.2 PRO</span></h1>
+<h1 class="font-bold text-primary tracking-tight">劇場營運精細計算機 <span class="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-black ml-1 uppercase">v52.0 VULCAN</span></h1>
 </div>
-<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all active-scale" onclick="resetData()">
+<div class="flex items-center gap-1">
+<button class="touch-target text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all active-scale" onclick="toggleSnapshotMode()" title="分享模式">
+<span class="material-symbols-outlined">ios_share</span>
+</button>
+<button class="touch-target text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all active-scale" onclick="resetData()">
 <span class="material-symbols-outlined">restart_alt</span>
 </button>
 </div>
+</div>
 <div class="max-w-7xl mx-auto px-4 border-t border-outline-variant/30 overflow-x-auto scrollbar-hide">
 <nav class="flex items-center gap-2 py-2 text-[10px] font-black uppercase tracking-widest text-slate-accent whitespace-nowrap">
-<a class="px-4 py-2 hover:text-primary transition-colors hover:bg-primary/5 rounded-lg flex items-center gap-1.5 active-scale" href="#office-section">
+<a class="px-4 py-3 hover:text-primary transition-colors hover:bg-primary/5 rounded-lg flex items-center gap-1.5 active-scale" href="#office-section">
 <span class="material-symbols-outlined text-sm">business_center</span> 總部營運
             </a>
 <div class="h-4 w-px bg-outline-variant"></div>
-<a class="px-4 py-2 hover:text-primary transition-colors hover:bg-primary/5 rounded-lg flex items-center gap-1.5 active-scale" href="#plays-section">
+<a class="px-4 py-3 hover:text-primary transition-colors hover:bg-primary/5 rounded-lg flex items-center gap-1.5 active-scale" href="#plays-section">
 <span class="material-symbols-outlined text-sm">theater_comedy</span> 年度劇目
             </a>
 <div class="h-4 w-px bg-outline-variant"></div>
-<a class="px-4 py-2 hover:text-primary transition-colors hover:bg-primary/5 rounded-lg flex items-center gap-1.5 active-scale" href="#visual-section">
+<a class="px-4 py-3 hover:text-primary transition-colors hover:bg-primary/5 rounded-lg flex items-center gap-1.5 active-scale" href="#visual-section">
 <span class="material-symbols-outlined text-sm">bar_chart</span> 數據視覺化
             </a>
 </nav>
 </div>
 </header>
-<main class="max-w-7xl mx-auto px-4 md:px-8 py-8 space-y-12">
+<main class="max-w-7xl mx-auto px-4 md:px-8 py-4 space-y-12">
+<!-- Snapshot Header (Hidden by default) -->
+<div class="hidden text-center py-6 space-y-2" id="snapshot-header">
+<h2 class="text-2xl font-black text-primary">年度營運計畫預估報告</h2>
+<p class="text-sm text-on-surface-variant font-bold">匯出日期：<span id="snapshot-date"></span></p>
+</div>
+<!-- Administrative Section Label -->
+<div class="sticky-section-label py-3 border-b border-outline-variant mb-4 admin-ui">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-4 bg-primary rounded-full"></div>
+<span class="text-xs font-black uppercase tracking-widest text-primary">ADMINISTRATIVE / 總部營運</span>
+</div>
+</div>
 <!-- Office Costs Section -->
-<section class="scroll-mt-24" id="office-section">
-<div class="bg-white border border-outline-variant p-6 rounded-xl shadow-sm">
-<div class="flex items-center gap-3 mb-8">
-<div class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center border border-primary/10">
-<span class="material-symbols-outlined text-primary">corporate_fare</span>
+<section class="scroll-mt-32" id="office-section">
+<div class="bg-white border border-outline-variant p-6 rounded-2xl shadow-sm card-shadow">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center border border-primary/10 shrink-0">
+<span class="material-symbols-outlined text-primary text-2xl">corporate_fare</span>
 </div>
 <div>
-<h2 class="font-bold text-primary">總部營運攤提</h2>
-<p class="text-[10px] text-on-surface-variant">辦公室與行政支出的月均攤提</p>
+<h2 class="font-bold text-primary text-lg">總部營運攤提</h2>
+<p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-wide">Monthly Administrative Allocation</p>
 </div>
 </div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6" id="office-costs-container">
-<!-- JS Generated -->
+<!-- Tax Toggle -->
+<div class="flex items-center justify-between sm:justify-end gap-3 bg-surface-container-low p-3 rounded-xl border border-outline-variant admin-ui">
+<span class="text-[10px] font-black text-on-surface-variant uppercase leading-none">代扣稅金 (9B &gt; 2萬)</span>
+<button class="w-12 h-6 bg-outline-variant rounded-full p-1 transition-all relative active-scale" id="tax-toggle" onclick="toggleWithholdingTax()">
+<div class="w-4 h-4 bg-white rounded-full transition-all shadow-sm" id="tax-toggle-dot"></div>
+</button>
 </div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6" id="office-costs-container"></div>
 </div>
 </section>
+<!-- Projects Section Label -->
+<div class="sticky-section-label py-3 border-b border-outline-variant mb-4 admin-ui">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-4 bg-secondary rounded-full"></div>
+<span class="text-xs font-black uppercase tracking-widest text-primary">PROJECTS / 年度劇目計畫</span>
+</div>
+</div>
 <!-- Plays Section -->
-<section class="scroll-mt-24" id="plays-section">
+<section class="scroll-mt-32" id="plays-section">
 <div class="flex flex-col gap-1 mb-6">
-<h2 class="text-xl font-bold text-primary tracking-tight">年度劇目計畫</h2>
-<p class="text-xs text-on-surface-variant">模擬多專案併行的損益平衡點 (左右滑動切換專案)</p>
+<h2 class="text-xl font-bold text-primary tracking-tight">年度劇目模擬</h2>
+<p class="text-xs text-on-surface-variant font-medium">左右滑動切換專案，即時連動年度損益分析</p>
 </div>
-<div class="flex justify-center gap-2 mb-6" id="carousel-dots"></div>
-<div class="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-12 gap-6" id="plays-wrapper" onscroll="updateDots()">
-<!-- JS Generated -->
-</div>
+<div class="flex justify-center gap-2 mb-6 admin-ui" id="carousel-dots"></div>
+<div class="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-12 gap-6" id="plays-wrapper" onscroll="updateDots()"></div>
 </section>
+<!-- Visualization Section Label -->
+<div class="sticky-section-label py-3 border-b border-outline-variant mb-4 admin-ui">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-4 bg-slate-accent rounded-full"></div>
+<span class="text-xs font-black uppercase tracking-widest text-primary">VISUALIZATION / 數據視覺化</span>
+</div>
+</div>
 <!-- Visualization Section -->
-<section class="scroll-mt-24" id="visual-section">
-<div class="bg-white border border-outline-variant p-6 rounded-xl shadow-sm">
-<div class="flex items-center justify-between mb-8">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center border border-primary/10">
+<section class="scroll-mt-32" id="visual-section">
+<div class="bg-white border border-outline-variant p-6 rounded-2xl shadow-sm card-shadow">
+<div class="flex items-center gap-3 mb-10">
+<div class="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center border border-primary/10">
 <span class="material-symbols-outlined text-primary">analytics</span>
 </div>
 <div>
-<h2 class="font-bold text-primary">年度數據視覺化</h2>
-<p class="text-[10px] text-on-surface-variant">年度支出結構與損益趨勢即時分析</p>
+<h2 class="font-bold text-primary text-lg">數據視覺化中心</h2>
+<p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-wide">Real-time Performance Analysis</p>
 </div>
 </div>
-<div class="relative">
-<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg border border-outline-variant/30 active-scale transition-all flex items-center gap-1.5" id="color-palette-btn" onclick="toggleColorPalette()">
-<span class="material-symbols-outlined text-lg">palette</span>
-<span class="text-[10px] font-black uppercase hidden sm:inline">調色盤</span>
-</button>
-<!-- Color Palette Dropdown -->
-<div class="hidden absolute right-0 mt-2 w-56 bg-white border border-outline-variant shadow-xl rounded-xl z-[60] p-4 space-y-4" id="palette-dropdown">
-<div class="space-y-3">
-<p class="text-[10px] font-black uppercase text-slate-accent tracking-widest">配色方案預設</p>
-<div class="grid grid-cols-1 gap-2">
-<button class="flex items-center gap-3 p-2 hover:bg-surface-container rounded-lg text-left transition-colors" onclick="setTheme('classic')">
-<div class="flex -space-x-1">
-<div class="w-3 h-3 rounded-full bg-error ring-1 ring-white"></div>
-<div class="w-3 h-3 rounded-full bg-secondary ring-1 ring-white"></div>
-</div>
-<span class="text-xs font-bold text-on-surface">經典對比</span>
-</button>
-<button class="flex items-center gap-3 p-2 hover:bg-surface-container rounded-lg text-left transition-colors" onclick="setTheme('ocean')">
-<div class="flex -space-x-1">
-<div class="w-3 h-3 rounded-full bg-[#0369a1] ring-1 ring-white"></div>
-<div class="w-3 h-3 rounded-full bg-[#38bdf8] ring-1 ring-white"></div>
-</div>
-<span class="text-xs font-bold text-on-surface">海洋與天空</span>
-</button>
-<button class="flex items-center gap-3 p-2 hover:bg-surface-container rounded-lg text-left transition-colors" onclick="setTheme('sunset')">
-<div class="flex -space-x-1">
-<div class="w-3 h-3 rounded-full bg-[#c2410c] ring-1 ring-white"></div>
-<div class="w-3 h-3 rounded-full bg-[#fcd34d] ring-1 ring-white"></div>
-</div>
-<span class="text-xs font-bold text-on-surface">夕陽琥珀</span>
-</button>
-<button class="flex items-center gap-3 p-2 hover:bg-surface-container rounded-lg text-left transition-colors" onclick="setTheme('forest')">
-<div class="flex -space-x-1">
-<div class="w-3 h-3 rounded-full bg-[#166534] ring-1 ring-white"></div>
-<div class="w-3 h-3 rounded-full bg-[#86efac] ring-1 ring-white"></div>
-</div>
-<span class="text-xs font-bold text-on-surface">翡翠森林</span>
-</button>
-</div>
-</div>
-<div class="pt-3 border-t border-outline-variant/30 space-y-3">
-<p class="text-[10px] font-black uppercase text-slate-accent tracking-widest">自定義主色</p>
-<div class="flex items-center justify-between gap-2">
-<label class="text-[9px] font-bold text-on-surface-variant uppercase">行政費色</label>
-<input class="w-8 h-8 rounded border-none p-0 bg-transparent cursor-pointer" id="custom-admin-color" oninput="updateCustomColors()" type="color"/>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-<div class="space-y-4">
-<h3 class="text-xs font-black text-slate-accent uppercase tracking-widest text-center">支出結構分析</h3>
-<div class="relative h-[250px] flex items-center justify-center">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<div class="space-y-6">
+<h3 class="text-xs font-black text-slate-accent uppercase tracking-[0.2em] text-center border-b border-outline-variant/30 pb-2">年度支出結構</h3>
+<div class="relative h-[300px] flex items-center justify-center">
 <canvas id="costStructureChart"></canvas>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none" id="chart-overlay-cost">
+<div class="text-center">
+<p class="text-[10px] font-black text-on-surface-variant uppercase" id="chart-label-cost">年度分配</p>
+<p class="text-xl font-bold text-primary" id="chart-value-cost"></p>
 </div>
-<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-4" id="cost-legend">
-<!-- Legend JS -->
 </div>
 </div>
-<div class="space-y-4">
-<h3 class="text-xs font-black text-slate-accent uppercase tracking-widest text-center">損益平衡趨勢</h3>
-<div class="relative h-[250px] flex items-center justify-center">
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4 px-4" id="cost-legend"></div>
+</div>
+<div class="space-y-6">
+<h3 class="text-xs font-black text-slate-accent uppercase tracking-[0.2em] text-center border-b border-outline-variant/30 pb-2">損益平衡趨勢</h3>
+<div class="relative h-[300px] flex items-center justify-center">
 <canvas id="pnlTrendChart"></canvas>
 </div>
 <div class="flex justify-center gap-6 mt-4">
 <div class="flex items-center gap-2">
-<div class="w-3 h-0.5 bg-error"></div>
+<div class="w-4 h-1 rounded-full bg-error"></div>
 <span class="text-[10px] font-bold text-on-surface-variant uppercase">預計總支出</span>
 </div>
 <div class="flex items-center gap-2">
-<div class="w-3 h-0.5 bg-secondary"></div>
+<div class="w-4 h-1 rounded-full bg-secondary"></div>
 <span class="text-[10px] font-bold text-on-surface-variant uppercase">預估總營收</span>
 </div>
 </div>
-<p class="text-[9px] text-center text-on-surface-variant italic">數值依據「信心機率」加權計算後顯示</p>
 </div>
 </div>
 </div>
 </section>
 </main>
-<!-- Bottom Summary Bar -->
-<nav class="fixed bottom-0 left-0 right-0 z-50 bg-secondary text-white shadow-[0_-8px_30px_rgba(0,0,0,0.2)] transition-all" id="summary-bar">
-<div class="max-w-7xl mx-auto px-4 py-4 md:py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-<div class="grid grid-cols-3 md:flex items-center gap-4 md:gap-12 text-center md:text-left w-full md:w-auto">
-<div>
-<span class="text-[8px] uppercase font-black opacity-70 block mb-1">年度總支出</span>
-<span class="font-bold text-sm md:text-xl" id="total-cost-display">NT$ 0</span>
-</div>
-<div>
-<span class="text-[8px] uppercase font-black opacity-70 block mb-1">總預估營收</span>
-<span class="font-bold text-sm md:text-xl" id="total-revenue-display">NT$ 0</span>
-</div>
-<div>
-<span class="text-[8px] uppercase font-black opacity-70 block mb-1">二代健保合計</span>
-<span class="font-bold text-sm md:text-xl" id="total-ghi-display">NT$ 0</span>
-</div>
-</div>
-<div class="flex items-center gap-4 w-full md:w-auto">
-<div class="bg-white/10 rounded-xl px-6 py-3 flex-1 md:min-w-[180px] text-center border border-white/20 transition-colors" id="profit-box">
-<span class="text-[10px] uppercase font-black opacity-80 block mb-1">年度預估淨利</span>
-<span class="font-bold text-2xl md:text-3xl" id="total-profit-display">NT$ 0</span>
-</div>
-<div class="flex gap-2">
-<button class="p-4 bg-white/20 hover:bg-white/30 rounded-lg transition-all active-scale" onclick="copyDataJSON()">
-<span class="material-symbols-outlined">content_copy</span>
+<!-- Detailed Summary Overlay -->
+<div class="fixed inset-0 z-[200] bg-primary/40 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4" id="summary-overlay" onclick="toggleSummaryOverlay()">
+<div class="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-10" onclick="event.stopPropagation()">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<h3 class="font-bold text-primary">收支詳細分析</h3>
+<button class="touch-target" onclick="toggleSummaryOverlay()">
+<span class="material-symbols-outlined">close</span>
 </button>
+</div>
+<div class="p-6 space-y-6">
+<div class="space-y-4" id="summary-overlay-content">
+<!-- Content injected via JS -->
+</div>
+<button class="w-full py-4 bg-primary text-white font-bold rounded-xl active-scale" onclick="toggleSummaryOverlay()">關閉視窗</button>
+</div>
+</div>
+</div>
+<!-- Collapsible Bottom Summary Bar -->
+<nav class="fixed bottom-0 left-0 right-0 z-[100] transition-all duration-500 dashboard-minimized bg-secondary shadow-[0_-8px_30px_rgba(0,0,0,0.3)] text-white" id="summary-bar">
+<div class="max-w-7xl mx-auto px-4 py-3 md:py-4">
+<!-- Expandable Content Section -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 items-end mb-0 border-b border-white/0 transition-all duration-300" id="summary-bar-content">
+<div class="space-y-0.5">
+<span class="text-[8px] uppercase font-black opacity-70 block">年度總支出</span>
+<span class="font-bold text-sm md:text-lg" id="total-cost-display">NT$ 0</span>
+</div>
+<div class="space-y-0.5">
+<span class="text-[8px] uppercase font-black opacity-70 block">總預估營收</span>
+<span class="font-bold text-sm md:text-lg" id="total-revenue-display">NT$ 0</span>
+</div>
+<div class="space-y-0.5">
+<span class="text-[8px] uppercase font-black opacity-70 block">稅金及二代健保</span>
+<span class="font-bold text-sm md:text-lg" id="total-tax-display">NT$ 0</span>
+</div>
+<div class="space-y-0.5 bg-white/10 p-2 rounded-lg border border-white/20">
+<div class="flex justify-between items-center">
+<span class="text-[8px] uppercase font-black opacity-80 block">現金流安全墊</span>
+<span class="material-symbols-outlined text-[14px] opacity-70">umbrella</span>
+</div>
+<span class="font-bold text-sm md:text-lg" id="safety-buffer-display">約 0 個月</span>
+</div>
+</div>
+<!-- Primary Always-Visible Row -->
+<div class="flex flex-col md:flex-row justify-between items-center gap-3">
+<div class="flex items-center gap-3 w-full md:w-auto flex-1">
+<button class="touch-target bg-white/15 hover:bg-white/25 rounded-full w-10 h-10 flex items-center justify-center border border-white/10 admin-ui transition-all" id="dashboard-toggle-container" onclick="toggleDashboardExpansion()">
+<span class="material-symbols-outlined text-xl" id="summary-toggle-btn">expand_less</span>
+</button>
+<div class="bg-white/15 rounded-xl px-5 py-2 flex-1 text-center border border-white/10 shadow-inner flex flex-col justify-center cursor-pointer" id="profit-box" onclick="toggleSummaryOverlay()">
+<span class="text-[9px] uppercase font-black opacity-80 block mb-0.5 tracking-wider">年度預估淨利 (信心加權)</span>
+<span class="font-black text-xl md:text-2xl leading-none" id="total-profit-display">NT$ 0</span>
+</div>
+</div>
+<div class="flex gap-2 admin-ui w-full md:w-auto">
+<button class="touch-target bg-white/15 hover:bg-white/25 rounded-xl transition-all active-scale text-white border border-white/10" onclick="copyDataJSON()" title="複製數據">
+<span class="material-symbols-outlined text-lg">content_copy</span>
+</button>
+<button class="h-10 bg-white text-primary hover:bg-white/90 rounded-xl transition-all active-scale font-black text-[11px] uppercase tracking-[0.2em] flex-1 md:px-8 border border-white/20" onclick="toggleSnapshotMode()">
+                    匯出報表
+                </button>
 </div>
 </div>
 </div>
 </nav>
 <script>
     let appData = {
-        themeColors: ['#EF4444', '#10B981', '#F87171', '#34D399', '#DC2626', '#059669', '#B91C1C'],
+        withholdingTaxEnabled: true,
+        snapshotMode: false,
+        dashboardExpanded: false,
+        themeColors: ['#091426', '#EF4444', '#10B981', '#F59E0B', '#3B82F6', '#8B5CF6', '#EC4899', '#06B6D4', '#64748b'],
         officeCosts: {
             rent: { value: 25000, limit: 30000, label: '辦公房租' },
             salary: { value: 120000, limit: 150000, label: '固定薪資' },
             insurance: { value: 15000, limit: 20000, label: '勞健勞退' },
             software: { value: 5000, limit: 8000, label: '訂閱工具' },
-            hardware: { value: 180000, limit: 200000, label: '硬體資產' }
+            hardware: { value: 180000, limit: 200000, label: '年度硬體攤銷' }
         },
         plays: [
             {
                 id: Date.now(),
                 name: '示範計畫：星際劇場',
+                locked: false,
                 tourCount: 4,
                 capacity: 400,
                 prSeats: 20,
@@ -341,20 +386,13 @@
                     stage: { label: '舞台美術', unitCost: 60000, count: 1, taxType: 'corp', limit: 80000, icon: 'architecture' },
                     costume: { label: '服裝造型', unitCost: 35000, count: 1, taxType: 'corp', limit: 40000, icon: 'checkroom' },
                     props: { label: '道具製作', unitCost: 15000, count: 1, taxType: 'corp', limit: 20000, icon: 'category' },
-                    volunteer: { label: '志工津貼', unitCost: 2000, count: 5, taxType: '50', limit: 12000, icon: 'handshake' }
+                    misc: { label: '其他雜項', unitCost: 10000, count: 1, taxType: 'corp', limit: 50000, icon: 'more_horiz' }
                 }
             }
         ]
     };
 
-    const themes = {
-        classic: ['#EF4444', '#10B981', '#F87171', '#34D399', '#DC2626', '#059669', '#B91C1C'],
-        ocean: ['#0369a1', '#38bdf8', '#0ea5e9', '#7dd3fc', '#0284c7', '#bae6fd', '#075985'],
-        sunset: ['#c2410c', '#fcd34d', '#f59e0b', '#fbbf24', '#ea580c', '#fef3c7', '#9a3412'],
-        forest: ['#166534', '#86efac', '#22c55e', '#bbf7d0', '#15803d', '#dcfce7', '#064e3b']
-    };
-
-    const STORAGE_KEY = 'theatre_ledger_pro_v37_2';
+    const STORAGE_KEY = 'theatre_ledger_v52_vulcan';
     let costChart, pnlChart;
 
     function init() {
@@ -363,32 +401,22 @@
             try { 
                 const parsed = JSON.parse(saved);
                 parsed.plays.forEach(p => {
-                    if (p.prSeats === undefined) p.prSeats = 0;
-                    if (p.earlyBirdRatio === undefined) p.earlyBirdRatio = 0;
-                    if (p.earlyBirdPrice === undefined) p.earlyBirdPrice = p.avgTicketPrice;
+                    if(!p.production.misc) {
+                        p.production.misc = { label: '其他雜項', unitCost: 0, count: 1, taxType: 'corp', limit: 50000, icon: 'more_horiz' };
+                    }
                 });
-                if(!parsed.themeColors) parsed.themeColors = themes.classic;
-                appData = parsed; 
-            } catch(e) {}
-        } else {
-            appData.themeColors = themes.classic;
+                appData = { ...appData, ...parsed };
+                // Default to minimized on fresh load regardless of saved state for better UX
+                appData.dashboardExpanded = false;
+            } catch(e) { console.error("Data load error", e); }
         }
         
-        document.getElementById('custom-admin-color').value = appData.themeColors[0];
-        
+        updateTaxToggleUI();
         initCharts();
         renderOffice();
         renderPlays();
         updateTotals();
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            const btn = document.getElementById('color-palette-btn');
-            const dropdown = document.getElementById('palette-dropdown');
-            if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
-                dropdown.classList.add('hidden');
-            }
-        });
+        updateDashboardState();
     }
 
     function initCharts() {
@@ -402,185 +430,235 @@
                 datasets: [{
                     data: [],
                     backgroundColor: appData.themeColors,
-                    borderWidth: 0,
+                    borderWidth: 4,
+                    borderColor: '#ffffff',
                     hoverOffset: 15
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: { enabled: true } },
-                cutout: '70%',
-                animation: { duration: 500 }
+                plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                cutout: '72%',
+                onHover: (event, elements) => {
+                    if (elements.length > 0) {
+                        const index = elements[0].index;
+                        const label = costChart.data.labels[index];
+                        const val = costChart.data.datasets[0].data[index];
+                        document.getElementById('chart-label-cost').textContent = label;
+                        document.getElementById('chart-value-cost').textContent = `NT$ ${Math.round(val).toLocaleString()}`;
+                    } else {
+                        document.getElementById('chart-label-cost').textContent = '年度分配';
+                        document.getElementById('chart-value-cost').textContent = '';
+                    }
+                }
             }
         });
 
         pnlChart = new Chart(pnlCtx, {
             type: 'line',
             data: {
-                labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                labels: ['Q1 籌備', 'Q2 排練', 'Q3 巡演', 'Q4 結案'],
                 datasets: [
-                    { 
-                        label: '預計總支出', 
-                        data: [0, 0, 0, 0], 
-                        borderColor: '#EF4444', 
-                        backgroundColor: (context) => {
-                            const chart = context.chart;
-                            const {ctx, chartArea} = chart;
-                            if (!chartArea) return null;
-                            const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-                            gradient.addColorStop(0, 'rgba(239, 68, 68, 0)');
-                            gradient.addColorStop(1, 'rgba(239, 68, 68, 0.15)');
-                            return gradient;
-                        },
-                        fill: true,
-                        tension: 0.4,
-                        borderWidth: 3,
-                        pointRadius: 0
-                    },
-                    { 
-                        label: '預估總營收', 
-                        data: [0, 0, 0, 0], 
-                        borderColor: '#10B981', 
-                        backgroundColor: (context) => {
-                            const chart = context.chart;
-                            const {ctx, chartArea} = chart;
-                            if (!chartArea) return null;
-                            const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-                            gradient.addColorStop(0, 'rgba(16, 185, 129, 0)');
-                            gradient.addColorStop(1, 'rgba(16, 185, 129, 0.15)');
-                            return gradient;
-                        },
-                        fill: true,
-                        tension: 0.4,
-                        borderWidth: 3,
-                        pointRadius: 0
-                    }
+                    { label: '支出', data: [], borderColor: '#EF4444', borderWidth: 4, pointRadius: 6, pointHoverRadius: 10, pointBackgroundColor: '#ffffff', pointBorderWidth: 3, tension: 0.4, fill: false },
+                    { label: '營收', data: [], borderColor: '#10B981', borderWidth: 4, pointRadius: 6, pointHoverRadius: 10, pointBackgroundColor: '#ffffff', pointBorderWidth: 3, tension: 0.4, fill: false }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                interaction: {
-                    mode: 'index',
-                    intersect: false,
-                },
                 plugins: { 
                     legend: { display: false },
                     tooltip: {
                         enabled: true,
                         backgroundColor: '#091426',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
+                        padding: 12,
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 12 },
                         callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': NT$ ' + Math.round(context.parsed.y).toLocaleString();
-                            }
+                            label: (ctx) => `NT$ ${Math.round(ctx.parsed.y).toLocaleString()}`
                         }
                     }
                 },
                 scales: {
-                    y: { 
-                        beginAtZero: true, 
-                        grid: { color: 'rgba(0,0,0,0.05)' },
-                        ticks: { display: false } 
-                    },
-                    x: { 
-                        grid: { display: false },
-                        ticks: {
-                            font: { size: 9, weight: 'bold' },
-                            color: '#64748b'
-                        }
-                    }
+                    y: { grid: { color: 'rgba(0,0,0,0.05)' }, border: { display: false }, ticks: { display: false } },
+                    x: { grid: { display: false }, ticks: { font: { size: 10, weight: '900' }, color: '#64748b', padding: 10 } }
                 }
             }
         });
     }
 
-    function toggleColorPalette() {
-        document.getElementById('palette-dropdown').classList.toggle('hidden');
+    function toggleDashboardExpansion() {
+        appData.dashboardExpanded = !appData.dashboardExpanded;
+        updateDashboardState();
     }
 
-    function setTheme(themeKey) {
-        appData.themeColors = [...themes[themeKey]];
-        document.getElementById('custom-admin-color').value = appData.themeColors[0];
+    function updateDashboardState() {
+        const bar = document.getElementById('summary-bar');
+        const content = document.getElementById('summary-bar-content');
+        if (appData.dashboardExpanded) {
+            bar.classList.add('dashboard-expanded');
+            bar.classList.remove('dashboard-minimized');
+            content.classList.add('border-white/20', 'pb-4');
+        } else {
+            bar.classList.remove('dashboard-expanded');
+            bar.classList.add('dashboard-minimized');
+            content.classList.remove('border-white/20', 'pb-4');
+        }
+    }
+
+    function toggleWithholdingTax() {
+        appData.withholdingTaxEnabled = !appData.withholdingTaxEnabled;
+        updateTaxToggleUI();
         updateTotals();
     }
 
-    function updateCustomColors() {
-        const val = document.getElementById('custom-admin-color').value;
-        appData.themeColors[0] = val;
-        updateTotals();
+    function updateTaxToggleUI() {
+        const dot = document.getElementById('tax-toggle-dot');
+        const btn = document.getElementById('tax-toggle');
+        if (appData.withholdingTaxEnabled) {
+            dot.style.transform = 'translateX(1.5rem)';
+            btn.classList.add('bg-secondary');
+            btn.classList.remove('bg-outline-variant');
+        } else {
+            dot.style.transform = 'translateX(0)';
+            btn.classList.remove('bg-secondary');
+            btn.classList.add('bg-outline-variant');
+        }
+    }
+
+    function toggleLock(idx) {
+        appData.plays[idx].locked = !appData.plays[idx].locked;
+        renderPlays();
+    }
+
+    function toggleSnapshotMode() {
+        appData.snapshotMode = !appData.snapshotMode;
+        if (appData.snapshotMode) {
+            document.body.classList.add('snapshot-mode');
+            document.getElementById('snapshot-header').classList.remove('hidden');
+            document.getElementById('snapshot-date').textContent = new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' });
+            window.scrollTo(0,0);
+            // Auto expand dashboard for snapshot
+            appData.dashboardExpanded = true;
+            updateDashboardState();
+        } else {
+            document.body.classList.remove('snapshot-mode');
+            document.getElementById('snapshot-header').classList.add('hidden');
+        }
+        renderPlays(); 
+    }
+
+    function toggleSummaryOverlay() {
+        const overlay = document.getElementById('summary-overlay');
+        const isOpen = !overlay.classList.contains('hidden');
+        
+        if (isOpen) {
+            overlay.classList.add('hidden');
+            document.body.classList.remove('overlay-active');
+        } else {
+            updateOverlayContent();
+            overlay.classList.remove('hidden');
+            document.body.classList.add('overlay-active');
+        }
+    }
+
+    function updateOverlayContent() {
+        const content = document.getElementById('summary-overlay-content');
+        const totalCost = document.getElementById('total-cost-display').textContent;
+        const totalRev = document.getElementById('total-revenue-display').textContent;
+        const totalTax = document.getElementById('total-tax-display').textContent;
+        const totalProfit = document.getElementById('total-profit-display').textContent;
+        
+        content.innerHTML = `
+            <div class="space-y-4">
+                <div class="flex justify-between items-center py-3 border-b border-outline-variant/30">
+                    <span class="text-on-surface-variant font-bold text-sm">年度預計總支出</span>
+                    <span class="font-black text-primary">${totalCost}</span>
+                </div>
+                <div class="flex justify-between items-center py-3 border-b border-outline-variant/30">
+                    <span class="text-on-surface-variant font-bold text-sm">信心加權總營收</span>
+                    <span class="font-black text-secondary">${totalRev}</span>
+                </div>
+                <div class="flex justify-between items-center py-3 border-b border-outline-variant/30">
+                    <span class="text-on-surface-variant font-bold text-sm">預估稅務成本</span>
+                    <span class="font-black text-error">${totalTax}</span>
+                </div>
+                <div class="flex justify-between items-center py-4 px-4 bg-primary/5 rounded-xl">
+                    <span class="text-primary font-black">預估淨利</span>
+                    <span class="font-black text-xl ${parseInt(totalProfit.replace(/[^0-9-]/g, '')) >= 0 ? 'text-secondary' : 'text-error'}">${totalProfit}</span>
+                </div>
+                <p class="text-[10px] text-on-surface-variant text-center font-bold uppercase tracking-widest mt-2">Data updated in real-time</p>
+            </div>
+        `;
     }
 
     function updateTotals() {
-        const officeAnnual = (appData.officeCosts.rent.value + appData.officeCosts.salary.value + appData.officeCosts.insurance.value + appData.officeCosts.software.value) * 12 + (appData.officeCosts.hardware.value / 3);
+        const officeMonthly = appData.officeCosts.rent.value + appData.officeCosts.salary.value + appData.officeCosts.insurance.value + appData.officeCosts.software.value;
+        const officeAnnual = (officeMonthly * 12) + appData.officeCosts.hardware.value;
         
         let totalRev = 0;
         let totalCost = officeAnnual;
-        let totalGHI = 0;
+        let totalTaxAndGHI = 0;
         let playCosts = [];
 
         appData.plays.forEach((play, idx) => {
-            const totalAvailableSeatsPerShow = Math.max(0, play.capacity - play.prSeats);
-            const totalSellableSeats = play.tourCount * totalAvailableSeatsPerShow;
-            const expectedSalesCount = totalSellableSeats * (play.ticketRate / 100);
-            const earlyBirdCap = expectedSalesCount * (play.earlyBirdRatio / 100);
-            const regularCap = expectedSalesCount - earlyBirdCap;
-            const grossTicketRevenue = (earlyBirdCap * play.earlyBirdPrice) + (regularCap * play.avgTicketPrice);
-            const ticketNet = grossTicketRevenue * (1 - play.platformFee / 100);
-            
-            const playRevenue = (ticketNet + play.merchRevenue + play.sponsorship) * (play.confidenceLevel / 100);
+            const sellableSeats = play.tourCount * Math.max(0, play.capacity - play.prSeats);
+            const salesCount = sellableSeats * (play.ticketRate / 100);
+            const earlyBirdCount = salesCount * (play.earlyBirdRatio / 100);
+            const normalCount = salesCount - earlyBirdCount;
+            const grossRev = (earlyBirdCount * play.earlyBirdPrice) + (normalCount * play.avgTicketPrice);
+            const netRev = grossRev * (1 - play.platformFee / 100);
+            const weightedRev = (netRev + play.merchRevenue + play.sponsorship) * (play.confidenceLevel / 100);
             
             let playProdCost = 0;
-            let playGHI = 0;
+            let playTaxAndGHI = 0;
             let playStamp = 0;
-            const stampKeys = ['creative', 'performers', 'lighting', 'stage', 'costume', 'props'];
             
-            Object.entries(play.production).forEach(([key, item]) => {
+            Object.values(play.production).forEach(item => {
                 const subtotal = item.unitCost * item.count;
                 playProdCost += subtotal;
+                
                 if (item.taxType === '9B' || item.taxType === '50') {
-                    playGHI += subtotal * (play.ghiRate / 100);
+                    playTaxAndGHI += subtotal * (play.ghiRate / 100);
                 }
-                if (stampKeys.includes(key)) {
+                
+                if (appData.withholdingTaxEnabled && item.taxType === '9B' && item.unitCost >= 20000) {
+                    playTaxAndGHI += subtotal * 0.10;
+                }
+                
+                if (item.taxType !== 'corp') {
                     playStamp += subtotal * 0.004;
                 }
             });
 
-            const contrib = playRevenue * (play.officeContributionRate / 100);
-            const playTotalCost = playProdCost + playGHI + playStamp + play.marketingBudget + contrib;
+            const contribution = weightedRev * (play.officeContributionRate / 100);
+            const playTotalCost = playProdCost + playTaxAndGHI + playStamp + play.marketingBudget + contribution;
             
-            totalRev += playRevenue;
+            totalRev += weightedRev;
             totalCost += playTotalCost;
-            totalGHI += playGHI;
+            totalTaxAndGHI += playTaxAndGHI;
             playCosts.push({ name: play.name, value: playTotalCost });
 
-            const weightedTicketPrice = (play.avgTicketPrice * (1 - play.earlyBirdRatio / 100)) + (play.earlyBirdPrice * (play.earlyBirdRatio / 100));
-            const unitNet = weightedTicketPrice * (1 - play.platformFee / 100);
-            const ticketsNeeded = unitNet > 0 ? Math.ceil(playTotalCost / unitNet) : 0;
-            const totalCapacity = play.tourCount * play.capacity;
-            const bepRate = totalCapacity > 0 ? ((ticketsNeeded / totalCapacity) * 100).toFixed(1) : 0;
-            const playProfit = playRevenue - playTotalCost;
-
-            updatePlayUI(idx, playProfit, bepRate, ticketsNeeded, totalCapacity, playTotalCost);
+            const unitPrice = (play.avgTicketPrice * (1 - play.earlyBirdRatio / 100)) + (play.earlyBirdPrice * (play.earlyBirdRatio / 100));
+            const ticketsNeeded = unitPrice > 0 ? Math.ceil(playTotalCost / (unitPrice * (1 - play.platformFee/100))) : 0;
+            const bepRate = (play.tourCount * play.capacity) > 0 ? (ticketsNeeded / (play.tourCount * play.capacity) * 100).toFixed(1) : 0;
+            
+            updatePlayUI(idx, weightedRev - playTotalCost, bepRate, ticketsNeeded, play.tourCount * play.capacity, playTotalCost);
         });
 
         const finalProfit = totalRev - totalCost;
+        const liquidAvailable = (totalRev * 0.35) + (appData.plays[0]?.sponsorship || 0); 
+        const safetyMonths = officeMonthly > 0 ? (liquidAvailable / officeMonthly).toFixed(1) : '∞';
         
         document.getElementById('total-cost-display').textContent = `NT$ ${Math.round(totalCost).toLocaleString()}`;
         document.getElementById('total-revenue-display').textContent = `NT$ ${Math.round(totalRev).toLocaleString()}`;
-        document.getElementById('total-ghi-display').textContent = `NT$ ${Math.round(totalGHI).toLocaleString()}`;
+        document.getElementById('total-tax-display').textContent = `NT$ ${Math.round(totalTaxAndGHI).toLocaleString()}`;
         document.getElementById('total-profit-display').textContent = `NT$ ${Math.round(finalProfit).toLocaleString()}`;
+        document.getElementById('safety-buffer-display').textContent = `約 ${safetyMonths} 個月`;
 
         const bar = document.getElementById('summary-bar');
-        if (finalProfit >= 0) {
-            bar.classList.remove('bg-error');
-            bar.classList.add('bg-secondary');
-        } else {
-            bar.classList.remove('bg-secondary');
-            bar.classList.add('bg-error');
-        }
+        bar.className = `fixed bottom-0 left-0 right-0 z-[100] text-white shadow-[0_-8px_30px_rgba(0,0,0,0.3)] transition-all duration-500 ${appData.dashboardExpanded ? 'dashboard-expanded' : 'dashboard-minimized'} ${finalProfit >= 0 ? 'bg-secondary' : 'bg-error'}`;
         
         updateChartsData(officeAnnual, playCosts, totalCost, totalRev);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
@@ -588,246 +666,206 @@
 
     function updateChartsData(officeTotal, plays, totalCost, totalRev) {
         if(!costChart || !pnlChart) return;
-
         const labels = ['總部行政', ...plays.map(p => p.name)];
         const data = [officeTotal, ...plays.map(p => p.value)];
-        
         costChart.data.labels = labels;
         costChart.data.datasets[0].data = data;
-        costChart.data.datasets[0].backgroundColor = appData.themeColors;
         costChart.update();
 
         const legend = document.getElementById('cost-legend');
-        const colors = appData.themeColors;
         legend.innerHTML = labels.map((l, i) => `
-            <div class="flex items-center gap-1.5 overflow-hidden">
-                <div class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${colors[i % colors.length]}"></div>
-                <span class="text-[9px] font-bold truncate text-on-surface-variant">${l}</span>
+            <div class="flex items-center gap-2 overflow-hidden bg-surface-container-low p-2 rounded-lg border border-outline-variant/30">
+                <div class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${appData.themeColors[i % appData.themeColors.length]}"></div>
+                <span class="text-[9px] font-black truncate text-on-surface-variant uppercase">${l}</span>
             </div>
         `).join('');
 
-        pnlChart.data.datasets[0].data = [officeTotal * 0.25, officeTotal * 0.8, totalCost * 0.85, totalCost];
-        pnlChart.data.datasets[1].data = [0, totalRev * 0.3, totalRev * 0.7, totalRev];
-        pnlChart.update('none');
+        pnlChart.data.datasets[0].data = [officeTotal * 0.2, totalCost * 0.4, totalCost * 0.85, totalCost];
+        pnlChart.data.datasets[1].data = [0, totalRev * 0.05, totalRev * 0.7, totalRev];
+        pnlChart.update();
     }
 
     function updatePlayUI(idx, profit, bepRate, tickets, cap, cost) {
         const card = document.getElementById(`play-card-${idx}`);
         if (!card) return;
-        
         const profitEl = card.querySelector('.play-profit-display');
         if (profitEl) {
-            profitEl.textContent = `${profit >= 0 ? '+' : ''}${Math.round(profit).toLocaleString()}`;
-            profitEl.className = `play-profit-display text-[12px] font-black ${profit >= 0 ? 'text-secondary' : 'text-error'}`;
+            profitEl.textContent = `NT$ ${Math.round(profit).toLocaleString()}`;
+            profitEl.className = `play-profit-display font-black text-lg ${profit >= 0 ? 'text-secondary' : 'text-error'}`;
         }
-        
-        const bepText = card.querySelector('.bep-text');
-        if (bepText) {
-            bepText.textContent = `門檻率 ${bepRate}%`;
-            bepText.className = `bep-text text-[10px] font-black ${parseFloat(bepRate) > 100 ? 'text-error' : 'text-secondary'}`;
-        }
-        
-        const bepSub = card.querySelector('.bep-sub');
-        if (bepSub) bepSub.textContent = `${tickets.toLocaleString()} / ${cap.toLocaleString()} 張`;
-        
-        const bepBar = card.querySelector('.bep-bar');
-        if (bepBar) {
-            bepBar.style.width = `${Math.min(bepRate, 100)}%`;
-            bepBar.className = `bep-bar h-full transition-all duration-500 ${parseFloat(bepRate) > 100 ? 'bg-error' : 'bg-secondary'}`;
-        }
-
-        const costTotal = card.querySelector('.play-total-cost-display');
-        if (costTotal) costTotal.textContent = `NT$ ${Math.round(cost).toLocaleString()}`;
+        card.querySelector('.bep-sub').textContent = `${tickets.toLocaleString()} / ${cap.toLocaleString()} 張`;
+        card.querySelector('.bep-text').textContent = `保本門檻 ${bepRate}%`;
+        card.querySelector('.bep-bar').style.width = `${Math.min(bepRate, 100)}%`;
+        card.querySelector('.bep-bar').className = `bep-bar h-full transition-all duration-1000 ${bepRate > 90 ? 'bg-error' : 'bg-secondary'}`;
+        card.querySelector('.play-total-cost-display').textContent = `NT$ ${Math.round(cost).toLocaleString()}`;
     }
 
     function renderOffice() {
         const container = document.getElementById('office-costs-container');
-        container.innerHTML = Object.entries(appData.officeCosts).map(([key, data]) => {
-            const isOver = data.value > data.limit;
-            return `
+        container.innerHTML = Object.entries(appData.officeCosts).map(([key, data]) => `
             <div class="space-y-2">
-                <div class="flex justify-between items-center px-1">
-                    <label class="text-[9px] font-black uppercase text-on-surface-variant">${data.label}</label>
-                    ${isOver ? '<span class="text-[7px] bg-error text-white px-1.5 py-0.5 rounded-full font-bold uppercase">超過預算</span>' : ''}
+                <label class="text-[9px] font-black uppercase text-on-surface-variant block px-1 tracking-wider">${data.label}</label>
+                <div class="flex items-center bg-white border-2 border-outline-variant rounded-xl h-14 overflow-hidden focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10 transition-all interactive-element shadow-sm">
+                    <button class="touch-target w-12 hover:bg-surface-container active:bg-outline-variant/30 text-on-surface-variant admin-ui" onclick="const i=this.nextElementSibling; i.value=Math.max(0, (parseInt(i.value)||0)-1000); i.dispatchEvent(new Event('input'))">
+                        <span class="material-symbols-outlined text-sm">remove</span>
+                    </button>
+                    <input type="number" value="${data.value}" oninput="appData.officeCosts.${key}.value=parseInt(this.value)||0; updateTotals()" class="w-full text-center border-none bg-transparent focus:ring-0 font-black text-base text-on-surface p-0">
+                    <button class="touch-target w-12 hover:bg-surface-container active:bg-outline-variant/30 text-on-surface-variant admin-ui" onclick="const i=this.previousElementSibling; i.value=(parseInt(i.value)||0)+1000; i.dispatchEvent(new Event('input'))">
+                        <span class="material-symbols-outlined text-sm">add</span>
+                    </button>
                 </div>
-                <div class="flex items-center bg-white border-2 ${isOver ? 'border-error/40' : 'border-outline-variant'} rounded-lg h-12 overflow-hidden focus-within:border-primary transition-all active-scale">
-                    <input type="number" value="${data.value}" oninput="updateOfficeVal('${key}', this.value)" class="w-full text-center border-none bg-transparent focus:ring-0 font-bold text-lg text-on-surface">
-                </div>
-                <div class="flex items-center gap-1.5 px-1">
-                    <span class="text-[8px] font-bold text-on-surface-variant uppercase">上限:</span>
-                    <input type="number" value="${data.limit}" oninput="updateOfficeLimit('${key}', this.value)" class="w-full text-[10px] font-bold text-on-surface-variant bg-transparent border-b border-outline-variant focus:border-primary outline-none">
-                </div>
-            </div>`;
-        }).join('');
+            </div>`).join('');
     }
 
     function renderPlays() {
         const wrapper = document.getElementById('plays-wrapper');
         const dots = document.getElementById('carousel-dots');
-        
-        dots.innerHTML = appData.plays.map((_, i) => `<div class="dot-indicator ${i === 0 ? 'active' : ''}"></div>`).join('') + '<div class="dot-indicator"></div>';
+        dots.innerHTML = appData.plays.map((_, i) => `<div class="dot-indicator ${i === 0 ? 'active' : ''}"></div>`).join('') + (appData.snapshotMode ? '' : '<div class="dot-indicator"></div>');
 
-        const cards = appData.plays.map((play, idx) => `
-            <div id="play-card-${idx}" class="flex-shrink-0 w-[88vw] md:w-[500px] snap-center bg-white rounded-xl border border-outline-variant shadow-lg flex flex-col overflow-hidden h-fit">
-                <div class="p-6 bg-surface-container-low border-b border-outline-variant/30 flex justify-between items-start">
-                    <div class="flex items-start gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-md">
-                            <span class="material-symbols-outlined">theater_comedy</span>
+        wrapper.innerHTML = appData.plays.map((play, idx) => `
+            <div id="play-card-${idx}" class="flex-shrink-0 w-[90vw] md:w-[500px] snap-center bg-white rounded-3xl border border-outline-variant shadow-xl flex flex-col overflow-hidden h-fit card-shadow ${play.locked ? 'card-locked' : ''} active-scale">
+                <div class="p-6 bg-surface-container-low border-b border-outline-variant/50 flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center shadow-lg transform rotate-3">
+                            <span class="material-symbols-outlined text-2xl">${play.locked ? 'lock' : 'theater_comedy'}</span>
                         </div>
-                        <div class="flex-1">
-                            <input type="text" value="${play.name}" oninput="appData.plays[${idx}].name=this.value; updateTotals()" class="font-bold text-lg border-none bg-transparent focus:ring-0 p-0 text-primary w-full">
-                            <div class="flex items-center gap-2 mt-1">
-                                <span class="text-[9px] font-black text-on-surface-variant uppercase">預估淨利:</span>
-                                <span class="play-profit-display">NT$ 0</span>
-                            </div>
+                        <div>
+                            <input type="text" value="${play.name}" oninput="appData.plays[${idx}].name=this.value; updateTotals()" class="font-black text-lg border-none bg-transparent focus:ring-0 p-0 text-primary w-full interactive-element focus:border-b-2 focus:border-primary">
+                            <div class="play-profit-display">NT$ 0</div>
                         </div>
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="duplicatePlay(${idx})" class="p-2 hover:bg-black/5 rounded-lg text-on-surface-variant active-scale transition-all"><span class="material-symbols-outlined text-sm">content_copy</span></button>
-                        <button onclick="deletePlay(${idx})" class="p-2 hover:bg-error/10 rounded-lg text-error active-scale transition-all"><span class="material-symbols-outlined text-sm">delete</span></button>
+                    <div class="flex gap-1 admin-ui">
+                        <button onclick="toggleLock(${idx})" class="touch-target hover:bg-black/5 rounded-full text-on-surface-variant transition-all active-scale">
+                            <span class="material-symbols-outlined text-xl">${play.locked ? 'lock_open' : 'lock'}</span>
+                        </button>
+                        <button onclick="deletePlay(${idx})" class="touch-target hover:bg-error/10 rounded-full text-error transition-all active-scale">
+                            <span class="material-symbols-outlined text-xl">delete</span>
+                        </button>
                     </div>
                 </div>
 
-                <div class="px-6 py-5 border-b border-outline-variant/30 bg-white">
-                    <div class="flex justify-between items-end mb-2">
-                        <span class="text-[10px] font-black text-primary uppercase">保本分析儀表板 (BEP)</span>
-                        <div class="text-right">
-                            <div class="bep-sub text-[10px] font-bold text-on-surface">0 / 0 張</div>
-                            <div class="bep-text text-[10px] font-black text-secondary">門檻率 0%</div>
-                        </div>
-                    </div>
-                    <div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
-                        <div class="bep-bar h-full bg-secondary transition-all duration-500" style="width: 0%"></div>
-                    </div>
-                </div>
-
-                <div class="p-6 space-y-6 max-h-[600px] overflow-y-auto scrollbar-hide bg-white">
+                <div class="p-6 space-y-8 bg-white">
                     <div class="space-y-4">
-                        <div class="text-[10px] font-black text-on-surface-variant uppercase border-b border-outline-variant pb-1">場地與營收設定</div>
-                        <div class="grid grid-cols-2 gap-4">
-                            ${createInput('巡演場次', play.tourCount, (v) => { appData.plays[idx].tourCount = v; updateTotals(); })}
-                            ${createInput('單場席數', play.capacity, (v) => { appData.plays[idx].capacity = v; updateTotals(); })}
-                            ${createInput('公關票留座/每場', play.prSeats, (v) => { appData.plays[idx].prSeats = v; updateTotals(); })}
-                            ${createInput('售票服務費 %', play.platformFee, (v) => { appData.plays[idx].platformFee = v; updateTotals(); })}
+                        <div class="flex justify-between items-end">
+                            <span class="text-[10px] font-black text-primary uppercase tracking-[0.1em]">保本進度分析</span>
+                            <div class="text-right">
+                                <span class="bep-sub text-[10px] font-bold text-on-surface"></span>
+                                <div class="bep-text text-[11px] font-black uppercase"></div>
+                            </div>
                         </div>
-                        <div class="grid grid-cols-3 gap-4">
-                            <div class="col-span-1">${createInput('早鳥比例 %', play.earlyBirdRatio, (v) => { appData.plays[idx].earlyBirdRatio = v; updateTotals(); })}</div>
-                            <div class="col-span-1">${createInput('早鳥票價', play.earlyBirdPrice, (v) => { appData.plays[idx].earlyBirdPrice = v; updateTotals(); })}</div>
-                            <div class="col-span-1">${createInput('一般平均票價', play.avgTicketPrice, (v) => { appData.plays[idx].avgTicketPrice = v; updateTotals(); })}</div>
+                        <div class="w-full h-3 bg-surface-container-high rounded-full overflow-hidden shadow-inner p-0.5">
+                            <div class="bep-bar h-full rounded-full shadow-sm" style="width: 0%"></div>
                         </div>
                     </div>
 
-                    <div class="bg-surface-container-low p-4 rounded-xl space-y-4 border border-outline-variant/50">
+                    <div class="grid grid-cols-2 gap-6">
+                        ${createStepper('巡演場次', play.tourCount, (v) => { appData.plays[idx].tourCount = v; updateTotals(); })}
+                        ${createStepper('單場席數', play.capacity, (v) => { appData.plays[idx].capacity = v; updateTotals(); })}
+                        ${createStepper('公關留座', play.prSeats, (v) => { appData.plays[idx].prSeats = v; updateTotals(); })}
+                        ${createStepper('服務費 %', play.platformFee, (v) => { appData.plays[idx].platformFee = v; updateTotals(); })}
+                    </div>
+
+                    <div class="p-5 bg-surface-container-low rounded-2xl space-y-5 border border-outline-variant/60 interactive-element">
                         <div class="space-y-2">
-                            <div class="flex justify-between text-[9px] font-black text-primary uppercase">
-                                <span>預計銷售達成率</span>
-                                <span class="text-primary font-bold">${play.ticketRate}%</span>
+                            <div class="flex justify-between items-center text-[10px] font-black text-primary uppercase">
+                                <span>預計平均銷售率</span>
+                                <span class="bg-primary text-white px-2 py-0.5 rounded-full font-black">${play.ticketRate}%</span>
                             </div>
-                            <input type="range" min="0" max="100" value="${play.ticketRate}" oninput="appData.plays[${idx}].ticketRate=parseInt(this.value); this.previousElementSibling.lastElementChild.textContent=this.value+'%'; updateTotals()" class="custom-slider">
-                        </div>
-                        <div class="space-y-2">
-                            <div class="flex justify-between text-[9px] font-black text-secondary uppercase">
-                                <span>獲利成功機率 (信心)</span>
-                                <span class="text-secondary font-bold">${play.confidenceLevel}%</span>
-                            </div>
-                            <input type="range" min="10" max="100" value="${play.confidenceLevel}" oninput="appData.plays[${idx}].confidenceLevel=parseInt(this.value); this.previousElementSibling.lastElementChild.textContent=this.value+'%'; updateTotals()" class="custom-slider">
+                            <input type="range" min="0" max="100" value="${play.ticketRate}" oninput="appData.plays[${idx}].ticketRate=parseInt(this.value); updateTotals(); this.parentElement.querySelector('span:last-child').textContent=this.value+'%'" class="custom-slider my-2">
                         </div>
                     </div>
 
-                    <div class="space-y-3">
-                        <div class="text-[10px] font-black text-on-surface-variant uppercase border-b border-outline-variant pb-1">製作細項與稅務</div>
+                    <div class="space-y-4">
+                        <div class="text-[10px] font-black text-on-surface-variant uppercase border-b border-outline-variant/50 pb-2 flex justify-between">
+                            <span>重點製作支出</span>
+                            <span>金額 (預估)</span>
+                        </div>
                         ${Object.entries(play.production).map(([key, item]) => `
-                            <div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/30 flex flex-col gap-3">
-                                <div class="flex justify-between items-center">
-                                    <div class="flex items-center gap-2">
-                                        <span class="material-symbols-outlined text-sm text-on-surface-variant">${item.icon}</span>
-                                        <span class="text-[10px] font-black text-on-surface">${item.label}</span>
+                            <div class="flex justify-between items-center py-2">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center border border-outline-variant/30 shrink-0">
+                                        <span class="material-symbols-outlined text-[18px] text-on-surface-variant">${item.icon}</span>
                                     </div>
-                                    <span class="text-[10px] font-black text-on-surface-variant">NT$ ${(item.unitCost * item.count).toLocaleString()}</span>
+                                    <span class="text-[11px] font-bold text-on-surface">${item.label}</span>
                                 </div>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div class="flex items-center bg-white border border-outline-variant rounded p-1 active-scale transition-all">
-                                        <input type="number" value="${item.unitCost}" oninput="appData.plays[${idx}].production.${key}.unitCost=parseInt(this.value) || 0; updateTotals(); renderPlays()" class="w-full text-center border-none p-0 focus:ring-0 text-[11px] font-bold text-on-surface">
-                                        <span class="text-xs text-on-surface-variant mx-1">×</span>
-                                        <input type="number" value="${item.count}" oninput="appData.plays[${idx}].production.${key}.count=parseInt(this.value) || 0; updateTotals(); renderPlays()" class="w-8 text-center border-none p-0 focus:ring-0 text-[11px] font-bold text-on-surface">
+                                <div class="flex items-center gap-2">
+                                    <div class="flex items-center bg-surface-container-low border border-outline-variant rounded-lg h-9 overflow-hidden admin-ui">
+                                        <button onclick="const i=this.nextElementSibling; i.value=Math.max(0, (parseInt(i.value)||0)-5000); i.dispatchEvent(new Event('input'))" class="w-7 h-full flex items-center justify-center hover:bg-outline-variant/20 active:bg-outline-variant/40 transition-colors text-on-surface-variant">
+                                            <span class="material-symbols-outlined text-xs">remove</span>
+                                        </button>
+                                        <input type="number" value="${item.unitCost}" 
+                                            oninput="appData.plays[${idx}].production['${key}'].unitCost=parseInt(this.value)||0; updateTotals();" 
+                                            class="w-16 text-center border-none bg-transparent p-0 focus:ring-0 font-black text-[11px] text-primary">
+                                        <button onclick="const i=this.previousElementSibling; i.value=(parseInt(i.value)||0)+5000; i.dispatchEvent(new Event('input'))" class="w-7 h-full flex items-center justify-center hover:bg-outline-variant/20 active:bg-outline-variant/40 transition-colors text-on-surface-variant">
+                                            <span class="material-symbols-outlined text-xs">add</span>
+                                        </button>
                                     </div>
-                                    <div class="flex gap-1">
-                                        ${['9B', '50', 'corp'].map(t => `
-                                            <button onclick="appData.plays[${idx}].production.${key}.taxType='${t}'; updateTotals(); renderPlays()" class="flex-1 text-[8px] font-bold rounded border active-scale transition-all ${item.taxType === t ? 'bg-primary text-white border-primary' : 'bg-white text-on-surface-variant border-outline-variant'}">${t === 'corp' ? '公司' : t}</button>
-                                        `).join('')}
+                                    <span class="snapshot-only text-[11px] font-black text-primary">NT$ ${(item.unitCost * item.count).toLocaleString()}</span>
+                                    <div class="flex admin-ui">
+                                        <button onclick="toggleTaxType(${idx}, '${key}')" class="touch-target !w-auto h-auto min-h-0 text-[9px] font-black px-2 py-1 rounded-md border border-outline-variant bg-surface-container text-on-surface-variant uppercase active-scale shadow-sm">${item.taxType}</button>
                                     </div>
                                 </div>
                             </div>
                         `).join('')}
                     </div>
-
-                    <div class="space-y-4">
-                        ${createInput('行銷總預算', play.marketingBudget, (v) => { appData.plays[idx].marketingBudget = v; updateTotals(); })}
-                        ${createInput('公積金攤提%', play.officeContributionRate, (v) => { appData.plays[idx].officeContributionRate = v; updateTotals(); })}
-                    </div>
                 </div>
 
-                <div class="p-6 bg-surface-container-low border-t border-outline-variant/30 mt-auto flex justify-between items-end">
+                <div class="p-6 bg-surface-container border-t border-outline-variant/50 mt-auto flex justify-between items-end">
                     <div>
-                        <p class="text-[8px] text-on-surface-variant font-black uppercase">年度專案總成本</p>
-                        <p class="play-total-cost-display font-black text-primary text-xl">NT$ 0</p>
+                        <p class="text-[9px] text-on-surface-variant font-black uppercase tracking-widest">Project Total Weighted Cost</p>
+                        <p class="play-total-cost-display font-black text-primary text-2xl">NT$ 0</p>
                     </div>
-                    <div class="text-[8px] text-on-surface-variant font-bold italic">含印花稅 (0.4%) 自動計算</div>
                 </div>
             </div>
         `).join('') + `
-            <div class="flex-shrink-0 w-[88vw] md:w-[500px] snap-center">
-                <button onclick="addNewPlay()" class="w-full h-full min-h-[400px] border-4 border-dashed border-outline-variant hover:border-primary/20 bg-white rounded-xl flex flex-col items-center justify-center gap-4 transition-all active-scale group">
-                    <span class="material-symbols-outlined text-4xl text-outline-variant group-hover:text-primary transition-colors">add_circle</span>
-                    <span class="font-bold text-on-surface-variant group-hover:text-primary transition-colors">新增劇目專案</span>
+            <div class="flex-shrink-0 w-[90vw] md:w-[500px] snap-center admin-ui">
+                <button onclick="addNewPlay()" class="w-full h-full min-h-[500px] border-4 border-dashed border-outline-variant hover:border-primary/20 bg-white/50 hover:bg-white rounded-3xl flex flex-col items-center justify-center gap-6 transition-all active-scale group shadow-sm">
+                    <div class="w-20 h-20 rounded-full bg-outline-variant/20 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                        <span class="material-symbols-outlined text-5xl text-outline-variant group-hover:text-primary transition-colors">add_circle</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="font-black text-primary block uppercase tracking-[0.2em] text-sm">新增專案</span>
+                        <span class="text-[10px] font-bold text-on-surface-variant uppercase mt-1 block">New Performance Project</span>
+                    </div>
                 </button>
             </div>
         `;
-        
-        wrapper.innerHTML = cards;
         updateTotals();
     }
 
-    function createInput(label, value, onChange) {
+    function createStepper(label, value, onChange) {
         return `
-        <div class="space-y-1.5">
-            <label class="text-[8px] font-black text-on-surface-variant uppercase block px-1">${label}</label>
-            <div class="flex items-center bg-white border-2 border-outline-variant rounded-lg h-10 overflow-hidden focus-within:border-primary transition-all active-scale">
-                <button onclick="const i=this.nextElementSibling; i.stepDown(); i.dispatchEvent(new Event('input'))" class="w-8 h-full hover:bg-surface-container active:bg-outline-variant/20 transition-colors shrink-0 text-on-surface-variant">-</button>
-                <input type="number" value="${value}" oninput="(${onChange.toString()})(parseInt(this.value) || 0)" class="w-full text-center border-none p-0 focus:ring-0 text-sm font-bold bg-transparent text-on-surface">
-                <button onclick="const i=this.previousElementSibling; i.stepUp(); i.dispatchEvent(new Event('input'))" class="w-8 h-full hover:bg-surface-container active:bg-outline-variant/20 transition-colors shrink-0 text-on-surface-variant">+</button>
+        <div class="space-y-2">
+            <label class="text-[9px] font-black text-on-surface-variant uppercase block px-1 tracking-wider">${label}</label>
+            <div class="flex items-center bg-white border-2 border-outline-variant rounded-xl h-12 overflow-hidden focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/5 transition-all interactive-element shadow-sm">
+                <button onclick="const i=this.nextElementSibling; i.stepDown(); i.dispatchEvent(new Event('input'))" class="touch-target w-10 hover:bg-surface-container active:bg-outline-variant/30 transition-colors shrink-0 text-on-surface-variant admin-ui">
+                    <span class="material-symbols-outlined text-base">remove</span>
+                </button>
+                <input type="number" value="${value}" oninput="(${onChange.toString()})(parseInt(this.value) || 0)" class="w-full text-center border-none p-0 focus:ring-0 text-sm font-black bg-transparent text-on-surface">
+                <button onclick="const i=this.previousElementSibling; i.stepUp(); i.dispatchEvent(new Event('input'))" class="touch-target w-10 hover:bg-surface-container active:bg-outline-variant/30 transition-colors shrink-0 text-on-surface-variant admin-ui">
+                    <span class="material-symbols-outlined text-base">add</span>
+                </button>
             </div>
         </div>`;
     }
 
-    function updateOfficeVal(key, val) {
-        appData.officeCosts[key].value = parseInt(val) || 0;
-        updateTotals();
-        renderOffice();
-    }
-
-    function updateOfficeLimit(key, val) {
-        appData.officeCosts[key].limit = parseInt(val) || 0;
-        updateTotals();
-        renderOffice();
+    function toggleTaxType(idx, key) {
+        const types = ['9B', '50', 'corp'];
+        const current = appData.plays[idx].production[key].taxType;
+        const next = types[(types.indexOf(current) + 1) % types.length];
+        appData.plays[idx].production[key].taxType = next;
+        renderPlays();
     }
 
     function addNewPlay() {
         const newPlay = JSON.parse(JSON.stringify(appData.plays[0]));
         newPlay.id = Date.now();
-        newPlay.name = `新計畫 ${appData.plays.length + 1}`;
+        newPlay.name = `新劇目計畫 ${appData.plays.length + 1}`;
+        newPlay.locked = false;
         appData.plays.push(newPlay);
         renderPlays();
         const wrapper = document.getElementById('plays-wrapper');
-        wrapper.scrollTo({ left: wrapper.scrollWidth, behavior: 'smooth' });
-    }
-
-    function duplicatePlay(idx) {
-        const copy = JSON.parse(JSON.stringify(appData.plays[idx]));
-        copy.id = Date.now();
-        copy.name += ' (副本)';
-        appData.plays.push(copy);
-        renderPlays();
+        setTimeout(() => wrapper.scrollTo({ left: wrapper.scrollWidth, behavior: 'smooth' }), 50);
     }
 
     function deletePlay(idx) {
@@ -839,22 +877,27 @@
 
     function updateDots() {
         const wrapper = document.getElementById('plays-wrapper');
-        const dots = document.getElementById('carousel-dots').children;
-        const cardWidth = wrapper.offsetWidth * 0.88;
+        const dotsContainer = document.getElementById('carousel-dots');
+        if (!dotsContainer) return;
+        const dots = dotsContainer.children;
+        const cardWidth = wrapper.offsetWidth * 0.90;
         const index = Math.round(wrapper.scrollLeft / (cardWidth + 24)); 
         Array.from(dots).forEach((dot, i) => {
             if (i === index) dot.classList.add('active');
-            else dot.classList.remove('active');
+            else if (dot.classList) dot.classList.remove('active');
         });
     }
 
     function copyDataJSON() {
         navigator.clipboard.writeText(JSON.stringify(appData, null, 2));
-        alert('數據 JSON 已複製到剪貼簿');
+        const btn = event.currentTarget;
+        const originalIcon = btn.innerHTML;
+        btn.innerHTML = '<span class="material-symbols-outlined">check</span>';
+        setTimeout(() => btn.innerHTML = originalIcon, 2000);
     }
 
     function resetData() {
-        if(confirm('確定要重設所有數據嗎？這將無法復原。')) {
+        if(confirm('重設所有數據至預設值？這將無法復原。')) {
             localStorage.removeItem(STORAGE_KEY);
             location.reload();
         }
