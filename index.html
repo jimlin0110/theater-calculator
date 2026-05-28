@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html class="light" lang="zh-TW"><head>
+<html class="light" lang="zh-TW" style="font-size: 16px;"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
 <title>劇場營運精細計算機 - v85 Stage Ledger</title>
@@ -12,48 +12,96 @@
             theme: {
                 extend: {
                     "colors": {
-                        "primary": "#000000",
-                        "accent": "#091426",
-                        "secondary": "#855300",
-                        "background": "#fbf8fa",
-                        "surface": "#ffffff",
-                        "surface-container": "#f0edef",
-                        "surface-container-low": "#f6f3f5",
-                        "surface-container-high": "#eae7e9",
-                        "on-background": "#1b1b1d",
-                        "on-surface": "#1b1b1d",
-                        "on-surface-variant": "#45474c",
+                        "primary-fixed-dim": "#bcc7df",
                         "outline": "#75777d",
-                        "outline-variant": "#c5c6cd",
+                        "tertiary-fixed": "#d8e3fb",
+                        "surface-outline": "#c5c6cd",
+                        "secondary-container": "#fdb965",
+                        "secondary": "#855300",
+                        "error-alert": "#ba1a1a",
+                        "secondary-fixed-dim": "#fdb965",
+                        "on-primary-fixed-variant": "#3d475b",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#fbf8fa",
+                        "tertiary": "#000000",
+                        "surface-bright": "#fbf8fa",
+                        "inverse-on-surface": "#f3f0f2",
+                        "on-primary-fixed": "#111c2e",
+                        "tertiary-fixed-dim": "#bcc7de",
+                        "on-secondary-fixed-variant": "#653e00",
                         "error": "#ba1a1a",
-                        "error-container": "#ffdad6",
+                        "primary-fixed": "#d8e2fc",
+                        "primary-container": "#111c2e",
+                        "on-surface": "#1b1b1d",
+                        "surface-dim": "#dcd9db",
+                        "inverse-surface": "#303032",
+                        "surface-container": "#f0edef",
+                        "success-dim": "#ffb95f",
+                        "outline-variant": "#c5c6cd",
+                        "surface-muted": "#fbf8fa",
                         "on-error": "#ffffff",
-                        "success-dim": "#ffb95f"
+                        "inverse-primary": "#bcc7df",
+                        "surface-container-high": "#eae7e9",
+                        "surface-variant": "#e4e2e3",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e4e2e3",
+                        "on-secondary-container": "#754900",
+                        "on-background": "#1b1b1d",
+                        "secondary-fixed": "#ffddb8",
+                        "on-secondary-fixed": "#2a1700",
+                        "on-primary-container": "#7a849b",
+                        "on-tertiary-fixed-variant": "#3c475a",
+                        "on-tertiary-container": "#79849a",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#111c2d",
+                        "surface-container-low": "#f6f3f5",
+                        "background": "#fbf8fa",
+                        "on-secondary": "#ffffff",
+                        "primary": "#000000",
+                        "on-tertiary-fixed": "#111c2d",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#545f74",
+                        "on-surface-variant": "#45474c",
+                        "accent": "#091426"
                     },
                     "borderRadius": {
-                        "DEFAULT": "0.5rem",
+                        "DEFAULT": "0.25rem",
                         "lg": "0.5rem",
                         "xl": "0.75rem",
-                        "2xl": "1rem",
                         "full": "9999px"
                     },
                     "spacing": {
+                        "margin-desktop": "48px",
+                        "base": "4px",
                         "container-max": "1280px",
                         "margin-mobile": "16px",
-                        "margin-desktop": "48px",
-                        "gutter": "24px",
-                        "base": "4px"
+                        "gutter": "24px"
                     },
                     "fontFamily": {
-                        "headline-md": ["Inter", "sans-serif"],
-                        "body-md": ["Noto Sans", "sans-serif"],
-                        "number-display": ["Inter", "sans-serif"]
+                        "number-display": ["Inter"],
+                        "micro-tag": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Noto Sans"],
+                        "body-lg": ["Noto Sans"]
                     }
                 },
             },
         }
     </script>
 <style>
+        :root {
+            font-size: 16px;
+        }
+        body {
+            font-size: 1rem;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
             vertical-align: middle;
@@ -67,9 +115,9 @@
             -webkit-appearance: none;
             margin: 0;
         }
-        /* Mobile Input Focus Fix */
         input[type="number"], input[type="text"] {
-            font-size: 16px !important; /* Prevents iOS zoom */
+            font-size: 14px !important;
+            line-height: normal;
         }
         .step-btn:active { transform: scale(0.92); }
         .tab-active { background-color: #000000 !important; color: #ffffff !important; }
@@ -84,14 +132,16 @@
             -webkit-overflow-scrolling: touch;
             display: flex;
             overflow-x: auto;
+            width: 100%;
         }
         .project-card, .financial-card {
             scroll-snap-align: center;
             flex: 0 0 100%;
+            width: 100%;
         }
         @media (min-width: 768px) {
             .project-card, .financial-card {
-                flex: 0 0 calc(100% - 40px);
+                flex: 0 0 100%;
             }
         }
         .dot {
@@ -109,13 +159,19 @@
         body { min-height: 100dvh; }
         [contenteditable]:focus { outline: 2px solid #000000; border-radius: 4px; padding: 0 4px; }
         
-        /* Ensure bottom nav covers safe area on iOS */
         .pb-safe {
             padding-bottom: env(safe-area-inset-bottom);
         }
+        
+        @media (max-width: 640px) {
+            .text-xs { font-size: 0.7rem !important; }
+            .text-sm { font-size: 0.8rem !important; }
+            .text-base { font-size: 0.95rem !important; }
+            .project-rev-display, .project-exp-display { font-size: 1.1rem !important; }
+        }
     </style>
 </head>
-<body class="bg-background text-on-background font-body-md min-h-screen pb-32">
+<body class="bg-background text-on-background font-body-md min-h-screen pb-32 overflow-x-hidden">
 <header class="sticky top-0 w-full z-50 bg-surface/90 glass-effect border-b border-outline-variant shadow-sm h-16 flex items-center justify-between px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-accent text-2xl">theater_comedy</span>
@@ -135,53 +191,52 @@
 </div>
 </div>
 </header>
-<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-6 space-y-6">
+<main class="max-w-container-max mx-auto md:px-margin-desktop py-6 space-y-6 px-4">
 <!-- View Switcher -->
-<nav class="flex space-x-1 p-1 bg-surface-container-low rounded-xl w-fit mx-auto md:mx-0">
-<button class="nav-tab px-5 py-2 rounded-lg font-bold tab-active transition-all text-sm" data-view="office">辦公室營運</button>
-<button class="nav-tab px-5 py-2 rounded-lg font-bold text-on-surface-variant hover:bg-surface-container-high transition-all text-sm" data-view="ops">演出計畫</button>
-<button class="nav-tab px-5 py-2 rounded-lg font-bold text-on-surface-variant hover:bg-surface-container-high transition-all text-sm" data-view="financial">財務報表</button>
+<nav class="flex space-x-1 p-1 bg-surface-container-low rounded-xl w-fit mx-auto md:mx-0 overflow-hidden">
+<button class="nav-tab px-5 py-2 rounded-lg font-bold tab-active transition-all text-sm whitespace-nowrap" data-view="office">辦公室營運</button>
+<button class="nav-tab px-5 py-2 rounded-lg font-bold text-on-surface-variant hover:bg-surface-container-high transition-all text-sm whitespace-nowrap" data-view="ops">演出計畫</button>
+<button class="nav-tab px-5 py-2 rounded-lg font-bold text-on-surface-variant hover:bg-surface-container-high transition-all text-sm whitespace-nowrap" data-view="financial">財務報表</button>
 </nav>
 <!-- Office View -->
 <div class="view-section active space-y-6" id="view-office">
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
 <div class="lg:col-span-8">
-<div class="bg-white rounded-3xl border border-outline-variant p-8 shadow-md space-y-8">
+<div class="bg-white rounded-3xl border border-outline-variant p-6 md:p-8 shadow-md space-y-8">
 <div class="flex items-center gap-4">
-<div class="bg-accent/5 p-3 rounded-xl">
+<div class="bg-accent/5 p-3 rounded-xl flex-shrink-0">
 <span class="material-symbols-outlined text-accent text-3xl">corporate_fare</span>
 </div>
 <div>
-<h2 class="text-2xl font-bold">辦公室固定營運成本</h2>
+<h2 class="text-xl md:text-2xl font-bold">辦公室固定營運成本</h2>
 <p class="text-on-surface-variant text-sm font-medium">請輸入年度/月度固定行政開銷</p>
 </div>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-<div class="space-y-4">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6"><div class="space-y-4">
 <h4 class="text-[10px] font-black text-outline uppercase tracking-widest border-b pb-1">人事與空間</h4>
 <div class="space-y-3">
-<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
-<span class="text-sm font-bold">租金 (Rent)</span>
-<div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden">
-<button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-rent', -1000)"><span class="material-symbols-outlined text-sm">remove</span></button>
-<input class="office-calc-trigger w-24 text-right border-none bg-transparent font-bold focus:ring-0 text-sm" id="office-rent" type="number" value="30000"/>
-<button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-rent', 1000)"><span class="material-symbols-outlined text-sm">add</span></button>
+<div class="flex items-center justify-between p-2.5 bg-surface-container-low rounded-lg gap-2">
+<span class="text-sm font-bold flex-shrink-0">租金</span>
+<div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden flex-shrink-0">
+<button class="w-7 h-7 md:w-8 md:h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-rent', -1000)"><span class="material-symbols-outlined text-sm">remove</span></button>
+<input class="office-calc-trigger w-[72px] md:w-24 text-right border-none bg-transparent font-bold focus:ring-0 text-[13px]" id="office-rent" style="padding: 0 4px;" type="number" value="30000"/>
+<button class="w-7 h-7 md:w-8 md:h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-rent', 1000)"><span class="material-symbols-outlined text-sm">add</span></button>
 </div>
 </div>
-<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
-<span class="text-sm font-bold">薪資 (Salaries)</span>
-<div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden">
-<button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-salary', -5000)"><span class="material-symbols-outlined text-sm">remove</span></button>
-<input class="office-calc-trigger w-24 text-right border-none bg-transparent font-bold focus:ring-0 text-sm" id="office-salary" type="number" value="120000"/>
-<button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-salary', 5000)"><span class="material-symbols-outlined text-sm">add</span></button>
+<div class="flex items-center justify-between p-2.5 bg-surface-container-low rounded-lg gap-2">
+<span class="text-sm font-bold flex-shrink-0">薪資</span>
+<div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden flex-shrink-0">
+<button class="w-7 h-7 md:w-8 md:h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-salary', -5000)"><span class="material-symbols-outlined text-sm">remove</span></button>
+<input class="office-calc-trigger w-[72px] md:w-24 text-right border-none bg-transparent font-bold focus:ring-0 text-[13px]" id="office-salary" style="padding: 0 4px;" type="number" value="120000"/>
+<button class="w-7 h-7 md:w-8 md:h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-salary', 5000)"><span class="material-symbols-outlined text-sm">add</span></button>
 </div>
 </div>
-<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
-<span class="text-sm font-bold">勞退 (Labor Pension)</span>
-<div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden">
-<button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-pension', -1000)"><span class="material-symbols-outlined text-sm">remove</span></button>
-<input class="office-calc-trigger w-24 text-right border-none bg-transparent font-bold focus:ring-0 text-sm" id="office-pension" type="number" value="7200"/>
-<button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-pension', 1000)"><span class="material-symbols-outlined text-sm">add</span></button>
+<div class="flex items-center justify-between p-2.5 bg-surface-container-low rounded-lg gap-2">
+<span class="text-sm font-bold flex-shrink-0">勞退</span>
+<div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden flex-shrink-0">
+<button class="w-7 h-7 md:w-8 md:h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-pension', -1000)"><span class="material-symbols-outlined text-sm">remove</span></button>
+<input class="office-calc-trigger w-[72px] md:w-24 text-right border-none bg-transparent font-bold focus:ring-0 text-[13px]" id="office-pension" style="padding: 0 4px;" type="number" value="7200"/>
+<button class="w-7 h-7 md:w-8 md:h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-pension', 1000)"><span class="material-symbols-outlined text-sm">add</span></button>
 </div>
 </div>
 </div>
@@ -189,45 +244,44 @@
 <div class="space-y-4">
 <h4 class="text-[10px] font-black text-outline uppercase tracking-widest border-b pb-1">行政與雜項</h4>
 <div class="space-y-3">
-<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
-<span class="text-sm font-bold">水電 (Utilities)</span>
-<div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden">
-<button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-utilities', -500)"><span class="material-symbols-outlined text-sm">remove</span></button>
-<input class="office-calc-trigger w-24 text-right border-none bg-transparent font-bold focus:ring-0 text-sm" id="office-utilities" type="number" value="5000"/>
-<button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-utilities', 500)"><span class="material-symbols-outlined text-sm">add</span></button>
+<div class="flex items-center justify-between p-2.5 bg-surface-container-low rounded-lg gap-2">
+<span class="text-sm font-bold flex-shrink-0">水電</span>
+<div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden flex-shrink-0">
+<button class="w-7 h-7 md:w-8 md:h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-utilities', -500)"><span class="material-symbols-outlined text-sm">remove</span></button>
+<input class="office-calc-trigger w-[72px] md:w-24 text-right border-none bg-transparent font-bold focus:ring-0 text-[13px]" id="office-utilities" style="padding: 0 4px;" type="number" value="5000"/>
+<button class="w-7 h-7 md:w-8 md:h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-utilities', 500)"><span class="material-symbols-outlined text-sm">add</span></button>
 </div>
 </div>
-<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
-<span class="text-sm font-bold">網路 (Network)</span>
-<div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden">
-<button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-network', -100)"><span class="material-symbols-outlined text-sm">remove</span></button>
-<input class="office-calc-trigger w-24 text-right border-none bg-transparent font-bold focus:ring-0 text-sm" id="office-network" type="number" value="1200"/>
-<button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-network', 100)"><span class="material-symbols-outlined text-sm">add</span></button>
+<div class="flex items-center justify-between p-2.5 bg-surface-container-low rounded-lg gap-2">
+<span class="text-sm font-bold flex-shrink-0">網路</span>
+<div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden flex-shrink-0">
+<button class="w-7 h-7 md:w-8 md:h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-network', -100)"><span class="material-symbols-outlined text-sm">remove</span></button>
+<input class="office-calc-trigger w-[72px] md:w-24 text-right border-none bg-transparent font-bold focus:ring-0 text-[13px]" id="office-network" style="padding: 0 4px;" type="number" value="1200"/>
+<button class="w-7 h-7 md:w-8 md:h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-network', 100)"><span class="material-symbols-outlined text-sm">add</span></button>
 </div>
 </div>
-<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
-<span class="text-sm font-bold">行政雜項 (Misc)</span>
-<div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden">
-<button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-misc', -500)"><span class="material-symbols-outlined text-sm">remove</span></button>
-<input class="office-calc-trigger w-24 text-right border-none bg-transparent font-bold focus:ring-0 text-sm" id="office-misc" type="number" value="5000"/>
-<button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-misc', 500)"><span class="material-symbols-outlined text-sm">add</span></button>
-</div>
-</div>
+<div class="flex items-center justify-between p-2.5 bg-surface-container-low rounded-lg gap-2">
+<span class="text-sm font-bold flex-shrink-0">行政雜項</span>
+<div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden flex-shrink-0">
+<button class="w-7 h-7 md:w-8 md:h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-misc', -500)"><span class="material-symbols-outlined text-sm">remove</span></button>
+<input class="office-calc-trigger w-[72px] md:w-24 text-right border-none bg-transparent font-bold focus:ring-0 text-[13px]" id="office-misc" style="padding: 0 4px;" type="number" value="5000"/>
+<button class="w-7 h-7 md:w-8 md:h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="officeStepVal('office-misc', 500)"><span class="material-symbols-outlined text-sm">add</span></button>
 </div>
 </div>
 </div>
-<div class="pt-6 border-t border-outline-variant flex justify-between items-center">
-<span class="font-bold text-on-surface-variant">辦公室總營運成本 (每月)</span>
+</div></div>
+<div class="pt-6 border-t border-outline-variant flex flex-col sm:flex-row justify-between items-center gap-2 text-center sm:text-left">
+<span class="font-bold text-on-surface-variant text-sm md:text-base">辦公室總營運成本 (每月)</span>
 <span class="text-2xl font-black text-accent" id="office-total-display">NT$ 0</span>
 </div>
 </div>
 </div>
 <div class="lg:col-span-4">
 <div class="bg-surface-container-low p-6 rounded-3xl border border-outline-variant h-fit">
-<h3 class="font-bold mb-4">營運說明</h3>
-<ul class="text-sm space-y-3 text-on-surface-variant list-disc pl-5">
+<h3 class="font-bold mb-4 text-base">營運說明</h3>
+<ul class="text-sm space-y-3 text-on-surface-variant list-disc pl-5 font-medium">
 <li>此處設定的「辦公室成本」為固定開銷。</li>
-<li>這些開銷將會從所有演出計畫的總收益中扣除，計算出最终的全案總淨利。</li>
+<li>這些開銷將會從所有演出計畫的總收益中扣除，計算出最終的全案總淨利。</li>
 <li>建議依據年度平均月預算進行估算。</li>
 </ul>
 </div>
@@ -239,7 +293,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
 <div class="lg:col-span-8 space-y-4">
 <div class="flex justify-center gap-2 mb-2" id="pagination-dots"></div>
-<div class="relative group">
+<div class="relative group w-full overflow-hidden">
 <div class="no-scrollbar gap-6 pb-4" id="project-container">
 <div class="project-card flex-shrink-0 bg-surface-container-low border-2 border-dashed border-outline-variant rounded-3xl p-8 flex flex-col items-center justify-center gap-4 cursor-pointer hover:bg-surface-container-high transition-colors min-h-[400px]" id="add-card-btn" onclick="addProject()">
 <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-sm">
@@ -256,12 +310,12 @@
 <div class="bg-accent text-white rounded-3xl p-8 shadow-xl relative overflow-hidden transition-all duration-500" id="profit-card">
 <div class="relative z-10 space-y-4">
 <div class="flex justify-between items-center">
-<span class="text-[10px] opacity-70 uppercase tracking-widest font-bold text-white">全案預估總淨利 / Total Net Profit</span>
+<span class="text-[10px] md:text-[11px] opacity-70 uppercase tracking-widest font-bold text-white">全案預估總淨利 / Total Net Profit</span>
 <span class="material-symbols-outlined opacity-70 text-white" id="profit-icon">trending_up</span>
 </div>
 <div>
-<span class="block text-3xl font-black tracking-tighter text-white">NT$</span>
-<span class="block text-5xl font-black tracking-tighter mt-[-4px] text-white" id="display-net-profit">0</span>
+<span class="block text-2xl md:text-3xl font-black tracking-tighter text-white">NT$</span>
+<span class="block md:text-5xl font-black tracking-tighter mt-[-4px] text-white text-3xl md:text-5xl" id="display-net-profit">0</span>
 </div>
 <div class="flex items-center gap-2 pt-4">
 <div class="h-2 w-full bg-white/10 rounded-full overflow-hidden">
@@ -294,23 +348,23 @@
 </div>
 <!-- Financial View -->
 <div class="view-section space-y-6" id="view-financial">
-<div class="flex flex-col md:flex-row justify-between items-end gap-4">
+<div class="flex flex-col md:flex-row justify-between items-end gap-4 px-1">
 <div>
-<h2 class="text-2xl font-bold">演出計畫財務結算</h2>
+<h2 class="text-xl md:text-2xl font-bold">演出計畫財務結算</h2>
 <p class="text-on-surface-variant text-sm font-medium">各別演出項目的財務表現分析</p>
 </div>
 <div class="flex gap-2" id="fin-pagination-dots"></div>
 </div>
-<div class="relative">
+<div class="relative w-full overflow-hidden">
 <div class="no-scrollbar gap-6 pb-6" id="financial-cards-container">
 <!-- Financial Cards Generated via JS -->
 </div>
 </div>
-<div class="bg-white rounded-3xl border border-outline-variant overflow-hidden shadow-sm">
-<div class="p-6 border-b border-outline-variant bg-surface-container-low">
-<h3 class="font-bold">全案綜合統計</h3>
+<div class="bg-white rounded-3xl border border-outline-variant overflow-x-auto shadow-sm mx-1">
+<div class="p-6 border-b border-outline-variant bg-surface-container-low min-w-[320px]">
+<h3 class="font-bold text-base">全案綜合統計</h3>
 </div>
-<table class="w-full text-left text-sm border-collapse">
+<table class="w-full text-left text-sm border-collapse min-w-[400px]">
 <thead class="bg-surface-container-low/50 font-bold">
 <tr>
 <th class="p-4 border-b">預算類別</th>
@@ -349,18 +403,18 @@
 </div>
 </main>
 <!-- Bottom Nav (Mobile Only) -->
-<nav class="md:hidden fixed bottom-0 w-full z-[60] bg-accent text-white shadow-[0_-4px_12px_rgba(0,0,0,0.3)] flex justify-around items-center h-16 px-4 pb-safe">
-<button class="flex flex-col items-center justify-center text-white active:opacity-70 transition-opacity" onclick="scrollToElement('profit-card', 'ops')">
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-[60] bg-accent text-white shadow-[0_-4px_12px_rgba(0,0,0,0.3)] flex justify-around items-center h-16 px-4 pb-safe border-t border-white/10">
+<button class="flex flex-col items-center justify-center text-white active:opacity-70 transition-opacity flex-1 py-1" onclick="scrollToElement('profit-card', 'ops')">
 <span class="material-symbols-outlined text-xl text-white">account_balance_wallet</span>
-<span class="text-[10px] font-bold mt-1 text-white">總損益</span>
+<span class="text-[10px] font-bold mt-1 text-white whitespace-nowrap">總損益</span>
 </button>
-<button class="flex flex-col items-center justify-center text-white active:opacity-70 transition-opacity" onclick="scrollToElement('summary-expense', 'ops')">
+<button class="flex flex-col items-center justify-center text-white active:opacity-70 transition-opacity flex-1 py-1" onclick="scrollToElement('summary-expense', 'ops')">
 <span class="material-symbols-outlined text-xl text-white">payments</span>
-<span class="text-[10px] font-bold mt-1 text-white">總成本</span>
+<span class="text-[10px] font-bold mt-1 text-white whitespace-nowrap">總成本</span>
 </button>
-<button class="flex flex-col items-center justify-center text-white active:opacity-70 transition-opacity" onclick="scrollToElement('summary-revenue', 'ops')">
+<button class="flex flex-col items-center justify-center text-white active:opacity-70 transition-opacity flex-1 py-1" onclick="scrollToElement('summary-revenue', 'ops')">
 <span class="material-symbols-outlined text-xl text-white">trending_up</span>
-<span class="text-[10px] font-bold mt-1 text-white">總收入</span>
+<span class="text-[10px] font-bold mt-1 text-white whitespace-nowrap">總收入</span>
 </button>
 </nav>
 <script>
@@ -412,15 +466,15 @@
         card.className = "bg-white rounded-3xl border border-outline-variant p-6 shadow-md space-y-6 relative project-card flex-shrink-0 animate-in fade-in slide-in-from-right-10 duration-500";
         card.id = pid;
         card.innerHTML = `
-            <div class="flex justify-between items-start">
-                <div class="space-y-1">
+            <div class="flex justify-between items-start gap-4">
+                <div class="space-y-1 min-w-0">
                     <div class="flex items-center gap-2">
                         <span class="bg-accent/10 text-accent text-[10px] px-2 py-0.5 rounded font-black uppercase tracking-wider">PROJECT #${projectIdCounter}</span>
                         <span class="text-xs text-on-surface-variant font-bold">演出計畫</span>
                     </div>
-                    <h3 class="font-headline-md text-xl font-bold focus:outline-none hover:bg-surface-container-low px-1 rounded project-title" contenteditable="true">未命名演出</h3>
+                    <h3 class="font-headline-md text-xl font-bold focus:outline-none hover:bg-surface-container-low px-1 rounded project-title truncate" contenteditable="true">未命名演出</h3>
                 </div>
-                <button class="text-error hover:bg-error-container p-2 rounded-lg transition-colors" onclick="removeProject('${pid}')">
+                <button class="text-error hover:bg-error-container p-2 rounded-lg transition-colors flex-shrink-0" onclick="removeProject('${pid}')">
                     <span class="material-symbols-outlined">delete</span>
                 </button>
             </div>
@@ -428,41 +482,41 @@
             <section class="space-y-4">
                 <button class="w-full flex items-center justify-between border-b border-surface-container pb-4 transition-colors group" onclick="toggleCollapsible(this)">
                     <div class="flex items-center gap-3">
-                        <div class="bg-accent/5 p-2 rounded-lg">
+                        <div class="bg-accent/5 p-2 rounded-lg flex-shrink-0">
                             <span class="material-symbols-outlined text-accent">storefront</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <h2 class="font-headline-md text-lg font-bold">場地與票房收入</h2>
+                        <div class="flex items-center gap-2 min-w-0">
+                            <h2 class="font-headline-md text-base md:text-lg font-bold truncate">場地與票房收入</h2>
                             <span class="material-symbols-outlined text-on-surface-variant expand-icon transition-transform rotate-180">expand_more</span>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <span class="text-[10px] text-on-surface-variant uppercase tracking-widest block font-bold">Estimated Revenue</span>
-                        <span class="font-number-display text-xl text-accent font-bold project-rev-display">NT$ 0</span>
+                    <div class="text-right flex-shrink-0">
+                        <span class="text-[10px] text-on-surface-variant uppercase tracking-widest block font-bold">Est. Revenue</span>
+                        <span class="font-number-display text-lg md:text-xl text-accent font-bold project-rev-display">NT$ 0</span>
                     </div>
                 </button>
                 <div class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-3">
-                            <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
-                                <span class="text-xs font-bold">場次數量</span>
-                                <div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden">
+                            <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg gap-2">
+                                <span class="text-xs font-bold whitespace-nowrap">場次數量</span>
+                                <div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden flex-shrink-0">
                                     <button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="stepVal(this, -1)"><span class="material-symbols-outlined text-sm">remove</span></button>
                                     <input class="calc-trigger w-12 text-center border-none bg-transparent font-bold focus:ring-0 text-sm" data-key="perfCount" type="number" value="5"/>
                                     <button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="stepVal(this, 1)"><span class="material-symbols-outlined text-sm">add</span></button>
                                 </div>
                             </div>
-                            <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
-                                <span class="text-xs font-bold">每場座位數</span>
-                                <div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden">
+                            <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg gap-2">
+                                <span class="text-xs font-bold whitespace-nowrap">每場座位數</span>
+                                <div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden flex-shrink-0">
                                     <button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="stepVal(this, -10)"><span class="material-symbols-outlined text-sm">remove</span></button>
                                     <input class="calc-trigger w-12 text-center border-none bg-transparent font-bold focus:ring-0 text-sm" data-key="seatsPerPerf" type="number" value="300"/>
                                     <button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="stepVal(this, 10)"><span class="material-symbols-outlined text-sm">add</span></button>
                                 </div>
                             </div>
-                            <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
-                                <span class="text-xs font-bold">平均票價</span>
-                                <div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden">
+                            <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg gap-2">
+                                <span class="text-xs font-bold whitespace-nowrap">平均票價</span>
+                                <div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden flex-shrink-0">
                                     <button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="stepVal(this, -100)"><span class="material-symbols-outlined text-sm">remove</span></button>
                                     <input class="calc-trigger w-16 text-center border-none bg-transparent font-bold focus:ring-0 text-sm" data-key="avgPrice" type="number" value="1200"/>
                                     <button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="stepVal(this, 100)"><span class="material-symbols-outlined text-sm">add</span></button>
@@ -470,22 +524,30 @@
                             </div>
                         </div>
                         <div class="space-y-3">
-                            <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
-                                <span class="text-xs font-bold text-secondary">早鳥票 (85%)</span>
+                            <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg gap-2">
+                                <span class="text-xs font-bold text-secondary whitespace-nowrap">早鳥票 (85%)</span>
                                 <input class="calc-trigger w-16 text-right bg-white border border-outline-variant rounded p-1 text-sm font-bold" data-key="earlyQty" type="number" value="50"/>
                             </div>
-                            <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
-                                <span class="text-xs font-bold text-secondary">VIP 票 (150%)</span>
+                            <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg gap-2">
+                                <span class="text-xs font-bold text-secondary whitespace-nowrap">VIP 票 (150%)</span>
                                 <input class="calc-trigger w-16 text-right bg-white border border-outline-variant rounded p-1 text-sm font-bold" data-key="vipQty" type="number" value="20"/>
                             </div>
-                            <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
-                                <span class="text-xs font-bold">平均折扣損失 %</span>
+                            <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg gap-2">
+                                <span class="text-xs font-bold text-secondary whitespace-nowrap">公關票 (0%)</span>
+                                <div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden flex-shrink-0">
+                                    <button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="stepVal(this, -5)"><span class="material-symbols-outlined text-sm">remove</span></button>
+                                    <input class="calc-trigger w-12 text-center border-none bg-transparent font-bold focus:ring-0 text-sm" data-key="prQty" type="number" value="10"/>
+                                    <button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="stepVal(this, 5)"><span class="material-symbols-outlined text-sm">add</span></button>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg gap-2">
+                                <span class="text-xs font-bold whitespace-nowrap">平均折扣損失 %</span>
                                 <input class="calc-trigger w-16 text-right bg-white border border-outline-variant rounded p-1 text-sm font-bold" data-key="discountRate" type="number" value="15"/>
                             </div>
                         </div>
                     </div>
-                    <div class="p-3 bg-surface-container-low rounded-lg flex justify-between items-center">
-                        <span class="text-xs font-bold">售票佣金 %</span>
+                    <div class="p-3 bg-surface-container-low rounded-lg flex justify-between items-center gap-2">
+                        <span class="text-xs font-bold whitespace-nowrap">售票佣金 %</span>
                         <input class="calc-trigger w-16 text-right bg-white border border-outline-variant rounded p-1 text-sm font-bold" data-key="commRate" type="number" value="6"/>
                     </div>
                 </div>
@@ -494,17 +556,17 @@
             <section class="space-y-4">
                 <button class="w-full flex items-center justify-between border-b border-surface-container pb-4 transition-colors group" onclick="toggleCollapsible(this)">
                     <div class="flex items-center gap-3">
-                        <div class="bg-accent/5 p-2 rounded-lg">
+                        <div class="bg-accent/5 p-2 rounded-lg flex-shrink-0">
                             <span class="material-symbols-outlined text-accent">payments</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <h2 class="font-headline-md text-lg font-bold">製作與開發成本</h2>
+                        <div class="flex items-center gap-2 min-w-0">
+                            <h2 class="font-headline-md text-base md:text-lg font-bold truncate">製作與開發成本</h2>
                             <span class="material-symbols-outlined text-on-surface-variant expand-icon transition-transform rotate-180">expand_more</span>
                         </div>
                     </div>
-                    <div class="text-right">
+                    <div class="text-right flex-shrink-0">
                         <span class="text-[10px] text-on-surface-variant uppercase tracking-widest block font-bold">Total Expenses</span>
-                        <span class="font-number-display text-xl text-accent font-bold project-exp-display">NT$ 0</span>
+                        <span class="font-number-display text-lg md:text-xl text-accent font-bold project-exp-display">NT$ 0</span>
                     </div>
                 </button>
                 <div class="space-y-4">
@@ -531,12 +593,12 @@
                     </div>
                     
                     <div class="bg-surface-container-low p-4 rounded-xl border border-dashed border-outline-variant">
-                        <div class="flex items-center justify-between">
-                            <div class="space-y-1">
-                                <span class="font-bold text-on-surface-variant text-sm block">自動稅務計算</span>
-                                <p class="text-[9px] text-on-surface-variant font-bold opacity-70">預扣所得、印花稅、二代健保</p>
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="space-y-1 min-w-0">
+                                <span class="font-bold text-on-surface-variant text-sm block truncate">自動稅務計算</span>
+                                <p class="text-[9px] text-on-surface-variant font-bold opacity-70 truncate">預扣所得、印花稅、二代健保</p>
                             </div>
-                            <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-4 flex-shrink-0">
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input checked="" class="sr-only peer calc-trigger" data-key="taxEnabled" type="checkbox"/>
                                     <div class="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-accent"></div>
@@ -566,9 +628,9 @@
 
     function costInput(label, key, val) {
         return `
-            <div class="flex items-center justify-between p-2 bg-surface-container-low/50 rounded">
-                <span class="text-xs font-bold">${label}</span>
-                <div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden">
+            <div class="flex items-center justify-between p-2 bg-surface-container-low/50 rounded gap-2">
+                <span class="text-xs font-bold flex-shrink-0">${label}</span>
+                <div class="flex items-center bg-white rounded border border-outline-variant overflow-hidden flex-shrink-0">
                     <button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="stepVal(this, -1000)"><span class="material-symbols-outlined text-sm">remove</span></button>
                     <input class="calc-trigger w-20 text-right border-none bg-transparent font-bold focus:ring-0 text-sm" data-key="${key}" type="number" value="${val}"/>
                     <button class="w-8 h-8 step-btn flex items-center justify-center hover:bg-gray-50" onclick="stepVal(this, 1000)"><span class="material-symbols-outlined text-sm">add</span></button>
@@ -631,35 +693,35 @@
 
         projectsData.forEach((p, idx) => {
             const card = document.createElement('div');
-            card.className = "financial-card bg-white rounded-3xl border border-outline-variant p-8 flex-shrink-0 shadow-md space-y-6";
+            card.className = "financial-card bg-white rounded-3xl border border-outline-variant p-6 md:p-8 flex-shrink-0 shadow-md space-y-6";
             
             const roiColor = p.roi >= 0 ? 'text-secondary' : 'text-error';
             const profitColor = p.profit >= 0 ? 'text-accent' : 'text-error';
 
             card.innerHTML = `
-                <div class="flex justify-between items-center border-b border-surface-container pb-4">
-                    <div class="space-y-1">
+                <div class="flex justify-between items-center border-b border-surface-container pb-4 gap-4">
+                    <div class="space-y-1 min-w-0">
                         <span class="bg-accent/10 text-accent text-[10px] px-2 py-0.5 rounded font-black uppercase tracking-wider">PROJECT ANALYSIS</span>
-                        <h3 class="text-xl font-bold">${p.title}</h3>
+                        <h3 class="text-lg md:text-xl font-bold truncate">${p.title}</h3>
                     </div>
-                    <div class="text-right">
+                    <div class="text-right flex-shrink-0">
                         <span class="text-[10px] font-bold text-outline uppercase">ROI</span>
-                        <div class="text-2xl font-black ${roiColor}">${p.roi.toFixed(1)}%</div>
+                        <div class="text-xl md:text-2xl font-black ${roiColor}">${p.roi.toFixed(1)}%</div>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-surface-container-low p-4 rounded-2xl">
                         <span class="text-[10px] font-bold text-outline uppercase block mb-1">預估總收入</span>
-                        <span class="text-lg font-bold">NT$ ${Math.round(p.revenue).toLocaleString()}</span>
+                        <span class="text-base md:text-lg font-bold">NT$ ${Math.round(p.revenue).toLocaleString()}</span>
                     </div>
                     <div class="bg-surface-container-low p-4 rounded-2xl">
                         <span class="text-[10px] font-bold text-outline uppercase block mb-1">預估總成本</span>
-                        <span class="text-lg font-bold">NT$ ${Math.round(p.cost).toLocaleString()}</span>
+                        <span class="text-base md:text-lg font-bold">NT$ ${Math.round(p.cost).toLocaleString()}</span>
                     </div>
                 </div>
                 <div class="bg-accent/5 p-6 rounded-2xl flex flex-col items-center justify-center gap-1">
-                    <span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">預估淨利 (Net Profit)</span>
-                    <span class="text-3xl font-black ${profitColor}">NT$ ${Math.round(p.profit).toLocaleString()}</span>
+                    <span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest text-center">預估淨利 (Net Profit)</span>
+                    <span class="text-2xl md:text-3xl font-black ${profitColor}">NT$ ${Math.round(p.profit).toLocaleString()}</span>
                 </div>
             `;
             container.appendChild(card);
@@ -694,7 +756,6 @@
         
         projectsData = [];
 
-        // Office Costs
         const officeRent = parseFloat(document.getElementById('office-rent').value) || 0;
         const officeSalary = parseFloat(document.getElementById('office-salary').value) || 0;
         const officePension = parseFloat(document.getElementById('office-pension').value) || 0;
@@ -719,9 +780,10 @@
             const avgPrice = getVal('avgPrice');
             const earlyQty = getVal('earlyQty');
             const vipQty = getVal('vipQty');
+            const prQty = getVal('prQty');
             
             const totalTickets = perf * seats;
-            const standardQty = Math.max(0, totalTickets - earlyQty - vipQty);
+            const standardQty = Math.max(0, totalTickets - earlyQty - vipQty - prQty);
             const grossTicketing = (standardQty * avgPrice) + (earlyQty * avgPrice * 0.85) + (vipQty * avgPrice * 1.5);
             const netTicketing = grossTicketing * (1 - getVal('discountRate')/100) * (1 - getVal('commRate')/100);
             
@@ -771,11 +833,13 @@
         const bar = document.getElementById('profit-progress-bar');
         const status = document.getElementById('profit-status-text');
         if (netProfit >= 0) {
-            profitCard.classList.replace("bg-primary", "bg-accent");
+            profitCard.classList.remove("bg-primary");
+            profitCard.classList.add("bg-accent");
             bar.className = "h-full bg-white w-full transition-all duration-700";
             status.innerText = "總體獲利：盈餘";
         } else {
-            profitCard.classList.replace("bg-accent", "bg-primary");
+            profitCard.classList.remove("bg-accent");
+            profitCard.classList.add("bg-primary");
             bar.className = "h-full bg-error w-full transition-all duration-700";
             status.innerText = "總體獲利：赤字";
         }
@@ -796,7 +860,6 @@
         
         document.getElementById('fin-total-exp').innerText = `NT$ ${Math.round(totalGlobalExpense).toLocaleString()}`;
 
-        // Ensure financial cards stay in sync
         if(document.getElementById('view-financial').classList.contains('active')) {
             updateFinancialCards();
         }
