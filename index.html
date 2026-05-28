@@ -3,7 +3,7 @@
 <html class="light" lang="zh-TW"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
-<title>劇場營運精細計算機 - 旗艦版 v74.0</title>
+<title>劇場營運精細計算機 - 旗艦版 v79.0</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;family=Noto+Sans+TC:wght@400;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -12,6 +12,7 @@
         body { 
             -webkit-overflow-scrolling: touch; 
             font-family: 'Noto Sans TC', 'Inter', sans-serif;
+            overflow-x: hidden;
         }
         input[type="range"].custom-slider {
             -webkit-appearance: none;
@@ -153,91 +154,75 @@
             font-size: 9px;
             cursor: help;
         }
-    </style>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#0f172a",
-                        secondary: "#10B981",
-                        chartBlue: "#3B82F6",
-                        error: "#EF4444",
-                        background: "#f8fafc",
-                        "surface-container": "#f1f5f9",
-                        "on-surface": "#1e293b",
-                        "on-surface-variant": "#64748b",
-                        "outline-variant": "#e2e8f0"
-                    }
-                }
-            }
+        
+        #summary-bar {
+            transition: background-color 0.5s ease-in-out;
         }
-    </script>
+    </style>
 </head>
-<body class="bg-background text-on-surface min-h-screen pb-48">
-<header class="sticky top-0 w-full z-50 bg-white/90 backdrop-blur-xl border-b border-outline-variant admin-ui">
+<body class="bg-[#f8fafc] text-[#1e293b] min-h-screen pb-48">
+<header class="sticky top-0 w-full z-50 bg-white/90 backdrop-blur-xl border-b border-[#e2e8f0] admin-ui">
 <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
 <div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-primary font-bold">account_balance</span>
-<h1 class="font-bold text-primary tracking-tight text-sm sm:text-base">劇場營運精細計算機 <span class="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-black ml-1 uppercase">v74.0 FLAGSHIP</span></h1>
+<span class="material-symbols-outlined text-[#0f172a] font-bold">account_balance</span>
+<h1 class="font-bold text-[#0f172a] tracking-tight text-sm sm:text-base">劇場營運精細計算機 <span class="text-[9px] bg-[#0f172a]/10 text-[#0f172a] px-1.5 py-0.5 rounded font-black ml-1 uppercase">v79.0 FLAGSHIP</span></h1>
 </div>
 <div class="flex items-center gap-1">
-<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container rounded-full transition-all active-scale" onclick="window.print()" title="列印報表">
+<button class="w-10 h-10 flex items-center justify-center text-[#64748b] hover:bg-[#f1f5f9] rounded-full transition-all active-scale" onclick="window.print()" title="列印報表">
 <span class="material-symbols-outlined">print</span>
 </button>
-<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container rounded-full transition-all active-scale" onclick="resetState()">
+<button class="w-10 h-10 flex items-center justify-center text-[#64748b] hover:bg-[#f1f5f9] rounded-full transition-all active-scale" onclick="resetState()">
 <span class="material-symbols-outlined">restart_alt</span>
 </button>
 </div>
 </div>
-<div class="max-w-7xl mx-auto px-4 border-t border-outline-variant/30 overflow-x-auto scrollbar-hide">
-<nav class="flex items-center gap-4 py-2 text-[10px] font-black uppercase tracking-widest text-on-surface-variant whitespace-nowrap">
-<a class="flex items-center gap-1.5 py-2 px-3 hover:text-primary transition-colors" href="#office-section">
+<div class="max-w-7xl mx-auto px-4 border-t border-[#e2e8f0]/30 overflow-x-auto scrollbar-hide">
+<nav class="flex items-center gap-4 py-2 text-[10px] font-black uppercase tracking-widest text-[#64748b] whitespace-nowrap">
+<a class="flex items-center gap-1.5 py-2 px-3 hover:text-[#0f172a] transition-colors" href="#office-section">
 <span class="material-symbols-outlined text-sm">business_center</span> 總部營運
             </a>
-<a class="flex items-center gap-1.5 py-2 px-3 hover:text-primary transition-colors" href="#analytics-section">
+<a class="flex items-center gap-1.5 py-2 px-3 hover:text-[#0f172a] transition-colors" href="#analytics-section">
 <span class="material-symbols-outlined text-sm">analytics</span> 年度分析
             </a>
-<a class="flex items-center gap-1.5 py-2 px-3 hover:text-primary transition-colors" href="#plays-section">
+<a class="flex items-center gap-1.5 py-2 px-3 hover:text-[#0f172a] transition-colors" href="#plays-section">
 <span class="material-symbols-outlined text-sm">theater_comedy</span> 年度劇目
             </a>
 </nav>
 </div>
 </header>
 <main class="max-w-7xl mx-auto px-4 py-6 space-y-12">
-<div class="sticky-section-label py-3 border-b border-outline-variant admin-ui">
+<div class="sticky-section-label py-3 border-b border-[#e2e8f0] admin-ui">
 <div class="flex items-center gap-2">
-<div class="w-1.5 h-4 bg-primary rounded-full"></div>
-<span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">ADMINISTRATIVE / 總部營運</span>
+<div class="w-1.5 h-4 bg-[#0f172a] rounded-full"></div>
+<span class="text-[10px] font-black uppercase tracking-[0.2em] text-[#0f172a]">ADMINISTRATIVE / 總部營運</span>
 </div>
 </div>
 <section class="scroll-mt-32" id="office-section">
-<div class="bg-white border border-outline-variant p-6 rounded-2xl shadow-sm">
+<div class="bg-white border border-[#e2e8f0] p-6 rounded-2xl shadow-sm">
 <div class="flex items-center gap-4 mb-8">
-<div class="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center border border-primary/10">
-<span class="material-symbols-outlined text-primary">corporate_fare</span>
+<div class="w-12 h-12 rounded-xl bg-[#0f172a]/5 flex items-center justify-center border border-[#0f172a]/10">
+<span class="material-symbols-outlined text-[#0f172a]">corporate_fare</span>
 </div>
 <div>
-<h2 class="font-bold text-primary text-lg leading-tight">總部營運月預估</h2>
-<p class="text-[10px] text-on-surface-variant font-black uppercase tracking-wider">Fixed Monthly Overhead</p>
+<h2 class="font-bold text-[#0f172a] text-lg leading-tight">總部營運月預估</h2>
+<p class="text-[10px] text-[#64748b] font-black uppercase tracking-wider">Fixed Monthly Overhead</p>
 </div>
 </div>
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="office-costs-container"></div>
 </div>
 </section>
-<div class="sticky-section-label py-3 border-b border-outline-variant admin-ui">
+<div class="sticky-section-label py-3 border-b border-[#e2e8f0] admin-ui">
 <div class="flex items-center gap-2">
 <div class="w-1.5 h-4 bg-blue-600 rounded-full"></div>
-<span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">ANNUAL ANALYTICS / 年度數據分析</span>
+<span class="text-[10px] font-black uppercase tracking-[0.2em] text-[#0f172a]">ANNUAL ANALYTICS / 年度數據分析</span>
 </div>
 </div>
 <section class="scroll-mt-32" id="analytics-section">
-<div class="bg-white border border-outline-variant rounded-2xl shadow-sm overflow-hidden">
-<div class="p-4 border-b border-outline-variant flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="bg-white border border-[#e2e8f0] rounded-2xl shadow-sm overflow-hidden">
+<div class="p-4 border-b border-[#e2e8f0] flex flex-col sm:flex-row items-center justify-between gap-4">
 <div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-primary">monitoring</span>
-<span class="text-xs font-bold text-primary">財務視覺化分析</span>
+<span class="material-symbols-outlined text-[#0f172a]">monitoring</span>
+<span class="text-xs font-bold text-[#0f172a]">財務視覺化分析</span>
 </div>
 <div class="toggle-group w-full sm:w-auto">
 <div class="toggle-btn active" id="tab-profit" onclick="setAnalyticsTab('profit')">損益對比</div>
@@ -252,22 +237,22 @@
 </div>
 </div>
 </section>
-<div class="sticky-section-label py-3 border-b border-outline-variant admin-ui">
+<div class="sticky-section-label py-3 border-b border-[#e2e8f0] admin-ui">
 <div class="flex items-center gap-2">
-<div class="w-1.5 h-4 bg-secondary rounded-full"></div>
-<span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">PROJECTS / 年度劇目計畫</span>
+<div class="w-1.5 h-4 bg-[#10B981] rounded-full"></div>
+<span class="text-[10px] font-black uppercase tracking-[0.2em] text-[#0f172a]">PROJECTS / 年度劇目計畫</span>
 </div>
 </div>
 <section class="scroll-mt-32" id="plays-section">
 <div class="flex flex-col gap-1 mb-6">
-<h2 class="text-xl font-bold text-primary tracking-tight">年度劇目模擬</h2>
-<p class="text-xs text-on-surface-variant font-medium">左右滑動切換專案，即時連動年度損益分析</p>
+<h2 class="text-xl font-bold text-[#0f172a] tracking-tight">年度劇目模擬</h2>
+<p class="text-xs text-[#64748b] font-medium">左右滑動切換專案，即時連動年度損益分析</p>
 </div>
 <div class="flex justify-center gap-2 mb-6 admin-ui" id="carousel-dots"></div>
 <div class="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-8 gap-6" id="plays-wrapper"></div>
 </section>
 </main>
-<nav class="fixed bottom-0 left-0 right-0 z-[100] transition-all duration-500 dashboard-minimized border-t border-white/10" id="summary-bar">
+<nav class="fixed bottom-0 left-0 right-0 z-[100] dashboard-minimized border-t border-white/10" id="summary-bar">
 <div class="max-w-4xl mx-auto px-4 py-4">
 <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-white" id="summary-bar-content">
 <div class="bg-black/20 p-3 rounded-xl border border-white/10">
@@ -291,13 +276,16 @@
 <span class="text-[10px] font-black text-white/70 uppercase tracking-[0.2em] mb-1">年度預估淨利</span>
 <span class="text-2xl font-black text-white" id="global-net-profit">NT$ 0</span>
 </div>
-<button class="w-12 h-12 flex items-center justify-center bg-white text-primary rounded-2xl shadow-xl admin-ui transition-all active-scale" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+<button class="w-12 h-12 flex items-center justify-center bg-white text-[#0f172a] rounded-2xl shadow-xl admin-ui transition-all active-scale" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
 <span class="material-symbols-outlined">arrow_upward</span>
 </button>
 </div>
 </div>
 </nav>
 <script>
+    const STORAGE_KEY = 'THEATRE_LEDGER_STATE_V79_FLIGHT';
+    let myChart = null;
+
     let state = {
         office: { rent: 25000, salary: 120000, insurance: 15000, misc: 5000 },
         plays: [
@@ -336,12 +324,23 @@
         ui: { isExpanded: false, analyticsTab: 'profit' }
     };
 
-    const STORAGE_KEY = 'THEATRE_LEDGER_STATE_V74_COMPLIANCE';
-    let myChart = null;
+    const expenseConfigs = [
+        { key: 'creative', label: '導演編創', icon: 'edit_note' },
+        { key: 'cast', label: '演員演出', icon: 'groups' },
+        { key: 'technical', label: '燈光技術', icon: 'settings_input_component' },
+        { key: 'stage', label: '舞台製作', icon: 'foundation' },
+        { key: 'costume', label: '服裝造型', icon: 'checkroom' },
+        { key: 'props', label: '道具視覺', icon: 'category' },
+        { key: 'meals', label: '餐飲費', icon: 'restaurant' },
+        { key: 'volunteer', label: '志工費', icon: 'group' },
+        { key: 'accommodation', label: '住宿費', icon: 'hotel' },
+        { key: 'transportation', label: '交通費', icon: 'directions_bus' },
+        { key: 'misc', label: '其他雜項', icon: 'more_horiz' }
+    ];
 
     function saveState() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        calculate();
+        calculate(false);
     }
 
     function resetState() {
@@ -359,7 +358,7 @@
         renderAnalyticsChart();
     }
 
-    function calculate() {
+    function calculate(fullRender = true) {
         const officeMonthly = Object.values(state.office).reduce((a, b) => a + b, 0);
         const officeAnnual = officeMonthly * 12;
 
@@ -420,7 +419,7 @@
         });
 
         const netProfit = totalRev - totalCost - totalTaxAndBuffer;
-        updateUI(officeAnnual, totalRev, totalCost, totalTaxAndBuffer, netProfit);
+        updateUI(officeAnnual, totalRev, totalCost, totalTaxAndBuffer, netProfit, fullRender);
     }
 
     function renderAnalyticsChart() {
@@ -450,6 +449,7 @@
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
+                    animation: { duration: 0 },
                     plugins: { legend: { display: false } },
                     scales: { y: { beginAtZero: true, ticks: { callback: v => `${v/1000}k` } } }
                 }
@@ -479,7 +479,12 @@
                         borderWidth: 3
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    animation: { duration: 0 },
+                    plugins: { legend: { display: false } } 
+                }
             });
         } else if (state.ui.analyticsTab === 'tax') {
             const data = state.plays.map(p => p.calculated.totalTaxLiabilities);
@@ -497,6 +502,7 @@
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
+                    animation: { duration: 0 },
                     plugins: { 
                         legend: { display: false },
                         tooltip: { callbacks: { label: (ctx) => `稅務總計: NT$ ${Math.round(ctx.raw).toLocaleString()}` } }
@@ -507,23 +513,25 @@
         }
     }
 
-    function updateUI(officeAnnual, totalRev, totalCost, totalTaxAndBuffer, netProfit) {
-        const costEl = document.getElementById('global-total-cost');
-        if(costEl) costEl.textContent = `NT$ ${Math.round(totalCost).toLocaleString()}`;
-        const revEl = document.getElementById('global-total-revenue');
-        if(revEl) revEl.textContent = `NT$ ${Math.round(totalRev).toLocaleString()}`;
-        const taxEl = document.getElementById('global-total-tax');
-        if(taxEl) taxEl.textContent = `NT$ ${Math.round(totalTaxAndBuffer).toLocaleString()}`;
-        const profitEl = document.getElementById('global-net-profit');
-        if(profitEl) profitEl.textContent = `NT$ ${Math.round(netProfit).toLocaleString()}`;
+    function updateUI(officeAnnual, totalRev, totalCost, totalTaxAndBuffer, netProfit, fullRender) {
+        document.getElementById('global-total-cost').textContent = `NT$ ${Math.round(totalCost).toLocaleString()}`;
+        document.getElementById('global-total-revenue').textContent = `NT$ ${Math.round(totalRev).toLocaleString()}`;
+        document.getElementById('global-total-tax').textContent = `NT$ ${Math.round(totalTaxAndBuffer).toLocaleString()}`;
+        document.getElementById('global-net-profit').textContent = `NT$ ${Math.round(netProfit).toLocaleString()}`;
 
         const bar = document.getElementById('summary-bar');
         if(bar) {
-            bar.className = `fixed bottom-0 left-0 right-0 z-[100] transition-all duration-500 border-t border-white/10 ${state.ui.isExpanded ? 'dashboard-expanded' : 'dashboard-minimized'} ${netProfit >= 0 ? 'bg-secondary' : 'bg-error'}`;
+            bar.classList.remove('bg-[#10B981]', 'bg-[#EF4444]');
+            bar.classList.add(netProfit >= 0 ? 'bg-[#10B981]' : 'bg-[#EF4444]');
         }
 
-        renderOffice();
-        renderPlays();
+        if (fullRender) {
+            renderOffice();
+            renderPlays();
+        } else {
+            updatePlayCardsCalculatedValues();
+            syncInputValues();
+        }
         renderAnalyticsChart();
     }
 
@@ -539,7 +547,11 @@
         }
     }
 
-    function handleStepper(path, step, isAdd) {
+    function handleStepper(event, path, step, isAdd) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
         const keys = path.split('.');
         let target = state;
         for (let i = 0; i < keys.length - 1; i++) {
@@ -552,6 +564,73 @@
         saveState();
     }
 
+    function syncInputValues() {
+        Object.entries(state.office).forEach(([key, val]) => {
+            const input = document.querySelector(`[data-office-key="${key}"]`);
+            if (input && document.activeElement !== input) input.value = val;
+        });
+        
+        state.plays.forEach((play, pIdx) => {
+            Object.entries(play.expenses).forEach(([eKey, eVal]) => {
+                const qtyInput = document.querySelector(`[data-play-idx="${pIdx}"][data-exp-key="${eKey}"][data-field="qty"]`);
+                if (qtyInput && document.activeElement !== qtyInput) qtyInput.value = eVal.qty;
+                const rateInput = document.querySelector(`[data-play-idx="${pIdx}"][data-exp-key="${eKey}"][data-field="rate"]`);
+                if (rateInput && document.activeElement !== rateInput) rateInput.value = eVal.rate;
+                
+                // Update Tax Rate UI specifically
+                const taxValEl = document.getElementById(`taxrate-val-${pIdx}-${eKey}`);
+                if (taxValEl) taxValEl.textContent = `${eVal.taxRate}%`;
+            });
+            play.tiers.forEach((tier, tIdx) => {
+                const priceInput = document.querySelector(`[data-play-idx="${pIdx}"][data-tier-idx="${tIdx}"][data-field="price"]`);
+                if (priceInput && document.activeElement !== priceInput) priceInput.value = tier.price;
+                const seatsInput = document.querySelector(`[data-play-idx="${pIdx}"][data-tier-idx="${tIdx}"][data-field="seats"]`);
+                if (seatsInput && document.activeElement !== seatsInput) seatsInput.value = tier.seats;
+            });
+        });
+    }
+
+    function updatePlayCardsCalculatedValues() {
+        state.plays.forEach((play, idx) => {
+            Object.keys(play.expenses).forEach(eKey => {
+                const item = play.expenses[eKey];
+                const subtotal = item.qty * item.rate;
+                const subEl = document.getElementById(`subtotal-${idx}-${eKey}`);
+                if (subEl) subEl.textContent = `NT$ ${subtotal.toLocaleString()}`;
+                
+                const withholdingAmount = Math.round(subtotal * (item.taxRate / 100));
+                const withEl = document.getElementById(`withholding-${idx}-${eKey}`);
+                if (withEl) withEl.textContent = `NT$ ${withholdingAmount.toLocaleString()}`;
+                
+                // Tax rate display update
+                const taxRateEl = document.getElementById(`taxrate-val-${idx}-${eKey}`);
+                if (taxRateEl) taxRateEl.textContent = `${item.taxRate}%`;
+            });
+
+            const vatEl = document.getElementById(`vat-${idx}`);
+            if (vatEl) vatEl.textContent = `NT$ ${Math.round(play.calculated.vat).toLocaleString()}`;
+            const stampEl = document.getElementById(`stamp-${idx}`);
+            if (stampEl) stampEl.textContent = `NT$ ${Math.round(play.calculated.stampDuty).toLocaleString()}`;
+            const withTaxEl = document.getElementById(`withholding-total-${idx}`);
+            if (withTaxEl) withTaxEl.textContent = `NT$ ${Math.round(play.calculated.withholdingTax).toLocaleString()}`;
+            const compliEl = document.getElementById(`compliance-total-${idx}`);
+            if (compliEl) compliEl.textContent = `NT$ ${Math.round(play.calculated.totalTaxLiabilities).toLocaleString()}`;
+
+            const bepEl = document.getElementById(`bep-${idx}`);
+            if (bepEl) bepEl.textContent = `${play.calculated.bepTickets.toLocaleString()} / ${play.calculated.totalSeats.toLocaleString()} 張`;
+            const progressEl = document.getElementById(`progress-${idx}`);
+            if (progressEl) progressEl.style.width = `${Math.min(100, (play.calculated.bepTickets / (play.calculated.totalSeats || 1) * 100))}%`;
+
+            const profitEl = document.getElementById(`profit-${idx}`);
+            if (profitEl) {
+                profitEl.textContent = `NT$ ${Math.round(play.calculated.profit).toLocaleString()}`;
+                profitEl.className = `text-sm font-black ${play.calculated.profit >= 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}`;
+            }
+            const costEl = document.getElementById(`totalcost-${idx}`);
+            if (costEl) costEl.textContent = `NT$ ${Math.round(play.calculated.totalCost).toLocaleString()}`;
+        });
+    }
+
     function renderOffice() {
         const container = document.getElementById('office-costs-container');
         if (!container) return;
@@ -559,18 +638,18 @@
         
         container.innerHTML = Object.entries(state.office).map(([key, val]) => `
             <div class="space-y-1.5">
-                <label class="text-[10px] font-black uppercase text-on-surface-variant px-1">${labels[key]}</label>
+                <label class="text-[10px] font-black uppercase text-[#64748b] px-1">${labels[key]}</label>
                 <div class="flex items-center gap-2">
-                    <button class="stepper-btn" onclick="handleStepper('office.${key}', 1000, false)">
+                    <button class="stepper-btn" onclick="handleStepper(event, 'office.${key}', 1000, false)">
                         <span class="material-symbols-outlined text-sm">remove</span>
                     </button>
                     <div class="relative flex-1">
-                        <input type="number" value="${val}" 
+                        <input type="number" value="${val}" data-office-key="${key}"
                             onchange="state.office.${key} = Number(this.value); saveState();"
-                            class="w-full bg-surface-container border-none rounded-xl py-3 px-4 font-bold focus:ring-2 focus:ring-primary/20 text-sm text-center">
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-on-surface-variant">NT$</span>
+                            class="w-full bg-[#f1f5f9] border-none rounded-xl py-3 px-4 font-bold focus:ring-2 focus:ring-[#0f172a]/20 text-sm text-center">
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-[#64748b]">NT$</span>
                     </div>
-                    <button class="stepper-btn" onclick="handleStepper('office.${key}', 1000, true)">
+                    <button class="stepper-btn" onclick="handleStepper(event, 'office.${key}', 1000, true)">
                         <span class="material-symbols-outlined text-sm">add</span>
                     </button>
                 </div>
@@ -585,88 +664,75 @@
         
         dotsContainer.innerHTML = state.plays.map((_, i) => `<div class="dot-indicator"></div>`).join('');
         
-        const expenseConfigs = [
-            { key: 'creative', label: '導演編創', icon: 'edit_note' },
-            { key: 'cast', label: '演員演出', icon: 'groups' },
-            { key: 'technical', label: '燈光音響', icon: 'settings_input_component' },
-            { key: 'stage', label: '舞台美術', icon: 'foundation' },
-            { key: 'costume', label: '服裝造型', icon: 'checkroom' },
-            { key: 'props', label: '道具製作', icon: 'category' },
-            { key: 'meals', label: '餐飲費', icon: 'restaurant' },
-            { key: 'volunteer', label: '志工費', icon: 'group' },
-            { key: 'accommodation', label: '住宿費', icon: 'hotel' },
-            { key: 'transportation', label: '交通費', icon: 'directions_bus' },
-            { key: 'misc', label: '其他雜項', icon: 'more_horiz' }
-        ];
-
         wrapper.innerHTML = state.plays.map((play, idx) => `
-            <div class="flex-shrink-0 w-[92vw] sm:w-[520px] snap-center bg-white border border-outline-variant rounded-3xl overflow-hidden shadow-sm flex flex-col">
-                <div class="p-5 border-b border-outline-variant bg-surface-container/30">
+            <div class="flex-shrink-0 w-[92vw] sm:w-[520px] snap-center bg-white border border-[#e2e8f0] rounded-3xl overflow-hidden shadow-sm flex flex-col">
+                <div class="p-5 border-b border-[#e2e8f0] bg-[#f1f5f9]/30">
                     <div class="flex justify-between items-center mb-3">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-primary text-white flex items-center justify-center rounded-xl">
+                            <div class="w-10 h-10 bg-[#0f172a] text-white flex items-center justify-center rounded-xl">
                                 <span class="material-symbols-outlined text-xl">theater_comedy</span>
                             </div>
                             <input type="text" value="${play.name}" onchange="state.plays[${idx}].name=this.value; saveState();"
-                                class="font-black text-primary border-none bg-transparent p-0 focus:ring-0 text-base w-48">
+                                class="font-black text-[#0f172a] border-none bg-transparent p-0 focus:ring-0 text-base w-48">
                         </div>
                         <div class="flex gap-1 admin-ui">
-                            <button onclick="duplicatePlay(${idx})" class="w-8 h-8 flex items-center justify-center hover:bg-primary/5 rounded-full text-on-surface-variant transition-all active-scale">
+                            <button onclick="duplicatePlay(${idx})" class="w-8 h-8 flex items-center justify-center hover:bg-[#0f172a]/5 rounded-full text-[#64748b] transition-all active-scale">
                                 <span class="material-symbols-outlined text-lg">content_copy</span>
                             </button>
-                            <button onclick="deletePlay(${idx})" class="w-8 h-8 flex items-center justify-center hover:bg-error/5 rounded-full text-error transition-all active-scale">
+                            <button onclick="deletePlay(${idx})" class="w-8 h-8 flex items-center justify-center hover:bg-[#EF4444]/5 rounded-full text-[#EF4444] transition-all active-scale">
                                 <span class="material-symbols-outlined text-lg">delete</span>
                             </button>
                         </div>
                     </div>
                     <div class="toggle-group">
-                        <div onclick="state.plays[${idx}].type='new'; saveState();" class="toggle-btn ${play.type === 'new' ? 'active' : ''}">新製作 (New)</div>
-                        <div onclick="state.plays[${idx}].type='revival'; saveState();" class="toggle-btn ${play.type === 'revival' ? 'active' : ''}">重製 (Revival)</div>
+                        <div onclick="state.plays[${idx}].type='new'; saveState(); calculate(true);" class="toggle-btn ${play.type === 'new' ? 'active' : ''}">新製作 (New)</div>
+                        <div onclick="state.plays[${idx}].type='revival'; saveState(); calculate(true);" class="toggle-btn ${play.type === 'revival' ? 'active' : ''}">重製 (Revival)</div>
                     </div>
                 </div>
                 
                 <div class="p-4 sm:p-6 space-y-8 flex-1 overflow-y-auto max-h-[70vh] scrollbar-hide">
-                    <!-- Ticket Tiers Optimized for Mobile -->
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
-                            <span class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Price Tiers / 票價結構</span>
-                            <button onclick="addTier(${idx})" class="text-[10px] font-black text-primary hover:underline flex items-center gap-1">
+                            <span class="text-[10px] font-black text-[#64748b] uppercase tracking-widest">Price Tiers / 票價結構</span>
+                            <button onclick="addTier(${idx})" class="text-[10px] font-black text-[#0f172a] hover:underline flex items-center gap-1">
                                 <span class="material-symbols-outlined text-xs">add</span> 新增票種
                             </button>
                         </div>
                         <div class="space-y-3">
                             ${play.tiers.map((tier, tIdx) => `
-                                <div class="bg-surface-container/40 p-3 rounded-2xl border border-outline-variant/30 space-y-3">
+                                <div class="bg-[#f1f5f9]/40 p-3 rounded-2xl border border-[#e2e8f0]/30 space-y-3">
                                     <div class="flex items-center justify-between gap-3">
                                         <input type="text" value="${tier.name}" onchange="state.plays[${idx}].tiers[${tIdx}].name=this.value; saveState();"
-                                            class="flex-1 bg-white border border-outline-variant/30 rounded-lg py-2 px-3 text-xs font-bold focus:ring-1 focus:ring-primary/20">
-                                        <button onclick="removeTier(${idx}, ${tIdx})" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-error/5 rounded-full transition-colors">
+                                            class="flex-1 bg-white border border-[#e2e8f0]/30 rounded-lg py-2 px-3 text-xs font-bold focus:ring-1 focus:ring-[#0f172a]/20">
+                                        <button onclick="removeTier(${idx}, ${tIdx})" class="w-8 h-8 flex items-center justify-center text-[#64748b] hover:text-[#EF4444] hover:bg-[#EF4444]/5 rounded-full transition-colors">
                                             <span class="material-symbols-outlined text-lg">close</span>
                                         </button>
                                     </div>
                                     <div class="grid grid-cols-2 gap-3">
                                         <div class="space-y-1">
-                                            <span class="text-[8px] font-black text-on-surface-variant uppercase ml-1">票價 (NT$)</span>
+                                            <span class="text-[8px] font-black text-[#64748b] uppercase ml-1">票價 (NT$)</span>
                                             <div class="flex items-center gap-1">
-                                                <button class="stepper-btn !w-8 !h-8" onclick="handleStepper('plays.${idx}.tiers.${tIdx}.price', 100, false)">
+                                                <button class="stepper-btn !w-8 !h-8" onclick="handleStepper(event, 'plays.${idx}.tiers.${tIdx}.price', 100, false)">
                                                     <span class="material-symbols-outlined text-xs">remove</span>
                                                 </button>
-                                                <input type="number" value="${tier.price}" onchange="state.plays[${idx}].tiers[${tIdx}].price=Number(this.value); saveState();"
-                                                    class="w-full bg-white border border-outline-variant/30 rounded-lg py-2 px-1 text-xs font-black text-center focus:ring-1 focus:ring-primary/20">
-                                                <button class="stepper-btn !w-8 !h-8" onclick="handleStepper('plays.${idx}.tiers.${tIdx}.price', 100, true)">
+                                                <input type="number" value="${tier.price}" data-play-idx="${idx}" data-tier-idx="${tIdx}" data-field="price"
+                                                    onchange="state.plays[${idx}].tiers[${tIdx}].price=Number(this.value); saveState();"
+                                                    class="w-full bg-white border border-[#e2e8f0]/30 rounded-lg py-2 px-1 text-xs font-black text-center focus:ring-1 focus:ring-[#0f172a]/20">
+                                                <button class="stepper-btn !w-8 !h-8" onclick="handleStepper(event, 'plays.${idx}.tiers.${tIdx}.price', 100, true)">
                                                     <span class="material-symbols-outlined text-xs">add</span>
                                                 </button>
                                             </div>
                                         </div>
                                         <div class="space-y-1">
-                                            <span class="text-[8px] font-black text-on-surface-variant uppercase ml-1">座位數 (張)</span>
+                                            <span class="text-[8px] font-black text-[#64748b] uppercase ml-1">座位數 (張)</span>
                                             <div class="flex items-center gap-1">
-                                                <button class="stepper-btn !w-8 !h-8" onclick="handleStepper('plays.${idx}.tiers.${tIdx}.seats', 1, false)">
+                                                <button class="stepper-btn !w-8 !h-8" onclick="handleStepper(event, 'plays.${idx}.tiers.${tIdx}.seats', 1, false)">
                                                     <span class="material-symbols-outlined text-xs">remove</span>
                                                 </button>
-                                                <input type="number" value="${tier.seats}" onchange="state.plays[${idx}].tiers[${tIdx}].seats=Number(this.value); saveState();"
-                                                    class="w-full bg-white border border-outline-variant/30 rounded-lg py-2 px-1 text-xs font-black text-center focus:ring-1 focus:ring-primary/20">
-                                                <button class="stepper-btn !w-8 !h-8" onclick="handleStepper('plays.${idx}.tiers.${tIdx}.seats', 1, true)">
+                                                <input type="number" value="${tier.seats}" data-play-idx="${idx}" data-tier-idx="${tIdx}" data-field="seats"
+                                                    onchange="state.plays[${idx}].tiers[${tIdx}].seats=Number(this.value); saveState();"
+                                                    class="w-full bg-white border border-[#e2e8f0]/30 rounded-lg py-2 px-1 text-xs font-black text-center focus:ring-1 focus:ring-[#0f172a]/20">
+                                                <button class="stepper-btn !w-8 !h-8" onclick="handleStepper(event, 'plays.${idx}.tiers.${tIdx}.seats', 1, true)">
                                                     <span class="material-symbols-outlined text-xs">add</span>
                                                 </button>
                                             </div>
@@ -677,12 +743,11 @@
                         </div>
                     </div>
 
-                    <!-- Budget Detail -->
                     <div class="space-y-4">
                         <div class="flex items-center gap-2">
-                            <div class="h-[1px] flex-1 bg-outline-variant"></div>
-                            <span class="text-[10px] font-black text-on-surface-variant uppercase">Production Budget / 預算詳情</span>
-                            <div class="h-[1px] flex-1 bg-outline-variant"></div>
+                            <div class="h-[1px] flex-1 bg-[#e2e8f0]"></div>
+                            <span class="text-[10px] font-black text-[#64748b] uppercase">Production Budget / 預算詳情</span>
+                            <div class="h-[1px] flex-1 bg-[#e2e8f0]"></div>
                         </div>
                         <div class="space-y-3">
                             ${expenseConfigs.map(cfg => {
@@ -690,36 +755,46 @@
                                 const subtotal = item.qty * item.rate;
                                 const withholding = Math.round(subtotal * (item.taxRate / 100));
                                 return `
-                                <div class="bg-surface-container/30 p-3 rounded-xl border border-outline-variant/30">
+                                <div class="bg-[#f1f5f9]/30 p-3 rounded-xl border border-[#e2e8f0]/30">
                                     <div class="flex items-center justify-between mb-2">
                                         <div class="flex items-center gap-2">
-                                            <span class="material-symbols-outlined text-sm text-on-surface-variant">${cfg.icon}</span>
-                                            <span class="text-[11px] font-bold text-primary">${cfg.label}</span>
+                                            <span class="material-symbols-outlined text-sm text-[#64748b]">${cfg.icon}</span>
+                                            <span class="text-[11px] font-bold text-[#0f172a]">${cfg.label}</span>
                                         </div>
-                                        <span class="text-[11px] font-black text-primary">NT$ ${subtotal.toLocaleString()}</span>
+                                        <span class="text-[11px] font-black text-[#0f172a]" id="subtotal-${idx}-${cfg.key}">NT$ ${subtotal.toLocaleString()}</span>
                                     </div>
                                     <div class="grid grid-cols-2 gap-2 mb-3">
-                                        <div class="flex items-center gap-1">
-                                            <button class="stepper-btn !w-6 !h-6" onclick="handleStepper('plays.${idx}.expenses.${cfg.key}.qty', 1, false)"><span class="material-symbols-outlined text-[10px]">remove</span></button>
-                                            <input type="number" value="${item.qty}" onchange="state.plays[${idx}].expenses.${cfg.key}.qty=Number(this.value); saveState();" class="w-full bg-white border border-outline-variant/50 rounded-lg py-1 px-1 text-[9px] font-bold text-center">
-                                            <button class="stepper-btn !w-6 !h-6" onclick="handleStepper('plays.${idx}.expenses.${cfg.key}.qty', 1, true)"><span class="material-symbols-outlined text-[10px]">add</span></button>
+                                        <div class="flex flex-col gap-1">
+                                            <span class="text-[8px] font-black text-[#64748b] uppercase ml-1">數量</span>
+                                            <div class="flex items-center gap-1">
+                                                <button class="stepper-btn !w-6 !h-6" onclick="handleStepper(event, 'plays.${idx}.expenses.${cfg.key}.qty', 1, false)"><span class="material-symbols-outlined text-[10px]">remove</span></button>
+                                                <input type="number" value="${item.qty}" data-play-idx="${idx}" data-exp-key="${cfg.key}" data-field="qty"
+                                                    onchange="state.plays[${idx}].expenses.${cfg.key}.qty=Number(this.value); saveState();" 
+                                                    class="w-full bg-white border border-[#e2e8f0]/50 rounded-lg py-1 px-1 text-[9px] font-bold text-center">
+                                                <button class="stepper-btn !w-6 !h-6" onclick="handleStepper(event, 'plays.${idx}.expenses.${cfg.key}.qty', 1, true)"><span class="material-symbols-outlined text-[10px]">add</span></button>
+                                            </div>
                                         </div>
-                                        <div class="flex items-center gap-1">
-                                            <button class="stepper-btn !w-6 !h-6" onclick="handleStepper('plays.${idx}.expenses.${cfg.key}.rate', 1000, false)"><span class="material-symbols-outlined text-[10px]">remove</span></button>
-                                            <input type="number" value="${item.rate}" onchange="state.plays[${idx}].expenses.${cfg.key}.rate=Number(this.value); saveState();" class="w-full bg-white border border-outline-variant/50 rounded-lg py-1 px-1 text-[9px] font-black text-center">
-                                            <button class="stepper-btn !w-6 !h-6" onclick="handleStepper('plays.${idx}.expenses.${cfg.key}.rate', 1000, true)"><span class="material-symbols-outlined text-[10px]">add</span></button>
+                                        <div class="flex flex-col gap-1">
+                                            <span class="text-[8px] font-black text-[#64748b] uppercase ml-1">單價</span>
+                                            <div class="flex items-center gap-1">
+                                                <button class="stepper-btn !w-6 !h-6" onclick="handleStepper(event, 'plays.${idx}.expenses.${cfg.key}.rate', 1000, false)"><span class="material-symbols-outlined text-[10px]">remove</span></button>
+                                                <input type="number" value="${item.rate}" data-play-idx="${idx}" data-exp-key="${cfg.key}" data-field="rate"
+                                                    onchange="state.plays[${idx}].expenses.${cfg.key}.rate=Number(this.value); saveState();" 
+                                                    class="w-full bg-white border border-[#e2e8f0]/50 rounded-lg py-1 px-1 text-[9px] font-black text-center">
+                                                <button class="stepper-btn !w-6 !h-6" onclick="handleStepper(event, 'plays.${idx}.expenses.${cfg.key}.rate', 1000, true)"><span class="material-symbols-outlined text-[10px]">add</span></button>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="flex items-center justify-between px-2 py-1.5 bg-white/60 rounded-lg border border-dashed border-outline-variant/60">
+                                    <div class="flex items-center justify-between px-2 py-1.5 bg-white/60 rounded-lg border border-dashed border-[#e2e8f0]/60">
                                         <div class="flex items-center gap-1">
-                                            <span class="text-[8px] font-black text-on-surface-variant uppercase">預扣稅率</span>
+                                            <span class="text-[8px] font-black text-[#64748b] uppercase">預扣稅率</span>
                                             <span class="tooltip-icon" title="本國人/居留183天以上：10% | 外籍人士：20%">?</span>
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <button class="w-5 h-5 flex items-center justify-center bg-gray-100 rounded text-[10px]" onclick="handleStepper('plays.${idx}.expenses.${cfg.key}.taxRate', 5, false)">-</button>
-                                            <span class="text-[10px] font-black text-primary">${item.taxRate}%</span>
-                                            <button class="w-5 h-5 flex items-center justify-center bg-gray-100 rounded text-[10px]" onclick="handleStepper('plays.${idx}.expenses.${cfg.key}.taxRate', 5, true)">+</button>
-                                            <span class="text-[10px] font-black text-secondary ml-2">NT$ ${withholding.toLocaleString()}</span>
+                                            <button class="w-5 h-5 flex items-center justify-center bg-gray-100 rounded text-[10px] active:bg-gray-200" onclick="handleStepper(event, 'plays.${idx}.expenses.${cfg.key}.taxRate', 1, false)">-</button>
+                                            <span class="text-[10px] font-black text-[#0f172a] min-w-[24px] text-center" id="taxrate-val-${idx}-${cfg.key}">${item.taxRate}%</span>
+                                            <button class="w-5 h-5 flex items-center justify-center bg-gray-100 rounded text-[10px] active:bg-gray-200" onclick="handleStepper(event, 'plays.${idx}.expenses.${cfg.key}.taxRate', 1, true)">+</button>
+                                            <span class="text-[10px] font-black text-[#10B981] ml-2" id="withholding-${idx}-${cfg.key}">NT$ ${withholding.toLocaleString()}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -727,76 +802,73 @@
                         </div>
                     </div>
 
-                    <!-- Tax & Compliance Summary -->
                     <div class="space-y-4">
                         <div class="flex items-center gap-2">
-                            <div class="h-[1px] flex-1 bg-outline-variant"></div>
-                            <span class="text-[10px] font-black text-on-surface-variant uppercase">Tax & Compliance / 稅務合規</span>
-                            <div class="h-[1px] flex-1 bg-outline-variant"></div>
+                            <div class="h-[1px] flex-1 bg-[#e2e8f0]"></div>
+                            <span class="text-[10px] font-black text-[#64748b] uppercase">Tax & Compliance / 稅務合規</span>
+                            <div class="h-[1px] flex-1 bg-[#e2e8f0]"></div>
                         </div>
                         <div class="grid grid-cols-3 gap-2">
-                            <div class="bg-gray-50 p-2 rounded-xl border border-outline-variant/30 text-center">
-                                <p class="text-[8px] font-black text-on-surface-variant uppercase mb-0.5">營業稅 (5%)</p>
-                                <p class="text-[10px] font-black text-primary">NT$ ${Math.round(play.calculated.vat).toLocaleString()}</p>
+                            <div class="bg-gray-50 p-2 rounded-xl border border-[#e2e8f0]/30 text-center">
+                                <p class="text-[8px] font-black text-[#64748b] uppercase mb-0.5">營業稅 (5%)</p>
+                                <p class="text-[10px] font-black text-[#0f172a]" id="vat-${idx}">NT$ ${Math.round(play.calculated.vat).toLocaleString()}</p>
                             </div>
-                            <div class="bg-gray-50 p-2 rounded-xl border border-outline-variant/30 text-center">
-                                <p class="text-[8px] font-black text-on-surface-variant uppercase mb-0.5">印花稅 (0.4%)</p>
-                                <p class="text-[10px] font-black text-primary">NT$ ${Math.round(play.calculated.stampDuty).toLocaleString()}</p>
+                            <div class="bg-gray-50 p-2 rounded-xl border border-[#e2e8f0]/30 text-center">
+                                <p class="text-[8px] font-black text-[#64748b] uppercase mb-0.5">印花稅 (0.4%)</p>
+                                <p class="text-[10px] font-black text-[#0f172a]" id="stamp-${idx}">NT$ ${Math.round(play.calculated.stampDuty).toLocaleString()}</p>
                             </div>
-                            <div class="bg-gray-50 p-2 rounded-xl border border-outline-variant/30 text-center">
-                                <p class="text-[8px] font-black text-on-surface-variant uppercase mb-0.5">預扣所得稅</p>
-                                <p class="text-[10px] font-black text-primary">NT$ ${Math.round(play.calculated.withholdingTax).toLocaleString()}</p>
+                            <div class="bg-gray-50 p-2 rounded-xl border border-[#e2e8f0]/30 text-center">
+                                <p class="text-[8px] font-black text-[#64748b] uppercase mb-0.5">預扣所得稅</p>
+                                <p class="text-[10px] font-black text-[#0f172a]" id="withholding-total-${idx}">NT$ ${Math.round(play.calculated.withholdingTax).toLocaleString()}</p>
                             </div>
                         </div>
-                        <div class="p-3 bg-primary/5 rounded-xl border border-primary/10">
-                            <div class="flex justify-between items-center text-[10px] font-black text-primary uppercase">
+                        <div class="p-3 bg-[#0f172a]/5 rounded-xl border border-[#0f172a]/10">
+                            <div class="flex justify-between items-center text-[10px] font-black text-[#0f172a] uppercase">
                                 <span>稅務合規總成本</span>
-                                <span>NT$ ${Math.round(play.calculated.totalTaxLiabilities).toLocaleString()}</span>
+                                <span id="compliance-total-${idx}">NT$ ${Math.round(play.calculated.totalTaxLiabilities).toLocaleString()}</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Risk & Confidence -->
                     <div class="space-y-4">
                         <div class="grid grid-cols-2 gap-6">
                             <div class="space-y-2">
-                                <div class="flex justify-between text-[9px] font-black text-primary uppercase"><span>預備金 ${play.bufferRate}%</span></div>
+                                <div class="flex justify-between text-[9px] font-black text-[#0f172a] uppercase"><span>預備金 ${play.bufferRate}%</span></div>
                                 <input type="range" min="0" max="30" step="5" value="${play.bufferRate}" oninput="state.plays[${idx}].bufferRate=Number(this.value); saveState();" class="custom-slider">
                             </div>
                             <div class="space-y-2">
-                                <div class="flex justify-between text-[9px] font-black text-primary uppercase"><span>信心 ${play.confidence}%</span></div>
+                                <div class="flex justify-between text-[9px] font-black text-[#0f172a] uppercase"><span>信心 ${play.confidence}%</span></div>
                                 <input type="range" min="50" max="100" step="5" value="${play.confidence}" oninput="state.plays[${idx}].confidence=Number(this.value); saveState();" class="custom-slider">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Metrics -->
-                    <div class="pt-6 border-t border-outline-variant space-y-3">
+                    <div class="pt-6 border-t border-[#e2e8f0] space-y-3">
                         <div class="flex justify-between items-center">
-                            <span class="text-[10px] font-black text-on-surface-variant uppercase">保本門檻 (BEP)</span>
-                            <span class="text-xs font-bold text-primary">${play.calculated.bepTickets.toLocaleString()} / ${play.calculated.totalSeats.toLocaleString()} 張</span>
+                            <span class="text-[10px] font-black text-[#64748b] uppercase">保本門檻 (BEP)</span>
+                            <span class="text-xs font-bold text-[#0f172a]" id="bep-${idx}">${play.calculated.bepTickets.toLocaleString()} / ${play.calculated.totalSeats.toLocaleString()} 張</span>
                         </div>
-                        <div class="h-2 bg-surface-container rounded-full overflow-hidden">
-                            <div class="h-full bg-secondary transition-all" style="width: ${Math.min(100, (play.calculated.bepTickets / (play.calculated.totalSeats || 1) * 100))}%"></div>
+                        <div class="h-2 bg-[#f1f5f9] rounded-full overflow-hidden">
+                            <div id="progress-${idx}" class="h-full bg-[#10B981] transition-all duration-500" style="width: ${Math.min(100, (play.calculated.bepTickets / (play.calculated.totalSeats || 1) * 100))}%"></div>
                         </div>
-                        <p class="text-[8px] text-on-surface-variant text-center opacity-60">*BEP已包含稅務支出與風險預備金</p>
+                        <p class="text-[8px] text-[#64748b] text-center opacity-60">*BEP已包含稅務支出與風險預備金</p>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4 pt-2">
-                        <div class="bg-surface-container p-3 rounded-xl border border-outline-variant/30">
-                            <p class="text-[8px] font-black text-on-surface-variant uppercase mb-1">專案淨利</p>
-                            <p class="text-sm font-black ${play.calculated.profit >= 0 ? 'text-secondary' : 'text-error'}">NT$ ${Math.round(play.calculated.profit).toLocaleString()}</p>
+                        <div class="bg-[#f1f5f9] p-3 rounded-xl border border-[#e2e8f0]/30">
+                            <p class="text-[8px] font-black text-[#64748b] uppercase mb-1">專案淨利</p>
+                            <p id="profit-${idx}" class="text-sm font-black ${play.calculated.profit >= 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}">NT$ ${Math.round(play.calculated.profit).toLocaleString()}</p>
                         </div>
-                        <div class="bg-surface-container p-3 rounded-xl border border-outline-variant/30">
-                            <p class="text-[8px] font-black text-on-surface-variant uppercase mb-1">總預算額</p>
-                            <p class="text-sm font-black text-primary">NT$ ${Math.round(play.calculated.totalCost).toLocaleString()}</p>
+                        <div class="bg-[#f1f5f9] p-3 rounded-xl border border-[#e2e8f0]/30">
+                            <p class="text-[8px] font-black text-[#64748b] uppercase mb-1">總預算額</p>
+                            <p id="totalcost-${idx}" class="text-sm font-black text-[#0f172a]">NT$ ${Math.round(play.calculated.totalCost).toLocaleString()}</p>
                         </div>
                     </div>
                 </div>
             </div>
         `).join('') + `
             <div class="flex-shrink-0 w-[92vw] sm:w-[520px] snap-center admin-ui">
-                <button onclick="addPlay()" class="w-full h-full min-h-[500px] border-4 border-dashed border-outline-variant rounded-3xl flex flex-col items-center justify-center gap-4 hover:bg-white transition-all active-scale text-on-surface-variant hover:text-primary">
+                <button onclick="addPlay()" class="w-full h-full min-h-[500px] border-4 border-dashed border-[#e2e8f0] rounded-3xl flex flex-col items-center justify-center gap-4 hover:bg-white transition-all active-scale text-[#64748b] hover:text-[#0f172a]">
                     <span class="material-symbols-outlined text-4xl">add_circle</span>
                     <span class="font-black text-sm uppercase tracking-widest">新增演出專案</span>
                 </button>
@@ -809,12 +881,14 @@
     function addTier(idx) {
         state.plays[idx].tiers.push({ name: '新票種', price: 1000, seats: 100 });
         saveState();
+        calculate(true);
     }
 
     function removeTier(pIdx, tIdx) {
         if(state.plays[pIdx].tiers.length <= 1) return;
         state.plays[pIdx].tiers.splice(tIdx, 1);
         saveState();
+        calculate(true);
     }
 
     function updateDots() {
@@ -851,6 +925,7 @@
             marketing: 30000
         });
         saveState();
+        calculate(true);
     }
 
     function duplicatePlay(idx) {
@@ -859,6 +934,7 @@
         copy.name += " (複本)";
         state.plays.splice(idx + 1, 0, copy);
         saveState();
+        calculate(true);
     }
 
     function deletePlay(idx) {
@@ -866,13 +942,14 @@
         if(confirm('確定刪除此專案？')) {
             state.plays.splice(idx, 1);
             saveState();
+            calculate(true);
         }
     }
 
     window.onload = () => {
         const saved = localStorage.getItem(STORAGE_KEY);
         if(saved) state = JSON.parse(saved);
-        calculate();
+        calculate(true);
     };
 </script>
 </body></html>
